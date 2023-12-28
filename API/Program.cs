@@ -1,9 +1,15 @@
+using API.Repositories;
 using API.Repositories.Implementations;
 using API.Repositories.Interfaces;
 using API.Services.Implementations;
 using API.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<Context>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("context") ?? throw new InvalidOperationException("Connection string 'context' not found.")));
+
 
 // Add services to the container.
 
@@ -14,6 +20,12 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
+builder.Services.AddScoped<IServiceService, ServiceService>();
+builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 
 var app = builder.Build();
 

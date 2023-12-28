@@ -1,11 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace API.Model
 {
     public class OrderItem
     {
         [Required]
-        public string? ProductId { get; set; }
+        public Guid? ProductId { get; set; }
+        public Product? Product { get; set; }
+
+        public Guid? OrderId { get; set; }
+        public ProductOrder? Order { get; set; }
+
         [Required]
         public int Amount { get; set; }
         [Required]

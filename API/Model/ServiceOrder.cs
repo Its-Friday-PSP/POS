@@ -1,6 +1,6 @@
 ﻿namespace API.Model
 {
-    public class ServiceOrder
+    public class ServiceOrder : Order
     {
     }
 }

@@ -5,7 +5,7 @@ namespace API.Repositories.Implementations
 {
     public class OrderRepository : IOrderRepository
     {
-        public Order AddOrderItem(string orderId, OrderItem orderItem)
+        public Order AddOrderItem(Guid orderId, OrderItem orderItem)
         {
             throw new NotImplementedException();
         }
@@ -15,17 +15,17 @@ namespace API.Repositories.Implementations
             throw new NotImplementedException();
         }
 
-        public Order DeleteOrder(string orderId)
+        public Order DeleteOrder(Guid orderId)
         {
             throw new NotImplementedException();
         }
 
-        public Order GetOrder(string orderId)
+        public Order GetOrder(Guid orderId)
         {
             throw new NotImplementedException();
         }
 
-        public Order RemoveOrderItem(string orderId, int orderItemIndex)
+        public Order RemoveOrderItem(Guid orderId, int orderItemIndex)
         {
             throw new NotImplementedException();
         }

@@ -1,6 +1,6 @@
 ﻿namespace API.Model
 {
-    public class ProductOrder
+    public class ProductOrder : Order
     {
         public IEnumerable<OrderItem>? OrderItems { get; set; }
     }

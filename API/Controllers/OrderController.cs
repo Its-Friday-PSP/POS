@@ -18,7 +18,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{orderId}")]
-        public ActionResult<IEnumerable<Order>> GetOrder(string orderId)
+        public ActionResult<IEnumerable<Order>> GetOrder(Guid orderId)
         {
             return Ok(_orderService.GetOrder(orderId));
         }
@@ -31,7 +31,7 @@ namespace API.Controllers
 
         [HttpPost("{orderId}/orderItem")]
         public ActionResult<Order> AddOrderItem(
-            [FromQuery] string orderId,
+            [FromQuery] Guid orderId,
             [FromBody] OrderItem orderItem)
         {
             System.Console.WriteLine("hello");
@@ -39,16 +39,16 @@ namespace API.Controllers
         }
 
         [HttpDelete("{orderId}/orderItem/{orderItemIndex}")]
-        public ActionResult<Order> RemoveOrderItem(string orderId, int orderItemIndex)
+        public ActionResult<Order> RemoveOrderItem(Guid orderId, int orderItemIndex)
         {
             System.Console.WriteLine(orderId + ", " + orderItemIndex);
             return Ok(_orderService.RemoveOrderItem(orderId, orderItemIndex));
         }
 
         [HttpDelete("{orderId}")]
-        public ActionResult<Order> DeleteOrder(string orderId)
+        public ActionResult<Order> DeleteOrder(Guid orderId)
         {
-            return Ok(_orderService?.DeleteOrder(orderId));
+            return Ok(_orderService.DeleteOrder(orderId));
         }
     }
 }
