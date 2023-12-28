@@ -4,6 +4,7 @@ using API.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20231228175848_AddedAuth")]
+    partial class AddedAuth
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,7 +27,7 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Model.Customer", b =>
                 {
-                    b.Property<Guid?>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -57,11 +60,10 @@ namespace API.Migrations
                     b.Property<Guid?>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int?>("Index")
+                    b.Property<int>("Index")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Amount")
-                        .IsRequired()
+                    b.Property<int>("Amount")
                         .HasColumnType("int");
 
                     b.Property<Guid?>("ProductId")
@@ -119,11 +121,9 @@ namespace API.Migrations
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<string>("Email")
-                                .IsRequired()
                                 .HasColumnType("nvarchar(max)");
 
                             b1.Property<string>("Password")
-                                .IsRequired()
                                 .HasColumnType("nvarchar(max)");
 
                             b1.HasKey("CustomerId");
@@ -134,8 +134,7 @@ namespace API.Migrations
                                 .HasForeignKey("CustomerId");
                         });
 
-                    b.Navigation("Auth")
-                        .IsRequired();
+                    b.Navigation("Auth");
                 });
 
             modelBuilder.Entity("API.Model.OrderItem", b =>
