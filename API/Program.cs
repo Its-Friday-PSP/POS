@@ -3,12 +3,15 @@ using API.Repositories.Implementations;
 using API.Repositories.Interfaces;
 using API.Services.Implementations;
 using API.Services.Interfaces;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAutoMapper(typeof(API.Mappers.MapperProfile));
 
 builder.Services.AddDbContext<Context>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("context") ?? throw new InvalidOperationException("Connection string 'context' not found.")));
@@ -52,12 +55,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 var app = builder.Build();
 
+var mapper = app.Services.GetRequiredService<IMapper>();
+mapper.ConfigurationProvider.AssertConfigurationIsValid();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<API.Middlewares.ExceptionHandlerMiddleware>();
 
 app.UseHttpsRedirection();
 

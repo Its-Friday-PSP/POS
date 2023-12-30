@@ -1,10 +1,8 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using System;
+﻿using API.Model;
+using API.Requests.Auth;
+using API.Responses.Auth;
 using API.Services.Interfaces;
-using API.Model;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -14,16 +12,21 @@ namespace API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
+        private readonly IMapper _mapper;
 
-        public AuthController(IAuthService authService)
+        public AuthController(IAuthService authService, IMapper mapper)
         {
             _authService = authService;
+            _mapper = mapper;
         }
 
         [HttpPost("login")]
-        public string Login(Auth auth)
+        public ActionResult<LoginResponse> Login(LoginRequest request)
         {
-            return _authService.Login(auth);
+            var auth = _mapper.Map<Auth>(request.Auth);
+            var token = _authService.Login(auth);
+            var response = new LoginResponse(token);
+            return response;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using API.Model;
+﻿using API.Exceptions;
+using API.Model;
 using API.Repositories.Interfaces;
 using API.Services.Interfaces;
 
@@ -15,7 +16,20 @@ namespace API.Services.Implementations
 
         public Customer CreateCustomer(Customer customer)
         {
-            return _customerRepository.CreateCustomer(customer);
+            if (EmailAlreadyRegistered())
+            {
+                throw new EmailAlreadyRegisteredException("Customer with this email is already registered");
+            }
+            else
+            {
+                return _customerRepository.CreateCustomer(customer);
+            }
+        }
+
+        private bool EmailAlreadyRegistered()
+        {
+            // kazkokia tikrinimo logika
+            return false;
         }
 
         public Customer DeleteCustomer(Guid customerId)
@@ -30,7 +44,7 @@ namespace API.Services.Implementations
 
         public Customer UpdateCustomer(Guid customerId, Customer customer)
         {
-           return _customerRepository.UpdateCustomer(customerId, customer);
+            return _customerRepository.UpdateCustomer(customerId, customer);
         }
     }
 }

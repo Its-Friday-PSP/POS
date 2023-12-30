@@ -1,9 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "CrZ08Rh3QBiz7FGhLfCHJRWwdP+TEGzW/hi1JFCwzgr5FT0IEJWynl+AeKTW1gwH3658YBDNv7bOi2ATT1eodw==",
+  "dgSpecHash": "+nLavd8c7+15lap57AaBOXY+20PenK7TVLS2iq2K4Gx2qfTnLLNDBeOm1n8IXBQCpj8tKq7atQic4a/S6AWd4Q==",
   "success": true,
   "projectFilePath": "C:\\Users\\justa\\Desktop\\Personal Projects\\LocalhostServer\\API\\API.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\justa\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
+    "C:\\Users\\justa\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",
     "C:\\Users\\justa\\.nuget\\packages\\azure.core\\1.24.0\\azure.core.1.24.0.nupkg.sha512",
     "C:\\Users\\justa\\.nuget\\packages\\azure.identity\\1.6.0\\azure.identity.1.6.0.nupkg.sha512",
     "C:\\Users\\justa\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",

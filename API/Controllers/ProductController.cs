@@ -1,6 +1,9 @@
+using API.DTOs;
 using API.Model;
+using API.Requests.Product;
+using API.Responses.Product;
 using API.Services.Interfaces;
-using Microsoft.AspNetCore.JsonPatch;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -11,34 +14,46 @@ namespace API.Controllers
     {
 
         private readonly IProductService _productService;
+        private readonly IMapper _mapper;
 
-        public ProductController(IProductService productService)
+        public ProductController(IProductService productService, IMapper mapper)
         {
             _productService = productService;
+            _mapper = mapper;
         }
 
         [HttpGet("{productId}")]
-        public ActionResult<IEnumerable<Product>> GetProduct(Guid productId)
-        {
-            return Ok(_productService.GetProduct(productId));
+        public ActionResult<GetProductResponse> GetProduct([FromRoute] GetProductRequest request)
+        {   
+            var productDomain = _productService.GetProduct(request.ProductId);
+            var response = new GetProductResponse(_mapper.Map<ProductDTO>(productDomain));
+            return Ok(response);
         }
 
         [HttpPost]
-        public ActionResult<Product> CreateProduct(Product product)
+        public ActionResult<CreateProductResponse> CreateProduct(CreateProductRequest request)
         {
-            return Ok(_productService.CreateProduct(product));
+            var productDomain = _mapper.Map<Product>(request.Product);
+            var createdProduct = _productService.CreateProduct(productDomain);
+            var response = new CreateProductResponse(_mapper.Map<ProductDTO>(createdProduct));
+            return Ok(response);
         }
 
         [HttpPut("{productId}")]
-        public ActionResult<Product> UpdateProduct([FromQuery] Guid productId, [FromBody] Product product)
+        public ActionResult<UpdateProductResponse> UpdateProduct(UpdateProductRequest request)
         {
-            return Ok(_productService.UpdateProduct(productId, product));
+            var product = _mapper.Map<Product>(request.Product);
+            var updateProduct = _productService.UpdateProduct(request.ProductId, product);
+            var response = new UpdateProductResponse(_mapper.Map<ProductDTO>(updateProduct));
+            return Ok(response);
         }
 
-        [HttpDelete("{orderId}")]
-        public ActionResult<Product> DeleteProduct(Guid orderId)
+        [HttpDelete("{productId}")]
+        public ActionResult<DeleteProductResponse> DeleteProduct(DeleteProductRequest request)
         {
-            return Ok(_productService.DeleteProduct(orderId));
+            var deletedProduct = _productService.DeleteProduct(request.ProductId);
+            var response = new DeleteProductResponse(_mapper.Map<ProductDTO>(deletedProduct));
+            return Ok(response);
         }
     }
 }

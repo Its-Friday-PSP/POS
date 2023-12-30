@@ -1,11 +1,10 @@
 ﻿using API.Model;
+using API.Repositories.Interfaces;
 using API.Services.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System;
-using API.Repositories.Interfaces;
 
 namespace API.Services.Implementations
 {

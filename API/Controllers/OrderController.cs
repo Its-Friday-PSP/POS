@@ -1,6 +1,8 @@
+using API.DTOs;
 using API.Model;
+using API.Requests.Order;
 using API.Services.Interfaces;
-using Microsoft.AspNetCore.JsonPatch;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -11,10 +13,12 @@ namespace API.Controllers
     {
 
         private readonly IOrderService _orderService;
+        private readonly IMapper _mapper;
 
-        public OrderController(IOrderService orderService)
+        public OrderController(IOrderService orderService, IMapper mapper)
         {
             _orderService = orderService;
+            _mapper = mapper;
         }
 
         [HttpGet("{orderId}")]
@@ -24,18 +28,20 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Order> CreateOrder(Order order)
+        public ActionResult<Order> CreateOrder(CreateOrderRequest request)
         {
+            var order = _mapper.Map<Order>(request.Order);
             return Ok(_orderService.CreateOrder(order));
         }
 
         [HttpPost("{orderId}/orderItem")]
         public ActionResult<Order> AddOrderItem(
             [FromQuery] Guid orderId,
-            [FromBody] OrderItem orderItem)
+            [FromBody] OrderItemDTO orderItem)
         {
             System.Console.WriteLine("hello");
-            return Ok(_orderService.AddOrderItem(orderId, orderItem));
+            
+            return Ok(_orderService.AddOrderItem(orderId, _mapper.Map<OrderItem>(orderItem)));
         }
 
         [HttpDelete("{orderId}/orderItem/{orderItemIndex}")]

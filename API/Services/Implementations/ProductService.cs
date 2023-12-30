@@ -30,7 +30,7 @@ namespace API.Services.Implementations
 
         public Product UpdateProduct(Guid productId, Product product)
         {
-           return _productRepository.UpdateProduct(productId, product);
+            return _productRepository.UpdateProduct(productId, product);
         }
     }
 }
