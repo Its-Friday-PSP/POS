@@ -6,7 +6,7 @@ namespace API.DTOs
     {
         public Guid? ProductId { get; set; }
         [Required]
-        public IEnumerable<ProductDTO>? Products { get; set; }
+        public List<ProductDTO>? Products { get; set; }
         [Required]
         public int? Amount { get; set; }
         [Required]

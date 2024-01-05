@@ -6,7 +6,7 @@ namespace API.DTOs
     {
         public Guid? ServiceId { get; set; }
         [Required]
-        public IEnumerable<ServiceDTO>? Services { get; set; }
+        public List<ServiceDTO>? Services { get; set; }
         [Required]
         public int? Amount { get; set; }
         [Required]

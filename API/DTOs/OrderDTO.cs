@@ -8,8 +8,9 @@ namespace API.DTOs
     {
         public Guid? Id { get; set; }
         [Required]
-        public OrderTypeEnum? OrderType { get; set; }
-        public string? Currency { get; set; }
+        public IEnumerable<OrderTypeEnum>? OrderType { get; set; }
+        public IEnumerable<OrderStatusEnum>? Status { get; set; }
+        public IEnumerable<CurrencyEnum>? Currency { get; set; }
         public ProductOrderDTO? ProductOrder { get; set; }
         public ServiceOrderDTO? ServiceOrder { get; set; }
     }

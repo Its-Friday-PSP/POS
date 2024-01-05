@@ -12,6 +12,6 @@ namespace API.DTOs
         [Required]
         public decimal? Price { get; set; }
         [Required]
-        public int? AmountInStock { get; set; }
+        public int AmountInStock { get; set; }
     }
 }
