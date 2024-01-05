@@ -1,4 +1,5 @@
 ﻿using API.DTOs;
+using API.Enums;
 using API.Model;
 using AutoMapper;
 
@@ -29,7 +30,7 @@ namespace API.Mappers
             CreateMap<OrderDTO, Order>()
                 .ConvertUsing((orderDto, _, context) =>
                 {
-                    if (orderDto.OrderType == OrderTypeDTO.SERVICE)
+                    if (orderDto.OrderType == OrderTypeEnum.SERVICE)
                     {
                         var serviceOrder = new ServiceOrder((Guid)orderDto.Id!);
                         return serviceOrder;

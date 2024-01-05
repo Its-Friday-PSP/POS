@@ -1,4 +1,5 @@
-﻿using API.Migrations;
+﻿using API.Enums;
+using API.Migrations;
 using System.ComponentModel.DataAnnotations;
 
 namespace API.DTOs
@@ -7,7 +8,8 @@ namespace API.DTOs
     {
         public Guid? Id { get; set; }
         [Required]
-        public OrderTypeDTO? OrderType { get; set; }
+        public OrderTypeEnum? OrderType { get; set; }
+        public string? Currency { get; set; }
         public ProductOrderDTO? ProductOrder { get; set; }
         public ServiceOrderDTO? ServiceOrder { get; set; }
     }

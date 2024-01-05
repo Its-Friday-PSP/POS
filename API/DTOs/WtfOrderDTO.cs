@@ -4,7 +4,7 @@ namespace API.DTOs
 {
     public class WtfOrderDTO
     {
-        [Required]
-        public int? Duration { get; set; }
+        //[Required]
+        //public int? Duration { get; set; }
     }
 }
