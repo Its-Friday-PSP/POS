@@ -23,12 +23,15 @@ namespace API.Repositories.Implementations
 
         public Customer DeleteCustomer(Guid customerId)
         {
-            throw new NotImplementedException();
+            var customer = GetCustomer(customerId);
+            _context.Customers.Remove(customer);
+            _context.SaveChanges(); 
+            return customer;
         }
 
-        public Customer GetCustomer(Guid customerId)
+        public Customer? GetCustomer(Guid customerId)
         {
-            throw new NotImplementedException();
+            return _context.Customers.Find(customerId);
         }
 
         public Customer? GetCustomer(string email)
@@ -36,9 +39,20 @@ namespace API.Repositories.Implementations
             return _context.Customers.FirstOrDefault(customer => customer.Auth.Email.ToLower().Equals(email.ToLower()));
         }
 
+        public List<Customer> GetCustomers()
+        {
+            return _context.Customers.ToList();
+        }
+
         public Customer UpdateCustomer(Guid customerId, Customer customer)
         {
-            throw new NotImplementedException();
+            var existingCustomer = GetCustomer(customerId);
+
+            existingCustomer.Auth = customer.Auth;
+
+            _context.SaveChanges();
+
+            return existingCustomer;
         }
     }
 }

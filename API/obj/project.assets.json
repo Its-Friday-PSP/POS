@@ -3915,19 +3915,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\justa\\.nuget\\packages\\": {}
+    "C:\\Users\\Deimante\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\justa\\Desktop\\Personal Projects\\LocalhostServer\\API\\API.csproj",
+      "projectUniqueName": "C:\\Users\\Deimante\\source\\repos\\POS\\API\\API.csproj",
       "projectName": "API",
-      "projectPath": "C:\\Users\\justa\\Desktop\\Personal Projects\\LocalhostServer\\API\\API.csproj",
-      "packagesPath": "C:\\Users\\justa\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\justa\\Desktop\\Personal Projects\\LocalhostServer\\API\\obj\\",
+      "projectPath": "C:\\Users\\Deimante\\source\\repos\\POS\\API\\API.csproj",
+      "packagesPath": "C:\\Users\\Deimante\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Deimante\\source\\repos\\POS\\API\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\justa\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Deimante\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -3935,8 +3935,6 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
-        "C:\\Program Files\\dotnet\\sdk\\7.0.302\\Sdks\\Microsoft.NET.Sdk.Web\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -4023,7 +4021,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.302\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100\\RuntimeIdentifierGraph.json"
       }
     }
   }

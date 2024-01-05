@@ -42,6 +42,11 @@ namespace API.Services.Implementations
             return _customerRepository.GetCustomer(customerId);
         }
 
+        public List<Customer> GetCustomers()
+        {
+           return _customerRepository.GetCustomers();
+        }
+
         public Customer UpdateCustomer(Guid customerId, Customer customer)
         {
             return _customerRepository.UpdateCustomer(customerId, customer);

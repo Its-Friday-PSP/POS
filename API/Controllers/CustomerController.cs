@@ -39,6 +39,15 @@ namespace API.Controllers
             return Ok(response);
         }
 
+        [HttpGet]
+        public ActionResult<GetCustomerResponse> GetCustomers()
+        {
+            var customers = _customerService.GetCustomers();
+            var response = new GetCustomersResponse(_mapper.Map<List<CustomerDTO>>(customers));
+            return Ok(response);
+        }
+
+
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status400BadRequest)] // Email already exists
         public ActionResult<CreateCustomerResponse> CreateCustomer(CreateCustomerRequest request)
@@ -51,12 +60,17 @@ namespace API.Controllers
         }
 
         [HttpPut("{customerId}")]
-        public ActionResult<UpdateCustomerResponse> UpdateCustomer(UpdateCustomerRequest request)
-        {
+        public ActionResult<UpdateCustomerResponse> UpdateCustomer(
+            UpdateCustomerRequest request,
+            Guid customerId
+        ) {
             var customer = _mapper.Map<Customer>(request.Customer);
-            var updateCustomer = _customerService.UpdateCustomer(request.CustomerId, customer);
-            var response = new UpdateCustomerResponse(_mapper.Map<CustomerDTO>(updateCustomer));
-            return Ok(response);
+            var updateCustomer = _customerService.UpdateCustomer(customerId, customer);
+
+            //var updateCustomer = _customerService.UpdateCustomer(request.CustomerId, customer);
+            //var response = new UpdateCustomerResponse(_mapper.Map<CustomerDTO>(updateCustomer));
+
+            return Ok();
         }
 
         [HttpDelete("{customerId}")]

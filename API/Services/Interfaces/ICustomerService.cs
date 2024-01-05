@@ -8,5 +8,6 @@ namespace API.Services.Interfaces
         public Customer GetCustomer(Guid customerId);
         public Customer UpdateCustomer(Guid customerId, Customer customer);
         public Customer DeleteCustomer(Guid customerId);
+        public List<Customer> GetCustomers();
     }
 }
