@@ -23,7 +23,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreatePayment(CreatePaymentRequest request)
+        public ActionResult<CreatePaymentResponse> CreatePayment(CreatePaymentRequest request)
         {
             var paymentDomain = _mapper.Map<Payment>(request.Payment);
             var createdPayment = _paymentsService.CreatePayment(paymentDomain);
@@ -33,7 +33,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetPayments()
+        public ActionResult<GetPaymentsResponse> GetPayments()
         {
             var payments = _paymentsService.GetPayments();
             var response = new GetPaymentsResponse(_mapper.Map<List<PaymentDTO>>(payments));
@@ -42,7 +42,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{paymentId}")]
-        public IActionResult GetPayment([FromRoute] GetPaymentRequest request)
+        public ActionResult<GetPaymentResponse> GetPayment([FromRoute] GetPaymentRequest request)
         {
             var paymentDomain = _paymentsService.GetPayment(request.PaymentId);
             
@@ -51,7 +51,7 @@ namespace API.Controllers
                 return NotFound();
             }
 
-            var response = new GetPaymentsResponse(_mapper.Map<List<PaymentDTO>>(paymentDomain));
+            var response = new GetPaymentResponse(_mapper.Map<PaymentDTO>(paymentDomain));
             
             return Ok(response);
         }
