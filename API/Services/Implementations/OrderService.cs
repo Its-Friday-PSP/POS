@@ -19,6 +19,11 @@ namespace API.Services.Implementations
             return _orderRepository.AddOrderItem(orderId, orderItem);
         }
 
+        public Order AddTip(Guid orderId, Tip tip)
+        {
+            return _orderRepository.AddTip(orderId, tip);
+        }
+
         public Order CreateOrder(Order order)
         {
             return _orderRepository.CreateOrder(order);
