@@ -16,17 +16,8 @@ namespace API.Mappers
 
             CreateMap<ProductDTO, Product>();
             CreateMap<Product, ProductDTO>();
-            
-            CreateMap<PaymentDTO, Payment>()
-                .ConvertUsing((paymentDTO, payment, _) =>
-                {
-                    payment.Id = paymentDTO.Id;
-                    payment.OrderId = paymentDTO.OrderId;
-                    payment.PaymentState = paymentDTO.PaymentState;
-                    payment.PaymentType = paymentDTO.PaymentType;
 
-                    return payment;
-                });
+            CreateMap<PaymentDTO, Payment>();
             CreateMap<Payment, PaymentDTO>();
             //CreateMap<Payment, PaymentDTO>();
 

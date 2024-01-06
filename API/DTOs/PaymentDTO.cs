@@ -1,4 +1,5 @@
 ﻿using API.Enumerators;
+using API.Model;
 using System.ComponentModel.DataAnnotations;
 
 namespace API.DTOs
@@ -7,12 +8,11 @@ namespace API.DTOs
     {
         [Required]
         public Guid Id { get; set; }
-        [Required]
-        public Guid OrderId { get; set; }
+        public Guid? OrderId { get; set; }
         [Required]
         public PaymentType PaymentType { get; set; }
-        [Required]
-        public PaymentState PaymentState { get; set; }
+        public PaymentState? PaymentState { get; set; }
+        public Price? Price { get; set; }
         public DateTime? LastUpdated { get; set; }
     }
 }

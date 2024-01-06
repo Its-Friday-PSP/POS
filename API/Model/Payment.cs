@@ -9,6 +9,7 @@ namespace API.Model
         public Guid OrderId { get; set; }
         public PaymentType PaymentType { get; set; }
         public PaymentState PaymentState { get; set; }
+        public Price Price { get; set; }
         public DateTime LastUpdated { get; set; }
     }
 }
