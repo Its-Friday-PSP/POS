@@ -35,6 +35,12 @@ namespace API.Controllers
             }*/
             
             var customerDomain = _customerService.GetCustomer(request.CustomerId);
+
+            if(customerDomain == null)
+            {
+                return NotFound();
+            }
+
             var response = new GetCustomerResponse(_mapper.Map<CustomerDTO>(customerDomain));
             return Ok(response);
         }
