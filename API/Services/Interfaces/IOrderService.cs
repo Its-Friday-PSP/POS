@@ -7,7 +7,7 @@ namespace API.Services.Interfaces
         public Order CreateOrder(Order order);
         public Order GetOrder(Guid orderId);
         public Order AddOrderItem(Guid orderId, OrderItem orderItem);
-        public Order RemoveOrderItem(Guid orderId, int orderItemIndex);
-        public Order DeleteOrder(Guid orderId);
+        public bool RemoveOrderItem(Guid orderId, int orderItemIndex);
+        public bool DeleteOrder(Guid orderId);
     }
 }

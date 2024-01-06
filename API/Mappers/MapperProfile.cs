@@ -1,6 +1,7 @@
 ﻿using API.DTOs;
 using API.Model;
 using AutoMapper;
+using System.Runtime.CompilerServices;
 
 namespace API.Mappers
 {
@@ -20,11 +21,36 @@ namespace API.Mappers
             /*CreateMap<ServiceOrderDTO, ServiceOrder>();
             CreateMap<ProductOrderDTO, ProductOrder>();*/
 
-            /*CreateMap<OrderItemDTO, OrderItem>()
-                .ForMember(orderItem => orderItem.Order, opt => opt.Ignore())
-                .ForMember(orderItem => orderItem.Product, opt => opt.Ignore());*/
+            //CreateMap<OrderItemDTO, OrderItem>()
+            //.ForMember(orderItem => orderItem.Order, opt => opt.Ignore())
+            //.ForMember(orderItem => orderItem.Product, opt => opt.Ignore());
 
-            
+            //CreateMap<ServiceOrderDTO, ServiceOrder>();
+            //CreateMap<ServiceOrder, ServiceOrderDTO>();
+
+            //CreateMap<Service, ServiceDTO>()
+            //    .ForMember(dto => dto.ServiceTimeSlots, opt => opt.MapFrom(src => src.ServiceTimeSlots));
+
+            //CreateMap<ServiceTimeSlots, ServiceTimeSlotsDTO>();
+
+            //CreateMap<ServiceDTO, Service>()
+            //    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id ?? Guid.NewGuid()))
+            //    .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name ?? string.Empty))
+            //    .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description ?? string.Empty))
+            //    .ForMember(dest => dest.DurationInMinutes, opt => opt.MapFrom(src => src.DurationInMinutes ?? 0))
+            //    .ForMember(dest => dest.ServiceTimeSlots, opt => opt.MapFrom(src => src.ServiceTimeSlots != null
+            //        ? src.ServiceTimeSlots.Select(dto => new ServiceTimeSlots(
+            //            dto.Id, 
+            //            dto.CustomerId,
+            //            dto.StartTime,
+            //            dto.EndTime,
+            //            dto.IsBooked))
+            //            .ToList()
+            //        : new List<ServiceTimeSlots>()));
+
+            //CreateMap<ServiceTimeSlotsDTO, ServiceTimeSlots>()
+            //    .ConstructUsing(dto => new ServiceTimeSlots(dto.Id, dto.CustomerId, dto.StartTime, dto.EndTime, dto.IsBooked))
+            //    .ForMember(dest => dest.ServiceId, opt => opt.Ignore()); 
 
             CreateMap<OrderDTO, Order>()
                 .ConvertUsing((orderDto, _, context) =>

@@ -24,7 +24,7 @@ namespace API.Services.Implementations
             return _orderRepository.CreateOrder(order);
         }
 
-        public Order DeleteOrder(Guid orderId)
+        public bool DeleteOrder(Guid orderId)
         {
             return _orderRepository.DeleteOrder(orderId);
         }
@@ -34,7 +34,7 @@ namespace API.Services.Implementations
             return _orderRepository.GetOrder(orderId);
         }
 
-        public Order RemoveOrderItem(Guid orderId, int orderItemIndex)
+        public bool RemoveOrderItem(Guid orderId, int orderItemIndex)
         {
             return _orderRepository.RemoveOrderItem(orderId, orderItemIndex);
         }

@@ -18,7 +18,7 @@ namespace API.Services.Implementations
             return _serviceRepository.CreateService(service);
         }
 
-        public Service DeleteService(Guid serviceId)
+        public bool DeleteService(Guid serviceId)
         {
             return _serviceRepository.DeleteService(serviceId);
         }

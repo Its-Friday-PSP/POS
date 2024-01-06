@@ -1,28 +1,45 @@
 ﻿using API.Model;
 using API.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Repositories.Implementations
 {
     public class ServiceRepository : IServiceRepository
     {
+        private readonly Context _context;
+
+        public ServiceRepository(Context context)
+        {
+            _context = context;
+        }
         public Service CreateService(Service service)
         {
-            throw new NotImplementedException();
+            var id = Guid.NewGuid();
+            service.Id = id;
+            _context.Services.Add(service);
+            _context.SaveChanges();
+            return service;
         }
 
-        public Service DeleteService(Guid serviceId)
+        public bool DeleteService(Guid serviceId)
         {
-            throw new NotImplementedException();
+            var service = GetService(serviceId);
+            _context.Services.Remove(service);
+            _context.SaveChanges();
+            return true;
         }
 
         public Service GetService(Guid serviceId)
         {
-            throw new NotImplementedException();
+            return _context.Services.Find(serviceId);
         }
 
         public Service UpdateService(Guid serviceId, Service service)
         {
-            throw new NotImplementedException();
+            var existingService = GetService(serviceId);
+            _context.Entry(existingService).CurrentValues.SetValues(service);
+            _context.SaveChanges();
+            return existingService;
         }
     }
 }
