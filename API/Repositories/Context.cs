@@ -12,7 +12,7 @@ namespace API.Repositories
         }
 
         public DbSet<Order> Orders { get; set; }
-        public DbSet<ProductOrder> ProductOrders { get; set; }
+        public DbSet<OrderItem> ProductOrders { get; set; }
         public DbSet<ServiceOrder> ServiceOrders { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Service> Services { get; set; }
@@ -41,7 +41,7 @@ namespace API.Repositories
             modelBuilder.Entity<OrderItem>()
                 .Property(orderItem => orderItem.Amount).IsRequired();
 
-            modelBuilder.Entity<ProductOrder>()
+            modelBuilder.Entity<OrderItem>()
                 .HasMany(order => order.OrderItems)
                 .WithOne(orderItem => orderItem.Order)
                 .HasForeignKey(orderItem => orderItem.OrderId);
