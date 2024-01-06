@@ -40,20 +40,30 @@ namespace API.Controllers
         }
 
         [HttpPut("{productId}")]
-        public ActionResult<UpdateProductResponse> UpdateProduct(UpdateProductRequest request)
+        public IActionResult UpdateProduct(UpdateProductRequest request)
         {
             var product = _mapper.Map<Product>(request.Product);
-            var updateProduct = _productService.UpdateProduct(request.ProductId, product);
-            var response = new UpdateProductResponse(_mapper.Map<ProductDTO>(updateProduct));
-            return Ok(response);
+            bool success = _productService.UpdateProduct(request.ProductId, product);
+            
+            if(!success)
+            {
+                return NotFound(); 
+            }
+            
+            return Ok();
         }
 
         [HttpDelete("{productId}")]
-        public ActionResult<DeleteProductResponse> DeleteProduct(DeleteProductRequest request)
+        public IActionResult DeleteProduct([FromRoute] DeleteProductRequest request)
         {
-            var deletedProduct = _productService.DeleteProduct(request.ProductId);
-            var response = new DeleteProductResponse(_mapper.Map<ProductDTO>(deletedProduct));
-            return Ok(response);
+            bool success = _productService.DeleteProduct(request.ProductId);
+            
+            if(!success)
+            {
+                return NotFound();
+            }
+
+            return Ok();
         }
     }
 }

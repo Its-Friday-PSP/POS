@@ -18,7 +18,7 @@ namespace API.Services.Implementations
             return _productRepository.CreateProduct(product);
         }
 
-        public Product DeleteProduct(Guid productId)
+        public bool DeleteProduct(Guid productId)
         {
             return _productRepository.DeleteProduct(productId);
         }
@@ -28,7 +28,7 @@ namespace API.Services.Implementations
             return _productRepository.GetProduct(productId);
         }
 
-        public Product UpdateProduct(Guid productId, Product product)
+        public bool UpdateProduct(Guid productId, Product product)
         {
             return _productRepository.UpdateProduct(productId, product);
         }
