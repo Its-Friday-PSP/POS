@@ -5,7 +5,6 @@ namespace API.DTOs
     public class OrderDTO
     {
         public Guid? Id { get; set; }
-        [Required]
         public OrderTypeDTO OrderType { get; set; }
         public int? TotalPrice { get; set; }
         public DateTime Date { get; set; }
