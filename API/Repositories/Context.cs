@@ -56,7 +56,13 @@ namespace API.Repositories
                 .HasOne<Order>() // Each Payment is associated with one Order
                 .WithMany(order => order.Payments) // Each Order can have many Payments
                 .HasForeignKey(payment => payment.OrderId);
-        }
 
+            modelBuilder.Entity<Payment>()
+                .OwnsOne(payment => payment.Price, price =>
+                {
+                    price.Property(price => price.Amount).HasColumnName("Amount");
+                    price.Property(price => price.Currency).HasColumnName("Currency");
+                });
+        }
     }
 }
