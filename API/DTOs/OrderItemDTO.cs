@@ -5,10 +5,11 @@ namespace API.DTOs
     public class OrderItemDTO
     {
         [Required]
-        public Guid? ProductId { get; set; }
+        public Guid? Id { get; set; }
+        [Required]
+        public Guid? ItemId { get; set; }
         [Required]
         public int? Amount { get; set; }
-        [Required]
-        public int? Index { get; set; }
+        public int? Price { get; set; }
     }
 }
