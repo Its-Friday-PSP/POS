@@ -56,5 +56,15 @@ namespace API.Controllers
         {
             return Ok(_orderService.DeleteOrder(orderId));
         }
+
+        [HttpPut("tip/{orderId}")]
+        public ActionResult<Order> AddTip([FromRoute] Guid orderId, [FromBody] AddTipRequest request)
+        {
+            var tip = _mapper.Map<Tip>(request.Tip);
+
+            var order = _orderService.AddTip(orderId, tip);
+
+            return order == null ? NotFound() : Ok(order);
+        }
     }
 }
