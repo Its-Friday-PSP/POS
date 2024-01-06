@@ -62,10 +62,10 @@ namespace API.Repositories
                 .WithMany(order => order.OrderItems) 
                 .HasForeignKey(orderItem => orderItem.OrderId);
 
-            modelBuilder.Entity<Service>()
-                .HasMany(service => service.ServiceTimeSlots)
-                .WithOne(timeSlots => timeSlots.Service)
-                .HasForeignKey(timeSlots => timeSlots.Service);
+            modelBuilder.Entity<ServiceTimeSlots>()
+                .HasOne<Service>()
+                .WithMany(service => service.ServiceTimeSlots)
+                .HasForeignKey(erviceTimeSlots => erviceTimeSlots.ServiceId);
         }
 
     }
