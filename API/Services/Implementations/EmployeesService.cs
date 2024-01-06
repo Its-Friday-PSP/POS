@@ -12,7 +12,7 @@ namespace API.Services.Implementations
         {
             _employeesRepository = employeesRepository;
         }
-        public Employee CreateEmployee(Employee employee)
+        public Employee? CreateEmployee(Employee employee)
         {
             if (EmailAlreadyRegistered())
             {
@@ -20,17 +20,31 @@ namespace API.Services.Implementations
             }
             else
             {
-                throw new EmailAlreadyRegisteredException("Employee with this email is already registered");
+                return null;
             }
         }
 
-        public Employee GetEmployee(Guid id)
+        public Employee? GetEmployee(Guid id)
         {
-            return null;
+            return _employeesRepository.GetEmployee(id);
         }
+        public IEnumerable<Employee> GetAllEmployees()
+        {
+            return _employeesRepository.GetAllEmployees();
+        }
+
+        public Employee? UpdateEmployee(Employee employee)
+        {
+            return _employeesRepository.UpdateEmployee(employee);
+        }
+
+        public bool DeleteEmployee(Guid id)
+        {
+            return _employeesRepository.DeleteEmployee(id);
+        }
+
         private bool EmailAlreadyRegistered()
         {
-            // kazkokia tikrinimo logika
             return false;
         }
     }

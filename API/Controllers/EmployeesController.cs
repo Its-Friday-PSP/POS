@@ -27,16 +27,16 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<CreateEmployeeResponse> RegisterNewEmployee(CreateEmployeeRequest request)
         {
-            Employee? employeeToReturn = null;
-            try
-            {
-                employeeToReturn = _employeesService.CreateEmployee(_mapper.Map<Employee>(request.Employee));
-                return Ok(new CreateEmployeeRequest(_mapper.Map<EmployeeDTO>(employeeToReturn));
-            }
-            catch (EmailAlreadyRegisteredException)
-            {
-                return StatusCode(StatusCodes.Status400BadRequest);
-            }
+            var employeeToReturn = _employeesService.CreateEmployee(_mapper.Map<Employee>(request.Employee));
+            return employeeToReturn == null ? StatusCode(StatusCodes.Status400BadRequest) : Ok(new CreateEmployeeRequest(_mapper.Map<EmployeeDTO>(employeeToReturn)));
+        }
+
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<GetEmployeesResponse> GetEmployees()
+        {
+            var employees = _employeesService.GetAllEmployees();
+            return Ok(new GetEmployeesResponse(_mapper.Map<List<EmployeeDTO>>(employees)));
         }
 
         [HttpGet("{employeeId}")]
@@ -45,8 +45,24 @@ namespace API.Controllers
         public ActionResult<GetEmployeeResponse> GetEmployee([FromRoute] GetEmployeeRequest request)
         {
             var employee = _employeesService.GetEmployee(request.EmployeeId);
-            var response = new GetEmployeeResponse(_mapper.Map<EmployeeDTO>(employee));
-            return Ok(response);
+            return employee == null ? StatusCode(StatusCodes.Status400BadRequest) : Ok(new GetEmployeeResponse(_mapper.Map<EmployeeDTO>(employee)));
+        }
+        
+        [HttpPut("{employeeId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<UpdateEmployeeResponse> UpdateEmployee([FromRoute] UpdateEmployeeRequest request)
+        {
+            var employee = _employeesService.UpdateEmployee(_mapper.Map<Employee>(request));
+            return employee == null ? StatusCode(StatusCodes.Status400BadRequest) : Ok(new GetEmployeeResponse(_mapper.Map<EmployeeDTO>(employee)));
+        }
+
+        [HttpDelete("{employeeId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult DeleteEmployee([FromRoute] DeleteEmployeeRequest request)
+        {
+            return _employeesService.DeleteEmployee(request.EmployeeId) ? Ok() : StatusCode(StatusCodes.Status400BadRequest);
         }
     }
 }

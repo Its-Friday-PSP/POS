@@ -20,14 +20,27 @@ namespace API.Repositories.Implementations
             return employee;
         }
 
-        public Employee GetEmployee(Guid id)
+        public Employee? GetEmployee(Guid id)
         {
-            return null;
+            return _context.Employees.Find(id);
         }
 
-        public Employee UpdateEmployee(Employee employee)
+        public IEnumerable<Employee> GetAllEmployees()
         {
-            return null;
+            return _context.Employees.ToList();
+        }
+        public Employee? UpdateEmployee(Employee employee)
+        {
+            var existingEmployee = GetEmployee(employee.Id);
+            if (existingEmployee == null)
+            {
+                return null;
+            }
+            existingEmployee.Auth = employee.Auth;
+            existingEmployee.Role = employee.Role;
+            existingEmployee.Name = employee.Name;
+            _context.SaveChanges();
+            return existingEmployee;
         }
 
         public bool DeleteEmployee(Guid id)

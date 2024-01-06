@@ -54,15 +54,7 @@ namespace API.Repositories
                 {
                     z.OrderId,
                     z.Index,
-                    z.Amount,
-                    z.ProductId,
                 });
-
-            modelBuilder.Entity<Order>().HasKey(a => new
-            {
-                a.Id,
-                a.CustomerId,
-            });
 
             modelBuilder.Entity<OrderItem>()
                 .Property(orderItem => orderItem.ProductId).IsRequired();
