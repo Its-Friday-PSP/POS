@@ -18,7 +18,6 @@ namespace API.Repositories
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Service> Services { get; set; }
-        public DbSet<ServiceTimeSlots> ServiceTimeSlot { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,16 +28,6 @@ namespace API.Repositories
                     auth.Property(auth => auth.Password).IsRequired();
                 })
                 .Navigation(customer => customer.Auth).IsRequired();
-
-            modelBuilder.Entity<Order>()
-                .HasOne(order => order.ProductOrder)
-                .WithOne(productOrder => productOrder.Order)
-                .HasForeignKey<ProductOrder>(productOrder => productOrder.OrderId);
-
-            modelBuilder.Entity<Order>()
-                .HasOne(order => order.ServiceOrder)
-                .WithOne(serviceOrder => serviceOrder.Order)
-                .HasForeignKey<ServiceOrder>(serviceOrder => serviceOrder.OrderId);
 
             modelBuilder.Entity<ProductOrder>()
                 .HasMany(order => order.OrderItems)
@@ -73,20 +62,10 @@ namespace API.Repositories
                 .WithMany(order => order.OrderItems) 
                 .HasForeignKey(orderItem => orderItem.OrderId);
 
-            modelBuilder.Entity<Product>()
-                .HasMany(product => product.OrderItems)
-                .WithOne(orderItems => orderItems.Product)
-                .HasForeignKey(orderItems => orderItems.ProductId);
-
             modelBuilder.Entity<Service>()
                 .HasMany(service => service.ServiceTimeSlots)
                 .WithOne(timeSlots => timeSlots.Service)
-                .HasForeignKey(timeSlots => timeSlots.ServiceId);
-
-            modelBuilder.Entity<ServiceTimeSlots>()
-                .HasOne(timeSlots => timeSlots.Service)
-                .WithMany(service => service.ServiceTimeSlots) 
-                .HasForeignKey(timeSlots => timeSlots.ServiceId);
+                .HasForeignKey(timeSlots => timeSlots.Service);
         }
 
     }
