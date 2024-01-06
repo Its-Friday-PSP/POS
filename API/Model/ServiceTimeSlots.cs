@@ -7,6 +7,8 @@
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public bool IsBooked { get; set; }
+        public Guid ServiceId { get; set; }
+        public Service Service { get; set; }
 
         public ServiceTimeSlots(Guid id, Guid customerId, DateTime startTime, DateTime endTime, bool isBooked)
         {

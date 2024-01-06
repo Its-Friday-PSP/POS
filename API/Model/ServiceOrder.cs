@@ -2,11 +2,13 @@
 {
     public class ServiceOrder : Order
     {
-        public List<Guid>? ServiceId { get; set; }
+        public List<Service>? Services { get; set; }
+        public Order Order { get; set; }
+        public Guid OrderId { get; set; }
 
-        public ServiceOrder(Guid id, List<Guid>? serviceId) : base(id)
+        public ServiceOrder(Guid id, List<Service>? services) : base(id)
         {
-            ServiceId = serviceId;
+            Services = services;
         }
 
         public ServiceOrder(Guid id) : base(id)

@@ -42,7 +42,8 @@ namespace API.Mappers
                             (int)orderItemDto.Amount!,
                             (int)orderItemDto.Index!));
                         var orderItems = context.Mapper.Map<IEnumerable<OrderItem>>(orderDto.ProductOrder!.OrderItems);
-                        var productOrder = new ProductOrder((Guid)orderDto.Id!, orderItems);
+                        var productOrder = new ProductOrder((Guid)orderDto.Id!) { OrderItems = orderItems };
+
                         return productOrder;
                     }
                 });
