@@ -21,11 +21,11 @@ namespace API.Services.Implementations
             _customerRepository = customerRepository;
         }
 
-        public string Login(Auth auth)
+        public string? Login(Auth auth)
         {
             var customer = AuthenticateUser(auth);
 
-            var token = GenerateToken(customer);
+            var token = customer == null ? null : GenerateToken(customer);
             return token;
         }
 
@@ -51,10 +51,14 @@ namespace API.Services.Implementations
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        private Customer AuthenticateUser(Auth auth)
+        private Customer? AuthenticateUser(Auth auth)
         {
             var customer = _customerRepository.GetCustomer(auth.Email);
-            //var buyer = await _buyerRepository.GetBuyerAsync(user => user.UserAuth.Email.ToLower() == userLogin.Email!.ToLower());
+            if (customer?.Auth.Password != auth.Password)
+            {
+                return null;
+            }
+                //var buyer = await _buyerRepository.GetBuyerAsync(user => user.UserAuth.Email.ToLower() == userLogin.Email!.ToLower());
 
             return customer;
 

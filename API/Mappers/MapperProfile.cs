@@ -14,6 +14,9 @@ namespace API.Mappers
             CreateMap<CustomerDTO, Customer>();
             CreateMap<Customer, CustomerDTO>();
 
+            CreateMap<EmployeeDTO, Employee>();
+            CreateMap<Employee, EmployeeDTO>();
+
             CreateMap<ProductDTO, Product>();
             CreateMap<Product, ProductDTO>();
 
