@@ -52,6 +52,10 @@ namespace API.Repositories
                 .WithMany()
                 .HasForeignKey(orderItem => orderItem.ProductId);
 
+            modelBuilder.Entity<Payment>()
+                .HasOne<Order>() // Each Payment is associated with one Order
+                .WithMany(order => order.Payments) // Each Order can have many Payments
+                .HasForeignKey(p => p.OrderId);
         }
 
     }
