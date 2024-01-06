@@ -13,6 +13,7 @@ namespace API.DTOs
         public OrderStatusDTO? Status { get; set; }
         public CurrencyDTO? Currency { get; set; }
         public int? TotalPrice { get; set; }
+        public DateTime Date { get; set; }
         public ProductOrderDTO? ProductOrder { get; set; }
         public ServiceOrderDTO? ServiceOrder { get; set; }
     }

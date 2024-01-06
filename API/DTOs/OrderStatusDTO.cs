@@ -2,8 +2,12 @@
 {
     public enum OrderStatusDTO
     {
-        FREEZED,
-        IN_PROGRESS,
-        DONE
+        CANCELLED,
+        AWAITING_PAYMENT,
+        PAID,
+        ON_HOLD,
+        PROCESSING,
+        REFUNDED,
+        COMPLETED
     }
 }
