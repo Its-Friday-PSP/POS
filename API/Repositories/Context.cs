@@ -51,6 +51,7 @@ namespace API.Repositories
                 .HasOne(orderItem => orderItem.Product)
                 .WithMany()
                 .HasForeignKey(orderItem => orderItem.ProductId);
+
         }
 
     }

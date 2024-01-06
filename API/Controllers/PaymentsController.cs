@@ -16,9 +16,9 @@ namespace API.Controllers
         private readonly IPaymentService _paymentsService;
         private readonly IMapper _mapper;
 
-        public PaymentsController(IPaymentService paymentsRepository, IMapper mapper)
+        public PaymentsController(IPaymentService paymentsService, IMapper mapper)
         {
-            _paymentsService = paymentsRepository;
+            _paymentsService = paymentsService;
             _mapper = mapper;
         }
 
