@@ -2,9 +2,9 @@
 {
     public enum PaymentType
     {
-        Card,
-        Cash,
-        Coupon,
-        BankTransfer,
+        CARD,
+        CASH,
+        COUPON,
+        BANK_TRANSFER,
     }
 }
