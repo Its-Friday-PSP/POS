@@ -6,9 +6,9 @@ namespace API.Repositories.Interfaces
     public interface IPaymentsRepository
     {
         Payment CreatePayment(Payment payment);
-        IEnumerable<Payment> GetPayments();
+        List<Payment> GetPayments();
         Payment GetPayment(Guid paymentId);
-        public void UpdatePayment(Guid paymentId, Payment payment);
-        public void DeletePayment(Guid paymentId);
+        bool UpdatePayment(Guid paymentId, Payment payment);
+        bool DeletePayment(Guid paymentId);
     }
 }

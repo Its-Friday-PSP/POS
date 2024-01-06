@@ -16,6 +16,7 @@ namespace API.Repositories.Implementations
         public Payment CreatePayment(Payment payment)
         {
             payment.Id = new Guid();
+            payment.LastUpdated = new DateTime();
 
             _context.Payments.Add(payment);
             _context.SaveChanges();
@@ -23,17 +24,21 @@ namespace API.Repositories.Implementations
             return payment;
         }
 
-        public void DeletePayment(Payment payment)
+        public bool DeletePayment(Payment payment)
         {
             _context.Payments.Remove(payment);
             _context.SaveChanges();
+
+            return true;
         }
 
-        public void DeletePayment(Guid paymentId)
+        public bool DeletePayment(Guid paymentId)
         {
             Payment payment = GetPayment(paymentId);
             _context.Payments.Remove(payment);
             _context.SaveChanges();
+
+            return true;
         }
 
         public Payment GetPayment(Guid paymentId)
@@ -41,23 +46,21 @@ namespace API.Repositories.Implementations
             return _context.Payments.FirstOrDefault(x => x.Id == paymentId)!;
         }
 
-        public IEnumerable<Payment> GetPayments()
+        public List<Payment> GetPayments()
         {
-            return _context.Payments;
+            return _context.Payments.ToList();
         }
 
-        public void UpdatePayment(Guid paymentId, Payment newPayment)
+        public bool UpdatePayment(Guid paymentId, Payment newPayment)
         {
             Payment oldPayment = _context.Payments.FirstOrDefault(x => x.Id == paymentId)!;
 
-            if(oldPayment == null)
-            {
-                return;
-            }
-
             oldPayment = newPayment;
+            oldPayment.LastUpdated = new DateTime();
 
             _context.SaveChanges();
+
+            return true;
         }
     }
 }
