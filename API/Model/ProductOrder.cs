@@ -6,5 +6,11 @@
         public ProductOrder(Guid id) : base(id)
         {
         }
+
+        public ProductOrder(Guid id) : base(id)
+        {
+
+        }
+
     }
 }

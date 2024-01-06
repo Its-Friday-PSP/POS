@@ -4,5 +4,10 @@
     {
         public Guid Id { get; set; }
         public Auth Auth { get; set; }
+
+        public Customer()
+        {
+
+        }
     }
 }

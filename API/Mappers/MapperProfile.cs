@@ -17,14 +17,16 @@ namespace API.Mappers
             CreateMap<ProductDTO, Product>();
             CreateMap<Product, ProductDTO>();
 
+            CreateMap<PaymentDTO, Payment>();
+            CreateMap<Payment, PaymentDTO>();
+            //CreateMap<Payment, PaymentDTO>();
+
             /*CreateMap<ServiceOrderDTO, ServiceOrder>();
             CreateMap<ProductOrderDTO, ProductOrder>();*/
 
             /*CreateMap<OrderItemDTO, OrderItem>()
                 .ForMember(orderItem => orderItem.Order, opt => opt.Ignore())
                 .ForMember(orderItem => orderItem.Product, opt => opt.Ignore());*/
-
-            
 
             CreateMap<OrderDTO, Order>()
                 .ConvertUsing((orderDto, _, context) =>
@@ -49,8 +51,6 @@ namespace API.Mappers
                 });
 
             //CreateMap<Order, OrderDTO>();
-
-         
             //CreateMap<OrderItem, OrderItemDTO>();
         }
     }

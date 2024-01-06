@@ -18,6 +18,7 @@ namespace API.Repositories
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Service> Services { get; set; }
+        public DbSet<Payment> Payments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -57,6 +58,18 @@ namespace API.Repositories
                 .WithMany()
                 .HasForeignKey(orderItem => orderItem.ProductId);
 
+            modelBuilder.Entity<Payment>()
+                .HasOne<Order>() // Each Payment is associated with one Order
+                .WithMany(order => order.Payments) // Each Order can have many Payments
+                .HasForeignKey(payment => payment.OrderId);
+
+            modelBuilder.Entity<Payment>()
+                .OwnsOne(payment => payment.Price, price =>
+                {
+                    price.Property(price => price.Amount).HasColumnName("Amount");
+                    price.Property(price => price.Currency).HasColumnName("Currency");
+                });
+
             modelBuilder.Entity<OrderItem>()
                 .HasOne(orderItem => orderItem.Order)
                 .WithMany(order => order.OrderItems) 
@@ -67,6 +80,5 @@ namespace API.Repositories
                 .WithMany(service => service.ServiceTimeSlots)
                 .HasForeignKey(erviceTimeSlots => erviceTimeSlots.ServiceId);
         }
-
     }
 }
