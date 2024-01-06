@@ -30,7 +30,7 @@ namespace API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Customers");
+                    b.ToTable("Customers", (string)null);
                 });
 
             modelBuilder.Entity("API.Model.Order", b =>
@@ -54,7 +54,7 @@ namespace API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("Order");
 
@@ -79,7 +79,7 @@ namespace API.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderItems");
+                    b.ToTable("OrderItems", (string)null);
                 });
 
             modelBuilder.Entity("API.Model.Payment", b =>
@@ -104,7 +104,7 @@ namespace API.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("Payments");
+                    b.ToTable("Payments", (string)null);
                 });
 
             modelBuilder.Entity("API.Model.Product", b =>
@@ -127,7 +127,7 @@ namespace API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("API.Model.Service", b =>
@@ -157,7 +157,7 @@ namespace API.Migrations
 
                     b.HasIndex("ServiceOrderId");
 
-                    b.ToTable("Services");
+                    b.ToTable("Services", (string)null);
                 });
 
             modelBuilder.Entity("API.Model.ServiceTimeSlots", b =>
@@ -185,7 +185,7 @@ namespace API.Migrations
 
                     b.HasIndex("ServiceId");
 
-                    b.ToTable("ServiceTimeSlots");
+                    b.ToTable("ServiceTimeSlots", (string)null);
                 });
 
             modelBuilder.Entity("API.Model.ProductOrder", b =>
@@ -204,7 +204,7 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Model.Customer", b =>
                 {
-                    b.OwnsOne("API.Model.Auth", "Auth", b1 =>
+                    b.OwnsOne("API.Model.Customer.Auth#API.Model.Auth", "Auth", b1 =>
                         {
                             b1.Property<Guid>("CustomerId")
                                 .HasColumnType("uniqueidentifier");
@@ -219,7 +219,7 @@ namespace API.Migrations
 
                             b1.HasKey("CustomerId");
 
-                            b1.ToTable("Customers");
+                            b1.ToTable("Customers", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("CustomerId");
@@ -256,7 +256,7 @@ namespace API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("API.Model.Price", "Price", b1 =>
+                    b.OwnsOne("API.Model.Payment.Price#API.Model.Price", "Price", b1 =>
                         {
                             b1.Property<Guid>("PaymentId")
                                 .HasColumnType("uniqueidentifier");
@@ -271,7 +271,7 @@ namespace API.Migrations
 
                             b1.HasKey("PaymentId");
 
-                            b1.ToTable("Payments");
+                            b1.ToTable("Payments", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("PaymentId");

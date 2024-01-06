@@ -5,24 +5,55 @@ namespace API.Repositories.Implementations
 {
     public class ProductRepository : IProductRepository
     {
-        public Product CreateProduct(Product product)
+        private readonly Context _context;
+
+        public ProductRepository(Context context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
 
-        public Product DeleteProduct(Guid productId)
+        public Product CreateProduct(Product product)
         {
-            throw new NotImplementedException();
+            product.Id = Guid.NewGuid();
+
+            _context.Products.Add(product);
+            _context.SaveChanges();
+
+            return product;
+        }
+
+        public bool DeleteProduct(Guid productId)
+        {
+            var product = _context.Products.FirstOrDefault(x => x!.Id == productId);
+            
+            if(product == null)
+            {
+                return false;
+            }
+
+            _context.Products.Remove(product);
+            _context.SaveChanges();
+
+            return true;
         }
 
         public Product GetProduct(Guid productId)
         {
-            throw new NotImplementedException();
+            return _context.Products.FirstOrDefault(product => product.Id == productId)!;
         }
 
-        public Product UpdateProduct(Guid productId, Product product)
+        public bool UpdateProduct(Guid productId, Product product)
         {
-            throw new NotImplementedException();
+            var oldProduct = _context.Products.FirstOrDefault(product => product.Id == productId);
+
+            if (oldProduct == null)
+            {
+                return false;
+            }
+
+            oldProduct = product;
+
+            return true;
         }
     }
 }
