@@ -17,6 +17,7 @@ namespace API.Repositories
         public DbSet<Product> Products { get; set; }
         public DbSet<Service> Services { get; set; }
         public DbSet<Customer> Customers { get; set; }
+        public DbSet<Employee> Employees { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -28,12 +29,28 @@ namespace API.Repositories
                 })
                 .Navigation(customer => customer.Auth).IsRequired();
 
+            modelBuilder.Entity<Employee>()
+               .OwnsOne(employee => employee.Auth, auth =>
+               {
+                   auth.Property(auth => auth.Email).IsRequired();
+                   auth.Property(auth => auth.Password).IsRequired();
+               })
+               .Navigation(employee => employee.Auth).IsRequired();
+
             modelBuilder.Entity<OrderItem>()
                 .HasKey(z => new
                 {
                     z.OrderId,
-                    z.Index
+                    z.Index,
+                    z.Amount,
+                    z.ProductId,
                 });
+
+            modelBuilder.Entity<Order>().HasKey(a => new
+            {
+                a.Id,
+                a.CustomerId,
+            });
 
             modelBuilder.Entity<OrderItem>()
                 .Property(orderItem => orderItem.ProductId).IsRequired();

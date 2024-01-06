@@ -1,11 +1,12 @@
 ﻿using API.DTOs;
 
-namespace API.Requests.Employees
+namespace API.Responses.Employees
 {
-    public class CreateEmployeeRequest
+    public class CreateEmployeeResponse
     {
         public EmployeeDTO Employee { get; set; }
-        public CreateEmployeeRequest(EmployeeDTO employee)
+        
+        public CreateEmployeeResponse(EmployeeDTO employee)
         {
             Employee = employee;
         }
