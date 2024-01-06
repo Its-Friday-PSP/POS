@@ -8,5 +8,11 @@
         {
             OrderItems = orderItems;
         }
+
+        public ProductOrder(Guid id) : base(id)
+        {
+
+        }
+
     }
 }
