@@ -1,33 +1,63 @@
-﻿using API.Repositories.Interfaces;
+﻿using API.Model;
+using API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Repositories.Implementations
 {
     public class PaymentsRepository : IPaymentsRepository
     {
-        public IActionResult CreatePayment()
+        private readonly Context _context;
+
+        public PaymentsRepository(Context context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
 
-        public IActionResult DeletePayment(Guid paymentId)
+        public Payment CreatePayment(Payment payment)
         {
-            throw new NotImplementedException();
+            payment.Id = new Guid();
+
+            _context.Payments.Add(payment);
+            _context.SaveChanges();
+
+            return payment;
         }
 
-        public IActionResult GetPayment(Guid paymentId)
+        public void DeletePayment(Payment payment)
         {
-            throw new NotImplementedException();
+            _context.Payments.Remove(payment);
+            _context.SaveChanges();
         }
 
-        public IActionResult GetPayments()
+        public void DeletePayment(Guid paymentId)
         {
-            throw new NotImplementedException();
+            Payment payment = GetPayment(paymentId);
+            _context.Payments.Remove(payment);
+            _context.SaveChanges();
         }
 
-        public IActionResult UpdatePayment(Guid paymentId)
+        public Payment GetPayment(Guid paymentId)
         {
-            throw new NotImplementedException();
+            return _context.Payments.FirstOrDefault(x => x.Id == paymentId)!;
+        }
+
+        public IEnumerable<Payment> GetPayments()
+        {
+            return _context.Payments;
+        }
+
+        public void UpdatePayment(Guid paymentId, Payment newPayment)
+        {
+            Payment oldPayment = _context.Payments.FirstOrDefault(x => x.Id == paymentId)!;
+
+            if(oldPayment == null)
+            {
+                return;
+            }
+
+            oldPayment = newPayment;
+
+            _context.SaveChanges();
         }
     }
 }

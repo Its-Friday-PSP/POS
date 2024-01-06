@@ -1,13 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using API.Model;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Repositories.Interfaces
 {
     public interface IPaymentsRepository
     {
-        public IActionResult CreatePayment();
-        public IActionResult GetPayments();
-        public IActionResult GetPayment(Guid paymentId);
-        public IActionResult UpdatePayment(Guid paymentId);
-        public IActionResult DeletePayment(Guid paymentId);
+        Payment CreatePayment(Payment payment);
+        IEnumerable<Payment> GetPayments();
+        Payment GetPayment(Guid paymentId);
+        public void UpdatePayment(Guid paymentId, Payment payment);
+        public void DeletePayment(Guid paymentId);
     }
 }
