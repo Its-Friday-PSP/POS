@@ -4,6 +4,7 @@ using API.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20240107002918_AddedTipToOrder")]
+    partial class AddedTipToOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,25 +34,6 @@ namespace API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Customers");
-                });
-
-            modelBuilder.Entity("API.Model.Employee", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Employees");
                 });
 
             modelBuilder.Entity("API.Model.Order", b =>
@@ -249,75 +233,49 @@ namespace API.Migrations
                 });
 
             modelBuilder.Entity("API.Model.Order", b =>
-            {
-                b.OwnsOne("API.Model.Tip", "Tip", b1 =>
                 {
-                    b1.Property<Guid>("OrderId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b1.Property<int>("PaymentType")
-                        .HasColumnType("int")
-                        .HasColumnName("TipPaymentType");
-
-                    b1.HasKey("OrderId");
-
-                    b1.ToTable("Orders");
-
-                    b1.WithOwner()
-                        .HasForeignKey("OrderId");
-
-                    b1.OwnsOne("API.Model.Price", "Price", b2 =>
-                    {
-                        b2.Property<Guid>("TipOrderId")
-                            .HasColumnType("uniqueidentifier");
-
-                        b2.Property<decimal>("Amount")
-                            .HasColumnType("decimal(18,2)")
-                            .HasColumnName("TipAmount");
-
-                        b2.Property<int>("Currency")
-                            .HasColumnType("int")
-                            .HasColumnName("TipCurrency");
-
-                        b2.HasKey("TipOrderId");
-
-                        b2.ToTable("Orders");
-
-                        b2.WithOwner()
-                            .HasForeignKey("TipOrderId");
-                    });
-
-                    b1.Navigation("Price")
-                        .IsRequired();
-                });
-
-                b.Navigation("Tip");
-            });
-                modelBuilder.Entity("API.Model.Employee", b =>
-                {
-                    b.OwnsOne("API.Model.Auth", "Auth", b1 =>
+                    b.OwnsOne("API.Model.Tip", "Tip", b1 =>
                         {
-                            b1.Property<Guid>("EmployeeId")
+                            b1.Property<Guid>("OrderId")
                                 .HasColumnType("uniqueidentifier");
 
-                            b1.Property<string>("Email")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
+                            b1.Property<int>("PaymentType")
+                                .HasColumnType("int")
+                                .HasColumnName("TipPaymentType");
 
-                            b1.Property<string>("Password")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
+                            b1.HasKey("OrderId");
 
-                            b1.HasKey("EmployeeId");
-
-                            b1.ToTable("Employees");
+                            b1.ToTable("Orders");
 
                             b1.WithOwner()
-                                .HasForeignKey("EmployeeId");
+                                .HasForeignKey("OrderId");
+
+                            b1.OwnsOne("API.Model.Price", "Price", b2 =>
+                                {
+                                    b2.Property<Guid>("TipOrderId")
+                                        .HasColumnType("uniqueidentifier");
+
+                                    b2.Property<decimal>("Amount")
+                                        .HasColumnType("decimal(18,2)")
+                                        .HasColumnName("TipAmount");
+
+                                    b2.Property<int>("Currency")
+                                        .HasColumnType("int")
+                                        .HasColumnName("TipCurrency");
+
+                                    b2.HasKey("TipOrderId");
+
+                                    b2.ToTable("Orders");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("TipOrderId");
+                                });
+
+                            b1.Navigation("Price")
+                                .IsRequired();
                         });
 
-                    b.Navigation("Auth")
-                        .IsRequired();
+                    b.Navigation("Tip");
                 });
 
             modelBuilder.Entity("API.Model.OrderItem", b =>
