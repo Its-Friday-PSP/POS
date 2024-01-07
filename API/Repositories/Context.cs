@@ -89,7 +89,6 @@ namespace API.Repositories
                         priceNavigation.Property(price => price.Currency).HasColumnName("TipCurrency");
                     });
 
-                    tipNavigation.Property(tip => tip.TipType).HasColumnName("TipType");
                     tipNavigation.Property(tip => tip.PaymentType).HasColumnName("TipPaymentType");
                 });
         }

@@ -6,6 +6,5 @@ namespace API.Model
     {
         public Price Price { get; set; }
         public PaymentType PaymentType { get; set; }
-        public TipType TipType { get; set; }
     }
 }

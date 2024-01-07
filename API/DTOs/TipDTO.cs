@@ -10,7 +10,5 @@ namespace API.DTOs
         public Price Price { get; set; }
         [Required]
         public PaymentType PaymentType { get; set; }
-        [Required]
-        public TipType TipType { get; set; }
     }
 }
