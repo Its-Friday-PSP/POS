@@ -4,6 +4,7 @@ using API.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20240106225817_AddEmployees")]
+    partial class AddEmployees
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -67,9 +70,6 @@ namespace API.Migrations
                     b.Property<string>("Discriminator")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("EmployeeId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -191,9 +191,6 @@ namespace API.Migrations
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("EmployeeId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime2");
 
@@ -207,8 +204,6 @@ namespace API.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId");
 
                     b.HasIndex("ServiceId");
 
@@ -283,52 +278,6 @@ namespace API.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("API.Model.Order", b =>
-                {
-                    b.OwnsOne("API.Model.Tip", "Tip", b1 =>
-                        {
-                            b1.Property<Guid>("OrderId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<int>("PaymentType")
-                                .HasColumnType("int")
-                                .HasColumnName("TipPaymentType");
-
-                            b1.HasKey("OrderId");
-
-                            b1.ToTable("Orders");
-
-                            b1.WithOwner()
-                                .HasForeignKey("OrderId");
-
-                            b1.OwnsOne("API.Model.Price", "Price", b2 =>
-                                {
-                                    b2.Property<Guid>("TipOrderId")
-                                        .HasColumnType("uniqueidentifier");
-
-                                    b2.Property<decimal>("Amount")
-                                        .HasColumnType("decimal(18,2)")
-                                        .HasColumnName("TipAmount");
-
-                                    b2.Property<int>("Currency")
-                                        .HasColumnType("int")
-                                        .HasColumnName("TipCurrency");
-
-                                    b2.HasKey("TipOrderId");
-
-                                    b2.ToTable("Orders");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("TipOrderId");
-                                });
-
-                            b1.Navigation("Price")
-                                .IsRequired();
-                        });
-
-                    b.Navigation("Tip");
-                });
-
             modelBuilder.Entity("API.Model.OrderItem", b =>
                 {
                     b.HasOne("API.Model.ProductOrder", "Order")
@@ -394,22 +343,11 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Model.ServiceTimeSlots", b =>
                 {
-                    b.HasOne("API.Model.Employee", null)
-                        .WithMany("ServiceTimeSlots")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("API.Model.Service", null)
                         .WithMany("ServiceTimeSlots")
                         .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("API.Model.Employee", b =>
-                {
-                    b.Navigation("ServiceTimeSlots");
                 });
 
             modelBuilder.Entity("API.Model.Order", b =>

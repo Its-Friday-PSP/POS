@@ -39,6 +39,9 @@ builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IPaymentsRepository, PaymentsRepository>();
 
+builder.Services.AddScoped<IEmployeesService, EmployeesService>();
+builder.Services.AddScoped<IEmployeesRepository, EmployeesRepository>();
+
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 

@@ -12,24 +12,27 @@ namespace API.Services.Implementations
     {
         private readonly IConfiguration _config;
         private readonly ICustomerRepository _customerRepository;
+        private readonly IEmployeesRepository _employeesRepository;
 
         public AuthService(
             IConfiguration config,
-            ICustomerRepository customerRepository)
+            ICustomerRepository customerRepository,
+            IEmployeesRepository employeesRepository)
         {
             _config = config;
             _customerRepository = customerRepository;
+            _employeesRepository = employeesRepository;
         }
 
-        public string Login(Auth auth)
+        public string? Login(Auth auth)
         {
-            var customer = AuthenticateUser(auth);
-
-            var token = GenerateToken(customer);
+            var id = AuthenticateUser(auth);
+            
+            var token = id == null ? null : GenerateToken((Guid)id);
             return token;
         }
 
-        private string GenerateToken(Customer customer)
+        private string GenerateToken(Guid id)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -37,7 +40,7 @@ namespace API.Services.Implementations
             var claims = new[]
             {
                 /*new Claim(ClaimTypes.NameIdentifier, user.Name),*/
-                new Claim("Id", customer.Id.ToString())
+                new Claim("Id", id.ToString())
                 /*new Claim(ClaimTypes.Role, role)*/
             };
 
@@ -50,13 +53,23 @@ namespace API.Services.Implementations
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-
-        private Customer AuthenticateUser(Auth auth)
+        
+        private Guid? AuthenticateUser(Auth auth)
         {
             var customer = _customerRepository.GetCustomer(auth.Email);
-            //var buyer = await _buyerRepository.GetBuyerAsync(user => user.UserAuth.Email.ToLower() == userLogin.Email!.ToLower());
+            
+            if (customer?.Auth.Password == auth.Password)
+            {
+                return customer.Id;
+            }
+            var employee = _employeesRepository.GetEmployee(auth.Email);
 
-            return customer;
+            if (employee?.Auth.Password == auth.Password)
+            {
+                return employee.Id;
+            }
+
+           return null;
 
             /*if (customer != null)
             {

@@ -19,6 +19,7 @@ namespace API.Repositories
         public DbSet<Product> Products { get; set; }
         public DbSet<Service> Services { get; set; }
         public DbSet<Payment> Payments { get; set; }
+        public DbSet<Employee> Employees { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -40,11 +41,19 @@ namespace API.Repositories
                 .WithOne(service => service.ServiceOrder) 
                 .HasForeignKey(service => service.ServiceOrderId); 
 
+            modelBuilder.Entity<Employee>()
+               .OwnsOne(employee => employee.Auth, auth =>
+               {
+                   auth.Property(auth => auth.Email).IsRequired();
+                   auth.Property(auth => auth.Password).IsRequired();
+               })
+               .Navigation(employee => employee.Auth).IsRequired();
+
             modelBuilder.Entity<OrderItem>()
                 .HasKey(z => new
                 {
                     z.OrderId,
-                    z.Index
+                    z.Index,
                 });
 
             modelBuilder.Entity<OrderItem>()
@@ -79,6 +88,11 @@ namespace API.Repositories
                 .HasOne<Service>()
                 .WithMany(service => service.ServiceTimeSlots)
                 .HasForeignKey(erviceTimeSlots => erviceTimeSlots.ServiceId);
+
+            modelBuilder.Entity<ServiceTimeSlots>()
+                .HasOne<Employee>()
+                .WithMany(employee => employee.ServiceTimeSlots)
+                .HasForeignKey(erviceTimeSlots => erviceTimeSlots.EmployeeId);
 
             modelBuilder.Entity<Order>()
                 .OwnsOne(order => order.Tip, tipNavigation =>
