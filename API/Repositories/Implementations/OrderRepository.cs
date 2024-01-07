@@ -12,9 +12,12 @@ namespace API.Repositories.Implementations
             _context = context;
         }
 
-        public Order AddOrderItem(Guid orderId, OrderItem orderItem)
+        public OrderItem AddOrderItem(OrderItem orderItem)
         {
-            throw new NotImplementedException();
+            _context.OrderItems.Add(orderItem);
+            _context.SaveChanges();
+
+            return orderItem;
         }
 
         public Order AddTip(Guid orderId, Tip tip)
@@ -34,22 +37,48 @@ namespace API.Repositories.Implementations
 
         public Order CreateOrder(Order order)
         {
-            throw new NotImplementedException();
+            order.Id = new Guid();
+
+            _context.Orders.Add(order);
+            _context.SaveChanges();
+
+            return order;
         }
 
-        public Order DeleteOrder(Guid orderId)
+        public bool DeleteOrder(Guid orderId)
         {
-            throw new NotImplementedException();
+            var order = _context.Orders.Find(orderId);
+
+            if(order == null)
+            {
+                return false;
+            }
+
+            _context.Orders.Remove(order);
+            _context.SaveChanges();
+
+            return true;
         }
 
         public Order GetOrder(Guid orderId)
         {
-            throw new NotImplementedException();
+            return _context.Orders.Find(orderId);
         }
 
-        public Order RemoveOrderItem(Guid orderId, int orderItemIndex)
+        public bool RemoveOrderItem(Guid orderId, int orderItemIndex)
         {
-            throw new NotImplementedException();
+            var orderItem = _context.OrderItems
+                .FirstOrDefault(item => item.Index == orderItemIndex && item.OrderId == orderId);
+
+            if(orderItem == null)
+            {
+                return false;
+            }
+
+            _context.OrderItems.Remove(orderItem);
+            _context.SaveChanges();
+
+            return true;
         }
     }
 }

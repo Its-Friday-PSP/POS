@@ -35,26 +35,25 @@ namespace API.Controllers
         }
 
         [HttpPost("{orderId}/orderItem")]
-        public ActionResult<Order> AddOrderItem(
-            [FromQuery] Guid orderId,
-            [FromBody] OrderItemDTO orderItem)
+        public ActionResult<OrderItem> AddOrderItem([FromBody] OrderItemDTO orderItem)
         {
-            System.Console.WriteLine("hello");
-            
-            return Ok(_orderService.AddOrderItem(orderId, _mapper.Map<OrderItem>(orderItem)));
+            var item = _orderService.AddOrderItem(_mapper.Map<OrderItem>(orderItem));
+
+            return item == null ? NotFound() : Ok();
         }
 
         [HttpDelete("{orderId}/orderItem/{orderItemIndex}")]
-        public ActionResult<Order> RemoveOrderItem(Guid orderId, int orderItemIndex)
+        public ActionResult<Order> RemoveOrderItem([FromRoute] Guid orderId, [FromRoute] int orderItemIndex)
         {
-            System.Console.WriteLine(orderId + ", " + orderItemIndex);
-            return Ok(_orderService.RemoveOrderItem(orderId, orderItemIndex));
+            bool success = _orderService.RemoveOrderItem(orderId, orderItemIndex);
+            return success ? Ok() : NotFound();
         }
 
         [HttpDelete("{orderId}")]
         public ActionResult<Order> DeleteOrder(Guid orderId)
         {
-            return Ok(_orderService.DeleteOrder(orderId));
+            bool success = _orderService.DeleteOrder(orderId);
+            return success ? Ok() : NotFound();
         }
 
         [HttpPut("tip/{orderId}")]
