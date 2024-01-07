@@ -4,7 +4,7 @@ namespace API.Requests.Employees
 {
     public class GetEmployeeRequest
     {
-        [FromRoute(Name="customerId")]
+        [FromRoute(Name="employeeId")]
         public Guid EmployeeId { get; set; }
     }
 }

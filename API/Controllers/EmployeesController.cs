@@ -51,9 +51,9 @@ namespace API.Controllers
         [HttpPut("{employeeId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<UpdateEmployeeResponse> UpdateEmployee([FromRoute] UpdateEmployeeRequest request)
+        public ActionResult<UpdateEmployeeResponse> UpdateEmployee(UpdateEmployeeRequest request, [FromRoute] Guid employeeId)
         {
-            var employee = _employeesService.UpdateEmployee(_mapper.Map<Employee>(request));
+            var employee = _employeesService.UpdateEmployee(_mapper.Map<Employee>(request.Employee), employeeId);
             return employee == null ? StatusCode(StatusCodes.Status400BadRequest) : Ok(new GetEmployeeResponse(_mapper.Map<EmployeeDTO>(employee)));
         }
 

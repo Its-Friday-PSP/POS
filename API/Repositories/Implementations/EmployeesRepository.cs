@@ -29,9 +29,9 @@ namespace API.Repositories.Implementations
         {
             return _context.Employees.ToList();
         }
-        public Employee? UpdateEmployee(Employee employee)
+        public Employee? UpdateEmployee(Employee employee, Guid id)
         {
-            var existingEmployee = GetEmployee(employee.Id);
+            var existingEmployee = GetEmployee(id);
             if (existingEmployee == null)
             {
                 return null;
@@ -45,7 +45,14 @@ namespace API.Repositories.Implementations
 
         public bool DeleteEmployee(Guid id)
         {
-            return false;
+            var employee = GetEmployee(id);
+            if (employee == null)
+            {
+                return false;
+            }
+            _context.Employees.Remove(employee);
+            _context.SaveChanges();
+            return true;
         }
     }
 }

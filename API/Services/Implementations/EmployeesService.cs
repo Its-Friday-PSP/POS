@@ -16,11 +16,11 @@ namespace API.Services.Implementations
         {
             if (EmailAlreadyRegistered())
             {
-                return _employeesRepository.CreateEmployee(employee);
+                return null;
             }
             else
             {
-                return null;
+                return _employeesRepository.CreateEmployee(employee);
             }
         }
 
@@ -33,9 +33,9 @@ namespace API.Services.Implementations
             return _employeesRepository.GetAllEmployees();
         }
 
-        public Employee? UpdateEmployee(Employee employee)
+        public Employee? UpdateEmployee(Employee employee, Guid id)
         {
-            return _employeesRepository.UpdateEmployee(employee);
+            return _employeesRepository.UpdateEmployee(employee, id);
         }
 
         public bool DeleteEmployee(Guid id)

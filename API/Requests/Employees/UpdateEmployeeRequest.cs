@@ -6,6 +6,6 @@ namespace API.Requests.Employees
     public class UpdateEmployeeRequest
     {
         [FromBody]
-        public EmployeeDTO Customer { get; set; }
+        public EmployeeDTO Employee { get; set; }
     }
 }
