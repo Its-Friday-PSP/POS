@@ -38,6 +38,7 @@ namespace API.Repositories.Implementations
         public Order CreateOrder(Order order)
         {
             order.Id = new Guid();
+            order.Date = DateTime.UtcNow;
 
             _context.Orders.Add(order);
             _context.SaveChanges();
@@ -63,6 +64,11 @@ namespace API.Repositories.Implementations
         public Order GetOrder(Guid orderId)
         {
             return _context.Orders.Find(orderId);
+        }
+
+        public IEnumerable<Order> GetOrders()
+        {
+            return _context.Orders;
         }
 
         public bool RemoveOrderItem(Guid orderId, int orderItemIndex)

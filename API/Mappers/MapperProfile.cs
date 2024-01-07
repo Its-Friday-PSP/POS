@@ -41,12 +41,14 @@ namespace API.Mappers
                     }
                     else
                     {
-                        orderDto.ProductOrder!.OrderItems!.Select(orderItemDto => new OrderItem(
-                            (Guid)orderItemDto.ProductId!,
-                            (Guid)orderDto.Id!,
-                            (int)orderItemDto.Amount!,
-                            (int)orderItemDto.Index!));
-                        var orderItems = context.Mapper.Map<IEnumerable<OrderItem>>(orderDto.ProductOrder!.OrderItems);
+                        var orderItems = orderDto.ProductOrder!.OrderItems!
+                            .Select(orderItemDto => new OrderItem(
+                                orderItemDto.ProductId,
+                                (Guid)orderDto.Id!,
+                                (int)orderItemDto.Amount!,
+                                (int)orderItemDto.Index!)
+                            );
+
                         var productOrder = new ProductOrder((Guid)orderDto.Id!) { OrderItems = orderItems };
 
                         return productOrder;

@@ -21,6 +21,12 @@ namespace API.Controllers
             _mapper = mapper;
         }
 
+        [HttpGet]
+        public ActionResult<IEnumerable<Order>> GetOrders()
+        {
+            return Ok(_orderService.GetOrders());
+        }
+
         [HttpGet("{orderId}")]
         public ActionResult<IEnumerable<Order>> GetOrder(Guid orderId)
         {
