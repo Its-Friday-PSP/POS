@@ -19,6 +19,9 @@ namespace API.Mappers
 
             CreateMap<PaymentDTO, Payment>();
             CreateMap<Payment, PaymentDTO>();
+
+            CreateMap<Tip, TipDTO>();
+            CreateMap<TipDTO, Tip>();
             //CreateMap<Payment, PaymentDTO>();
 
             /*CreateMap<ServiceOrderDTO, ServiceOrder>();

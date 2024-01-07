@@ -79,6 +79,18 @@ namespace API.Repositories
                 .HasOne<Service>()
                 .WithMany(service => service.ServiceTimeSlots)
                 .HasForeignKey(erviceTimeSlots => erviceTimeSlots.ServiceId);
+
+            modelBuilder.Entity<Order>()
+                .OwnsOne(order => order.Tip, tipNavigation =>
+                {
+                    tipNavigation.OwnsOne(tip => tip.Price, priceNavigation =>
+                    {
+                        priceNavigation.Property(price => price.Amount).HasColumnName("TipAmount");
+                        priceNavigation.Property(price => price.Currency).HasColumnName("TipCurrency");
+                    });
+
+                    tipNavigation.Property(tip => tip.PaymentType).HasColumnName("TipPaymentType");
+                });
         }
     }
 }
