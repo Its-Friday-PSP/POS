@@ -9,7 +9,7 @@
         public bool IsBooked { get; set; }
         // public Service Service { get; set; }
         public Guid ServiceId { get; set; }
-
+        public Guid EmployeeId { get; set; }
         public ServiceTimeSlots(Guid id, Guid customerId, DateTime startTime, DateTime endTime, bool isBooked)
         {
             Id = id;

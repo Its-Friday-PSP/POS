@@ -89,6 +89,11 @@ namespace API.Repositories
                 .WithMany(service => service.ServiceTimeSlots)
                 .HasForeignKey(erviceTimeSlots => erviceTimeSlots.ServiceId);
 
+            modelBuilder.Entity<ServiceTimeSlots>()
+                .HasOne<Employee>()
+                .WithMany(employee => employee.ServiceTimeSlots)
+                .HasForeignKey(erviceTimeSlots => erviceTimeSlots.EmployeeId);
+
             modelBuilder.Entity<Order>()
                 .OwnsOne(order => order.Tip, tipNavigation =>
                 {

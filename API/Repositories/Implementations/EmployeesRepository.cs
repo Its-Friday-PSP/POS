@@ -25,6 +25,10 @@ namespace API.Repositories.Implementations
             return _context.Employees.Find(id);
         }
 
+        public Employee? GetEmployee(string email)
+        {
+            return _context.Employees.FirstOrDefault(employee => employee.Auth.Email.ToLower().Equals(email.ToLower()));
+        }
         public IEnumerable<Employee> GetAllEmployees()
         {
             return _context.Employees;
