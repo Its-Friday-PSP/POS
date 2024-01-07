@@ -27,7 +27,7 @@ namespace API.Repositories.Implementations
 
         public IEnumerable<Employee> GetAllEmployees()
         {
-            return _context.Employees.ToList();
+            return _context.Employees;
         }
         public Employee? UpdateEmployee(Employee employee, Guid id)
         {

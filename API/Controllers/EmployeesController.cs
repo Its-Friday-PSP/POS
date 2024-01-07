@@ -28,7 +28,7 @@ namespace API.Controllers
         public ActionResult<CreateEmployeeResponse> RegisterNewEmployee(CreateEmployeeRequest request)
         {
             var employeeToReturn = _employeesService.CreateEmployee(_mapper.Map<Employee>(request.Employee));
-            return employeeToReturn == null ? StatusCode(StatusCodes.Status400BadRequest) : Ok(new CreateEmployeeRequest(_mapper.Map<EmployeeDTO>(employeeToReturn)));
+            return employeeToReturn == null ? Unauthorized() : Ok(new CreateEmployeeRequest(_mapper.Map<EmployeeDTO>(employeeToReturn)));
         }
 
         [HttpGet]
@@ -41,28 +41,28 @@ namespace API.Controllers
 
         [HttpGet("{employeeId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<GetEmployeeResponse> GetEmployee([FromRoute] GetEmployeeRequest request)
         {
             var employee = _employeesService.GetEmployee(request.EmployeeId);
-            return employee == null ? StatusCode(StatusCodes.Status400BadRequest) : Ok(new GetEmployeeResponse(_mapper.Map<EmployeeDTO>(employee)));
+            return employee == null ? NotFound() : Ok(new GetEmployeeResponse(_mapper.Map<EmployeeDTO>(employee)));
         }
         
         [HttpPut("{employeeId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<UpdateEmployeeResponse> UpdateEmployee(UpdateEmployeeRequest request, [FromRoute] Guid employeeId)
         {
             var employee = _employeesService.UpdateEmployee(_mapper.Map<Employee>(request.Employee), employeeId);
-            return employee == null ? StatusCode(StatusCodes.Status400BadRequest) : Ok(new GetEmployeeResponse(_mapper.Map<EmployeeDTO>(employee)));
+            return employee == null ? NotFound() : Ok(new GetEmployeeResponse(_mapper.Map<EmployeeDTO>(employee)));
         }
 
         [HttpDelete("{employeeId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult DeleteEmployee([FromRoute] DeleteEmployeeRequest request)
         {
-            return _employeesService.DeleteEmployee(request.EmployeeId) ? Ok() : StatusCode(StatusCodes.Status400BadRequest);
+            return _employeesService.DeleteEmployee(request.EmployeeId) ? Ok() : NotFound();
         }
     }
 }
