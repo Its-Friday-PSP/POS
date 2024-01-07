@@ -19,7 +19,7 @@ namespace API.Repositories.Implementations
 
         public Order AddTip(Guid orderId, Tip tip)
         {
-            var order = _context.Orders.FirstOrDefault(order => order.Id == orderId);
+            var order = _context.Orders.Find(orderId);
 
             if(order == null)
             {
