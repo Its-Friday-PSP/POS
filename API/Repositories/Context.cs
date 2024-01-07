@@ -53,11 +53,6 @@ namespace API.Repositories
             modelBuilder.Entity<OrderItem>()
                 .Property(orderItem => orderItem.Amount).IsRequired();
 
-            modelBuilder.Entity<OrderItem>()
-                .HasOne(orderItem => orderItem.Product)
-                .WithMany()
-                .HasForeignKey(orderItem => orderItem.ProductId);
-
             modelBuilder.Entity<Payment>()
                 .HasOne<Order>() // Each Payment is associated with one Order
                 .WithMany(order => order.Payments) // Each Order can have many Payments
