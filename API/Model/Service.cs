@@ -11,4 +11,5 @@
         public int DurationInMinutes { get; set; }
         public List<ServiceTimeSlots> ServiceTimeSlots { get; set; }
     }
+
 }
