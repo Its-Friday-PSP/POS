@@ -1,6 +1,7 @@
 ﻿using API.DTOs;
 using API.Model;
 using AutoMapper;
+using System.ComponentModel.DataAnnotations;
 
 namespace API.Mappers
 {
@@ -8,6 +9,9 @@ namespace API.Mappers
     {
         public MapperProfile()
         {
+            CreateMap<Discount, DiscountDTO>();
+            CreateMap<DiscountDTO, Discount>();
+
             CreateMap<AuthDTO, Auth>();
             CreateMap<Auth, AuthDTO>();
 
@@ -22,6 +26,7 @@ namespace API.Mappers
 
             CreateMap<Tip, TipDTO>();
             CreateMap<TipDTO, Tip>();
+
             //CreateMap<Payment, PaymentDTO>();
 
             /*CreateMap<ServiceOrderDTO, ServiceOrder>();

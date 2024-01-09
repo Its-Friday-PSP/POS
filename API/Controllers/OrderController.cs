@@ -1,6 +1,7 @@
 using API.DTOs;
 using API.Model;
 using API.Requests.Order;
+using API.Responses.Order;
 using API.Services.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -13,12 +14,14 @@ namespace API.Controllers
     {
 
         private readonly IOrderService _orderService;
+        private readonly IDiscountService _discountService;
         private readonly IMapper _mapper;
 
-        public OrderController(IOrderService orderService, IMapper mapper)
+        public OrderController(IOrderService orderService, IDiscountService discountService, IMapper mapper)
         {
             _orderService = orderService;
             _mapper = mapper;
+            _discountService = discountService;
         }
 
         [HttpGet("{orderId}")]
@@ -66,5 +69,49 @@ namespace API.Controllers
 
             return order == null ? NotFound() : Ok(order);
         }
+
+        [HttpGet("discount/{discountId}")]
+        public ActionResult<DiscountDTO> GetDiscount([FromRoute] string discountId)
+        {
+            var discount = _discountService.GetDiscount(discountId);
+
+            return discount == null ? NotFound() : Ok(discount);
+        }
+
+        [HttpGet("discounts")]
+        public ActionResult<IEnumerable<DiscountDTO>> GetDiscounts()
+        {
+            var discounts = _discountService.GetDiscounts();
+            var discountDTOs = _mapper.Map<IEnumerable<Discount>>(discounts);
+
+            return Ok(discountDTOs);
+        }
+
+        [HttpPost("discount")]
+        public ActionResult<DiscountDTO> CreateDiscount([FromBody] DiscountDTO discountDTO)
+        {
+            var discount = _mapper.Map<Discount>(discountDTO);
+            var newDiscount = _discountService.CreateDiscount(discount);
+
+            return newDiscount == null ? NotFound() : Ok(newDiscount);
+        }
+
+        [HttpPut("discount/{discountId}")]
+        public IActionResult UpdateDiscount([FromRoute] string discountId, DiscountDTO discountDTO)
+        {
+            var discount = _mapper.Map<Discount>(discountDTO);
+            bool success = _discountService.UpdateDiscount(discountId, discount);
+
+            return success ? Ok() : NotFound();
+        }
+
+        [HttpGet("checkDiscount/{discountId}")]
+        public ActionResult<ApplyDiscountResponse> CheckDiscount([FromRoute] string stringId)
+        {
+            var discount = _discountService.CheckDiscount(stringId);
+
+            return discount == null ? NotFound() : Ok(new ApplyDiscountResponse(discount));
+        }
+
     }
 }

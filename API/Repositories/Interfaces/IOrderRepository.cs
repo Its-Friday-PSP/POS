@@ -1,4 +1,5 @@
 ﻿using API.Model;
+using Microsoft.Identity.Client;
 
 namespace API.Repositories.Interfaces
 {

@@ -17,24 +17,16 @@ namespace API.Repositories.Implementations
             throw new NotImplementedException();
         }
 
-        public Order AddTip(Guid orderId, Tip tip)
+        public Order CreateOrder(Order order)
         {
-            var order = _context.Orders.Find(orderId);
+            HandleDiscounts(order);
 
-            if(order == null)
-            {
-                return null;
-            }
+            order.Id = Guid.NewGuid();
 
-            order.Tip = tip;
+            _context.Orders.Add(order);
             _context.SaveChanges();
 
             return order;
-        }
-
-        public Order CreateOrder(Order order)
-        {
-            throw new NotImplementedException();
         }
 
         public Order DeleteOrder(Guid orderId)
@@ -50,6 +42,35 @@ namespace API.Repositories.Implementations
         public Order RemoveOrderItem(Guid orderId, int orderItemIndex)
         {
             throw new NotImplementedException();
+        }
+
+        public Order AddTip(Guid orderId, Tip tip)
+        {
+            var order = _context.Orders.Find(orderId);
+
+            if (order == null)
+            {
+                return null;
+            }
+
+            order.Tip = tip;
+            _context.SaveChanges();
+
+            return order;
+        }
+
+        private void HandleDiscounts(Order order)
+        {
+            var customer = _context.Customers.Find(order.CustomerId);
+
+            foreach (var usedDiscount in order.Discounts)
+            {
+                var savedDiscount = customer.Discounts.FirstOrDefault(x => x.Id == usedDiscount.Id);
+                if (savedDiscount != null)
+                {
+                    customer.Discounts.Remove(savedDiscount);
+                }
+            }
         }
     }
 }
