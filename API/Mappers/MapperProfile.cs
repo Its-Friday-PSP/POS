@@ -40,7 +40,6 @@ namespace API.Mappers
                 .ConvertUsing((serviceTimeSlotsDTO, _, context) =>
                 {
                     var serviceTimeSlots = new ServiceTimeSlots(
-                            (Guid)serviceTimeSlotsDTO.Id!,
                             (Guid)serviceTimeSlotsDTO.CustomerId!,
                             (Guid)serviceTimeSlotsDTO.EmployeeId!,
                             (DateTime)serviceTimeSlotsDTO.StartTime!,
@@ -49,6 +48,17 @@ namespace API.Mappers
                         );
                     return serviceTimeSlots;
                 });
+
+            CreateMap<ServiceTimeSlots, ServiceTimeSlotsDTO>()
+                .ConvertUsing(serviceTimeSlots => new ServiceTimeSlotsDTO
+                {
+                    CustomerId = serviceTimeSlots.CustomerId, 
+                    EmployeeId = serviceTimeSlots.EmployeeId, 
+                    StartTime = serviceTimeSlots.StartTime,
+                    EndTime = serviceTimeSlots.EndTime, 
+                    IsBooked = serviceTimeSlots.IsBooked 
+                });
+
 
             CreateMap<ServiceDTO, Service>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id ?? Guid.Empty))
@@ -61,6 +71,16 @@ namespace API.Mappers
                         ? src.ServiceTimeSlots.Select(dto => context.Mapper.Map<ServiceTimeSlots>(dto)).ToList()
                         : new List<ServiceTimeSlots>()))
                 .ForMember(dest => dest.ServiceOrderId, opt => opt.Ignore());
+
+            CreateMap<Service, ServiceDTO>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id)) // Assuming Id is not nullable in Service
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                //.ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+                .ForMember(dest => dest.DurationInMinutes, opt => opt.MapFrom(src => src.DurationInMinutes))
+                .ForMember(dest => dest.ServiceTimeSlots, opt => opt.MapFrom(src => src.ServiceTimeSlots)) 
+                // .ForMember(dest => dest.ServiceOrderId, opt => opt.Ignore()) // Assuming ServiceOrderId is not needed in DTO
+                ;
 
             CreateMap<OrderDTO, Order>()
                 .ConvertUsing((orderDto, _, context) =>

@@ -13,9 +13,9 @@ namespace API.Services.Implementations
             _serviceRepository = serviceRepository;
         }
 
-        public Service CreateService(Service service, List<ServiceTimeSlots> timeSlots)
+        public Service CreateService(Service service)
         {
-            return _serviceRepository.CreateService(service, timeSlots);
+            return _serviceRepository.CreateService(service);
         }
 
         public bool DeleteService(Guid serviceId)

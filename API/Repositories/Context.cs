@@ -20,7 +20,6 @@ namespace API.Repositories
         public DbSet<Service> Services { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Employee> Employees { get; set; }
-        public DbSet<ServiceTimeSlots> ServiceTimeSlots { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
