@@ -15,6 +15,7 @@ namespace API.Model
         public ServiceTimeSlots(Guid customerId, Guid employeeId, DateTime startTime, DateTime endTime, bool isBooked)
         {
             CustomerId = customerId;
+            EmployeeId = employeeId;
             StartTime = startTime;
             EndTime = endTime;
             IsBooked = isBooked;

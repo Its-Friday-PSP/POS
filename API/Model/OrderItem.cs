@@ -16,5 +16,9 @@
             Amount = amount;
             Index = index;
         }
+
+        public OrderItem()
+        {
+        }
     }
 }
