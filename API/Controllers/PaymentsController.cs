@@ -6,6 +6,11 @@ using API.Responses.Payments;
 using API.Services.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using Stripe;
+using Stripe.Checkout;
+using System.Linq;
+using System.Security.Claims;
 
 namespace API.Controllers
 {
@@ -15,11 +20,31 @@ namespace API.Controllers
     {
         private readonly IPaymentService _paymentsService;
         private readonly IMapper _mapper;
+        private readonly IConfiguration _configuration;
+        //private readonly IOfferRepository _offerRepository;
+        private readonly IHttpContextAccessor _httpContext;
+        private readonly ICustomerRepository _customerRepository;
+        private readonly IProductRepository _productRepository;
+        private readonly IOrderRepository _orderRepository;
 
-        public PaymentsController(IPaymentService paymentsService, IMapper mapper)
+
+
+        public PaymentsController(
+            IPaymentService paymentsService,
+            IMapper mapper,
+            IConfiguration configuration,
+            IHttpContextAccessor httpContext,
+            ICustomerRepository customerRepository,
+            IOrderRepository orderRepository,
+            IProductRepository productRepository)
         {
             _paymentsService = paymentsService;
             _mapper = mapper;
+            _configuration = configuration;
+            _httpContext = httpContext;
+            _customerRepository = customerRepository;
+            _orderRepository = orderRepository;
+            _productRepository = productRepository;
         }
 
         [HttpPost]
@@ -81,6 +106,81 @@ namespace API.Controllers
             }
 
             return Ok();
+        }
+
+        [HttpPost("pay")]
+        public ActionResult<string> GetPaymentLink([FromBody] Guid orderId)
+        {
+            var userId = Guid.Parse(((ClaimsIdentity)_httpContext.HttpContext.User.Identity).FindFirst("Id").Value);
+
+            var order = _orderRepository.GetOrder(orderId);
+            if(order is null)
+            {
+                return NotFound();
+            }
+
+            /*if(order.Status != OrderStatus.AWAITING_PAYMENT)
+            {
+                return BadRequest();
+            }*/
+
+
+            var products = new List<(String id, int quantity, int price)>();
+            if(order.OrderType == Enumerators.OrderType.SERVICE)
+            {
+                var services = ((ServiceOrder)order).Services;
+                products = services.Select(service => (service.Id.ToString(), 1, (int)(service.Price.Amount * 100))).Distinct().ToList();
+            }
+            else
+            {
+                var orderItems = ((ProductOrder)order).OrderItems;
+                var productIds = orderItems.Select(item => item.ProductId);
+                var productsDomain = productIds.Select(productId => _productRepository.GetProduct(productId));
+                products = orderItems.Select(orderItem => (orderItem.ProductId.ToString(), orderItem.Amount, (int)(_productRepository.GetProduct(orderItem.ProductId)!.Price! * 100))).Distinct().ToList();
+            }
+
+
+
+            var options = new SessionCreateOptions
+            {
+                // Stripe calls the URLs below when certain checkout events happen such as success and failure.
+                //SuccessUrl = $"{thisApiUrl}/checkout/success?sessionId=" + "{CHECKOUT_SESSION_ID}", // Customer paid.
+                //SuccessUrl = "degano://stripe-redirect",
+                SuccessUrl = "https://google.com",
+                CancelUrl = "https://google.com",
+                //CancelUrl = s_wasmClientURL + "failed",  // Checkout cancelled.
+                PaymentMethodTypes = new List<string> // Only card available in test mode?
+                {
+                    "card"
+                },
+                LineItems = products.Select<(String id, int quantity, int price), SessionLineItemOptions>(product => new()
+                {
+                    PriceData = new SessionLineItemPriceDataOptions
+                    {
+                        UnitAmount = product.price, // Price is in USD cents.
+                        Currency = "EUR",
+                        /*ProductData = new SessionLineItemPriceDataProductDataOptions
+                        {
+
+                            Name = "Premium",
+                            //Description = product.Description,
+                            //Images = new List<string> { product.ImageUrl }
+                        },*/
+                        Product = product.id,
+                    },
+                    Quantity = product.quantity,
+                }).ToList(),
+                Mode = "payment", // One-time payment. Stripe supports recurring 'subscription' payments.
+
+                Customer = userId.ToString(),
+
+
+            };
+
+            var service = new SessionService();
+            var session = service.Create(options);
+
+            return session.Url;
         }
 
     }

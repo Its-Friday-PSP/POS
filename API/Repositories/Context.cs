@@ -154,7 +154,6 @@ namespace API.Repositories
                     price.Property(price => price.Amount).HasColumnName("Amount");
                     price.Property(price => price.Currency).HasColumnName("Currency");
                 });
-            
         }
 
         private void OnCreatingService(ModelBuilder modelBuilder)

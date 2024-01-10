@@ -17,13 +17,15 @@ namespace API.Mappers
             CreateMap<AuthDTO, Auth>();
             CreateMap<Auth, AuthDTO>();
 
-            CreateMap<CustomerDTO, Customer>();
+            CreateMap<CustomerDTO, Customer>()
+                .ForMember(dest => dest.StripeId, opt => opt.MapFrom(_ => (string?)null));
             CreateMap<Customer, CustomerDTO>();
 
             CreateMap<EmployeeDTO, Employee>();
             CreateMap<Employee, EmployeeDTO>();
 
-            CreateMap<ProductDTO, Product>();
+            CreateMap<ProductDTO, Product>()
+                .ForMember(dest => dest.StripeId, opt => opt.MapFrom(_ => (string?)null));
             CreateMap<Product, ProductDTO>();
 
             CreateMap<PaymentDTO, Payment>();
@@ -39,6 +41,14 @@ namespace API.Mappers
                 .ForMember(dest => dest.OrderStatus, opt => opt.MapFrom(src => src.Status))
                 .ForMember(dest => dest.AppliedDiscounts, opt => opt.MapFrom(src => src.OrderDiscounts.Select(x => x.Discount)))
                 .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => 0));
+
+            CreateMap<OrderItemDTO, OrderItem>()
+                .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId))
+                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount))
+                .ForMember(dest => dest.Index, opt => opt.MapFrom(src => src.Index))
+                .ForMember(dest => dest.OrderId, opt => opt.Ignore())
+                .ForMember(dest => dest.Product, opt => opt.Ignore())
+                .ForMember(dest => dest.Order, opt => opt.Ignore());
 
             CreateMap<DiscountCreationRequest, Discount>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
@@ -85,7 +95,9 @@ namespace API.Mappers
                 .ForMember(dest => dest.ServiceTimeSlots, opt => opt.MapFrom((src, dest, destMember, context) =>
                     src.ServiceTimeSlots != null
                         ? src.ServiceTimeSlots.Select(dto => context.Mapper.Map<ServiceTimeSlots>(dto)).ToList()
-                        : new List<ServiceTimeSlots>()));
+                        : new List<ServiceTimeSlots>()))
+                .ForMember(dest => dest.ServiceOrderId, opt => opt.Ignore())
+                .ForMember(dest => dest.StripeId, opt => opt.MapFrom(_ => (string?)null));
 
             CreateMap<Service, ServiceDTO>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))

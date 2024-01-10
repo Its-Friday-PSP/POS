@@ -11,6 +11,8 @@ namespace API.Model
         public Price Price { get; set; }
         public int DurationInMinutes { get; set; }
         public List<ServiceTimeSlots> ServiceTimeSlots { get; set; }
+        public string? StripeId { get; set; }
+
         public Service(
             Guid id,
             string name,
