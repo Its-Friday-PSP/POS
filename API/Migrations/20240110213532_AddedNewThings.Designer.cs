@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20240110191334_newThings")]
-    partial class newThings
+    [Migration("20240110213532_AddedNewThings")]
+    partial class AddedNewThings
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -30,6 +30,9 @@ namespace API.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("StripeId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -79,12 +82,6 @@ namespace API.Migrations
                     b.Property<long?>("Percentage")
                         .HasColumnType("bigint");
 
-                    b.Property<Guid?>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("ServiceId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("ValidFrom")
                         .HasColumnType("datetime2");
 
@@ -92,10 +89,6 @@ namespace API.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("ServiceId");
 
                     b.ToTable("Discounts");
                 });
@@ -134,9 +127,6 @@ namespace API.Migrations
                     b.Property<string>("Discriminator")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("EmployeeId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("OrderType")
                         .HasColumnType("int");
@@ -205,19 +195,20 @@ namespace API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("AmountInStock")
+                    b.Property<int?>("AmountInStock")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("OriginCountry")
                         .HasColumnType("int");
+
+                    b.Property<string>("StripeId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -243,6 +234,9 @@ namespace API.Migrations
 
                     b.Property<Guid?>("ServiceOrderId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("StripeId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -350,14 +344,6 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Model.Discount", b =>
                 {
-                    b.HasOne("API.Model.Product", null)
-                        .WithMany("ApplicableDiscounts")
-                        .HasForeignKey("ProductId");
-
-                    b.HasOne("API.Model.Service", null)
-                        .WithMany("Discounts")
-                        .HasForeignKey("ServiceId");
-
                     b.OwnsOne("API.Model.Price", "Price", b1 =>
                         {
                             b1.Property<string>("DiscountId")
@@ -554,8 +540,7 @@ namespace API.Migrations
                                 .HasForeignKey("ProductId");
                         });
 
-                    b.Navigation("Price")
-                        .IsRequired();
+                    b.Navigation("Price");
                 });
 
             modelBuilder.Entity("API.Model.Service", b =>
@@ -626,15 +611,8 @@ namespace API.Migrations
                     b.Navigation("Payments");
                 });
 
-            modelBuilder.Entity("API.Model.Product", b =>
-                {
-                    b.Navigation("ApplicableDiscounts");
-                });
-
             modelBuilder.Entity("API.Model.Service", b =>
                 {
-                    b.Navigation("Discounts");
-
                     b.Navigation("ServiceTimeSlots");
                 });
 

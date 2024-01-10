@@ -3,6 +3,8 @@ using API.Repositories.Interfaces;
 using API.Services.Interfaces;
 using Stripe;
 
+using Product = API.Model.Product;
+
 namespace API.Services.Implementations
 {
     public class ProductService : IProductService

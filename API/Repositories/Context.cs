@@ -24,6 +24,13 @@ namespace API.Repositories
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Order>()
+                .OwnsOne(product => product.Price, price =>
+                {
+                    price.Property(price => price.Amount).HasColumnName("OrderAmount");
+                    price.Property(price => price.Currency).HasColumnName("OrderCurrency");
+                });
+
             OnCreatingOrder(modelBuilder);
             OnCreatingPayments(modelBuilder);
             OnCreatingDiscount(modelBuilder);
@@ -89,22 +96,22 @@ namespace API.Repositories
         private void OnCreatingOrder(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Order>()
-                .OwnsOne(order => order.Tip, tipNavigation =>
-                {
-                    tipNavigation.OwnsOne(tip => tip.Price, priceNavigation =>
-                    {
-                        priceNavigation.Property(price => price.Amount).HasColumnName("TipAmount");
-                        priceNavigation.Property(price => price.Currency).HasColumnName("TipCurrency");
-                    });
-                    tipNavigation.Property(tip => tip.PaymentType).HasColumnName("TipPaymentType");
-                });
-
-            modelBuilder.Entity<Order>()
                 .OwnsOne(product => product.Price, price =>
                 {
                     price.Property(price => price.Amount).HasColumnName("OrderAmount");
                     price.Property(price => price.Currency).HasColumnName("OrderCurrency");
                 });
+
+            modelBuilder.Entity<Order>()
+                   .OwnsOne(order => order.Tip, tipNavigation =>
+                   {
+                       tipNavigation.OwnsOne(tip => tip.Price, priceNavigation =>
+                       {
+                           priceNavigation.Property(price => price.Amount).HasColumnName("TipAmount");
+                           priceNavigation.Property(price => price.Currency).HasColumnName("TipCurrency");
+                       });
+                       tipNavigation.Property(tip => tip.PaymentType).HasColumnName("TipPaymentType");
+                   });
 
             modelBuilder.Entity<OrderItem>()
                 .HasKey(z => new

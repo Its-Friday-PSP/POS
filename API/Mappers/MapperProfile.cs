@@ -96,7 +96,6 @@ namespace API.Mappers
                     src.ServiceTimeSlots != null
                         ? src.ServiceTimeSlots.Select(dto => context.Mapper.Map<ServiceTimeSlots>(dto)).ToList()
                         : new List<ServiceTimeSlots>()))
-                .ForMember(dest => dest.ServiceOrderId, opt => opt.Ignore())
                 .ForMember(dest => dest.StripeId, opt => opt.MapFrom(_ => (string?)null));
 
             CreateMap<Service, ServiceDTO>()
