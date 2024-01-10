@@ -6,5 +6,13 @@ namespace API.Model
     {
         public long Amount { get; set; }
         public Currency Currency { get; set; }
+
+        public Price() { }
+
+        public  Price(long amount, Currency currency)
+        {
+            this.Amount = amount;
+            this.Currency = currency;
+        }
     }
 }

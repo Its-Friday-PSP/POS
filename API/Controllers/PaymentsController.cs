@@ -40,7 +40,8 @@ namespace API.Controllers
             IHttpContextAccessor httpContext,
             ICustomerRepository customerRepository,
             IOrderRepository orderRepository,
-            IProductRepository productRepository)
+            IProductRepository productRepository,
+            IPaymentsRepository paymentsRepository)
         {
             _paymentsService = paymentsService;
             _mapper = mapper;
@@ -49,6 +50,7 @@ namespace API.Controllers
             _customerRepository = customerRepository;
             _orderRepository = orderRepository;
             _productRepository = productRepository;
+            _paymentRepository = paymentsRepository;
         }
 
         [HttpPost]
@@ -133,17 +135,17 @@ namespace API.Controllers
             if(order.OrderType == Enumerators.OrderType.SERVICE)
             {
                 var services = ((ServiceOrder)order).Services;
-                products = services.Select(service => (service.Id.ToString(), 1, (int)(service.Price.Amount * 100))).Distinct().ToList();
+                products = services.Select(service => (service.StripeId!, 1, (int)(service.Price.Amount * 100))).Distinct().ToList();
             }
             else
             {
                 var orderItems = ((ProductOrder)order).OrderItems;
                 var productIds = orderItems.Select(item => item.ProductId);
-                var productsDomain = productIds.Select(productId => _productRepository.GetProduct(productId));
-                products = orderItems.Select(orderItem => (orderItem.ProductId.ToString(), orderItem.Amount, (int)(_productRepository.GetProduct(orderItem.ProductId)!.Price!.Amount * 100))).Distinct().ToList();
+                var productsDomain = productIds.Select(productId => (productId, _productRepository.GetProduct(productId))).ToDictionary(item => item.productId);
+                products = orderItems.Select(orderItem => (productsDomain[orderItem.ProductId].Item2.StripeId!, orderItem.Amount, (int)(_productRepository.GetProduct(orderItem.ProductId)!.Price!.Amount * 100))).Distinct().ToList();
             }
 
-
+            var customer = _customerRepository.GetCustomer(userId);
 
             var options = new SessionCreateOptions
             {
@@ -177,7 +179,7 @@ namespace API.Controllers
                 }).ToList(),
                 Mode = "payment", // One-time payment. Stripe supports recurring 'subscription' payments.
 
-                Customer = userId.ToString(),
+                Customer = customer.StripeId,
 
 
             };
@@ -229,8 +231,8 @@ namespace API.Controllers
                         orderId,
                         Enumerators.PaymentType.CARD,
                         Enumerators.PaymentState.COMPLETED,
-                        new Model.Price(),
-                        DateTime.UtcNow
+                        order.Price,
+                        DateTime.Now
                         ));
                     _orderRepository.UpdateOrderStatus(order, OrderStatus.PAID);
 
