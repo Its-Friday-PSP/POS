@@ -1,10 +1,10 @@
 ﻿using API.Enumerators;
 using API.Model;
-using System.ComponentModel.DataAnnotations;
+using Microsoft.IdentityModel.Tokens;
 
-namespace API.DTOs
+namespace API.DTOs.Request
 {
-    public class DiscountDTO
+    public class DiscountCreationRequest
     {
         public string Id { get; set; }
         public DiscountType DiscountType { get; set; }
@@ -15,6 +15,5 @@ namespace API.DTOs
         public DateTime ValidFrom { get; set; }
         public DateTime ValidTo { get; set; }
         public bool IsStackable { get; set; }
-        public List<CustomerDiscountDTO> CustomerDiscounts { get; set; }
     }
 }

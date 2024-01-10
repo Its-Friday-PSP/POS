@@ -1,4 +1,5 @@
-﻿using API.Model;
+﻿using API.DTOs.Response;
+using API.Model;
 using System.ComponentModel.DataAnnotations;
 
 namespace API.DTOs
@@ -13,6 +14,6 @@ namespace API.DTOs
         public int? DurationInMinutes { get; set; }
         [Required]
         public List<ServiceTimeSlotsDTO>? ServiceTimeSlots { get; set; }
-        public List<DiscountDTO>? Discounts { get; set; }
+        public List<DiscountCreationResponse>? Discounts { get; set; }
     }
 }
