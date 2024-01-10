@@ -7,10 +7,12 @@ namespace API.Services.Implementations
     public class DiscountService : IDiscountService
     {
         private readonly IDiscountRepository _discountRepository;
+        private readonly ICustomerRepository _customerRepository;
 
-        public DiscountService(IDiscountRepository discountRepository)
+        public DiscountService(IDiscountRepository discountRepository, ICustomerRepository customerRepository)
         {
             _discountRepository = discountRepository;
+            _customerRepository = customerRepository;
         }
 
         public Discount CreateDiscount(Discount discount)
@@ -18,9 +20,9 @@ namespace API.Services.Implementations
             return _discountRepository.CreateDiscount(discount);
         }
 
-        public Discount GetDiscount(string discountId)
+        public Discount GetDiscount(string code)
         {
-            return _discountRepository.GetDiscount(discountId);
+            return _discountRepository.GetDiscount(code);
         }
 
         public IEnumerable<Discount> GetDiscounts()
@@ -28,21 +30,18 @@ namespace API.Services.Implementations
             return _discountRepository.GetDiscounts();
         }
 
-        public bool UpdateDiscount(string discountId, Discount discount)
+        public bool UpdateDiscount(string code, Discount discount)
         {
-            return _discountRepository.UpdateDiscount(discountId, discount);
+            return _discountRepository.UpdateDiscount(code, discount);
         }
 
-        public Discount CheckDiscount(string discountId)
+        public Discount CheckDiscount(Guid customerId, string code)
         {
-            var discount = _discountRepository.GetDiscount(discountId);
+            var customer = _customerRepository.GetCustomer(customerId);
+            var customerDiscounts = customer.CustomerDiscounts;
+            var discount = _discountRepository.GetDiscount(code);
 
-            if(discount == null)
-            {
-                return null;
-            }
-
-            if(!IsDiscountApplicable(discount))
+            if (!IsDiscountApplicable(customerDiscounts, customerId, discount))
             {
                 return null;
             }
@@ -50,7 +49,7 @@ namespace API.Services.Implementations
             return discount;
         }
 
-        private bool IsDiscountApplicable(Discount discount)
+        private bool IsDiscountApplicable(List<CustomerDiscount> customerDiscounts, Guid customerId, Discount discount)
         {
             DateTime todayDate = DateTime.Now;
 
@@ -59,7 +58,12 @@ namespace API.Services.Implementations
                 return false;
             }
 
-            return true;
+            bool isUnused = customerDiscounts.Any(x =>
+                !x.IsUsed &&
+                x.DiscountId == x.DiscountId &&
+                x.CustomerId == customerId);
+
+            return isUnused;
         }
 
         public bool DeleteDiscounts(IEnumerable<string> discountIds)
@@ -67,9 +71,9 @@ namespace API.Services.Implementations
             return _discountRepository.DeleteDiscounts(discountIds);
         }
 
-        public bool DeleteDiscount(string discountId)
+        public bool DeleteDiscount(string code)
         {
-            return _discountRepository.DeleteDiscount(discountId);
+            return _discountRepository.DeleteDiscount(code);
         }
     }
 }

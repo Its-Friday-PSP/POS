@@ -4,13 +4,17 @@
     {
         public List<Service>? Services { get; set; }
 
-        public ServiceOrder(Guid id, List<Service>? services) : base(id)
+        public ServiceOrder(Guid customerId, IEnumerable<Service>? services) : base(customerId)
         {
-            Services = services;
+            Services = services.ToList();
         }
 
-        public ServiceOrder(Guid id) : base(id)
+        public ServiceOrder(Guid customerId) : base(customerId)
         {
+        }
+        public ServiceOrder(IEnumerable<Service>? services) : base()
+        {
+            Services = services.ToList();
         }
     }
 }

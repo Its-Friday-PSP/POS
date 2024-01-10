@@ -4,7 +4,7 @@ namespace API.Services.Interfaces
 {
     public interface IDiscountService
     {
-        public Discount CheckDiscount(string code);
+        public Discount CheckDiscount(Guid customerId, string code);
         public Discount GetDiscount(string discountId);
         public IEnumerable<Discount> GetDiscounts();
         public Discount CreateDiscount(Discount discount);

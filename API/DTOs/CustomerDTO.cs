@@ -8,6 +8,6 @@ namespace API.DTOs
         public Guid? Id { get; set; }
         [Required]
         public AuthDTO? Auth { get; set; }
-        public List<Discount> Discounts { get; set; }
+        public List<CustomerDiscount>? CustomerDiscounts { get; set; }
     }
 }

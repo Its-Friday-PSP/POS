@@ -20,6 +20,11 @@ namespace API.Repositories.Implementations
             throw new NotImplementedException();
         }
 
+        public IEnumerable<Service> GetServices(IEnumerable<Guid> serviceIds)
+        {
+            throw new NotImplementedException();
+        }
+
         public Service UpdateService(Guid serviceId, Service service)
         {
             throw new NotImplementedException();

@@ -21,8 +21,6 @@ namespace API.Repositories.Implementations
         {
             HandleDiscounts(order);
 
-            order.Id = Guid.NewGuid();
-
             _context.Orders.Add(order);
             _context.SaveChanges();
 
@@ -61,16 +59,29 @@ namespace API.Repositories.Implementations
 
         private void HandleDiscounts(Order order)
         {
-            var customer = _context.Customers.Find(order.CustomerId);
+            //var customer = _context.Customers.Find(order.CustomerId);
 
-            foreach (var usedDiscount in order.Discounts)
-            {
-                var savedDiscount = customer.Discounts.FirstOrDefault(x => x.Id == usedDiscount.Id);
-                if (savedDiscount != null)
-                {
-                    customer.Discounts.Remove(savedDiscount);
-                }
-            }
+            //if(order.OrderDiscounts == null || order.OrderDiscounts.Count == 0 || customer == null)
+            //{
+            //    return;
+            //}
+
+            //foreach(var orderDiscount in order.OrderDiscounts)
+            //{
+            //    if(!orderDiscount.IsUsed)
+            //    {
+            //        continue;
+            //    }
+
+            //    var usedDiscount = customer.CustomerDiscounts?.FirstOrDefault(
+            //        x => x.CustomerId == orderDiscount.CustomerId &&
+            //        x.DiscountId == orderDiscount.DiscountId
+            //        );
+            //    customer.CustomerDiscounts?.Remove(usedDiscount!);
+            //}
+
+            //_context.SaveChanges();
+
         }
     }
 }
