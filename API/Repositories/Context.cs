@@ -38,8 +38,8 @@ namespace API.Repositories
 
             modelBuilder.Entity<ServiceOrder>()
                 .HasMany(serviceOrder => serviceOrder.Services) 
-                .WithOne(service => service.ServiceOrder) 
-                .HasForeignKey(service => service.ServiceOrderId); 
+                .WithOne() 
+                .HasForeignKey(service => service.ServiceOrderId);
 
             modelBuilder.Entity<Employee>()
                .OwnsOne(employee => employee.Auth, auth =>
@@ -84,15 +84,22 @@ namespace API.Repositories
                 .WithMany(order => order.OrderItems) 
                 .HasForeignKey(orderItem => orderItem.OrderId);
 
-            modelBuilder.Entity<ServiceTimeSlots>()
-                .HasOne<Service>()
-                .WithMany(service => service.ServiceTimeSlots)
-                .HasForeignKey(erviceTimeSlots => erviceTimeSlots.ServiceId);
+            modelBuilder.Entity<Service>()
+                .HasMany(service => service.ServiceTimeSlots)
+                .WithOne()
+                .HasForeignKey(serviceTimeSlots => serviceTimeSlots.ServiceId);
 
-            modelBuilder.Entity<ServiceTimeSlots>()
-                .HasOne<Employee>()
-                .WithMany(employee => employee.ServiceTimeSlots)
-                .HasForeignKey(erviceTimeSlots => erviceTimeSlots.EmployeeId);
+            modelBuilder.Entity<Service>()
+                .OwnsOne(service => service.Price, price =>
+                {
+                    price.Property(price => price.Amount).HasColumnName("Amount");
+                    price.Property(price => price.Currency).HasColumnName("Currency");
+                });
+
+            modelBuilder.Entity<Employee>()
+                .HasMany(employee => employee.ServiceTimeSlots)
+                .WithOne()
+                .HasForeignKey(serviceTimeSlots => serviceTimeSlots.EmployeeId);
 
             modelBuilder.Entity<Order>()
                 .OwnsOne(order => order.Tip, tipNavigation =>

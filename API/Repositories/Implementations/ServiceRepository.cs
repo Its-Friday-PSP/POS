@@ -1,28 +1,48 @@
-﻿using API.Model;
+﻿using API.DTOs;
+using API.Model;
 using API.Repositories.Interfaces;
 
 namespace API.Repositories.Implementations
 {
     public class ServiceRepository : IServiceRepository
     {
-        public Service CreateService(Service service)
+        private readonly Context _context;
+
+        public ServiceRepository(Context context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
 
-        public Service DeleteService(Guid serviceId)
+        public Service CreateService(Service service)
+        {       
+                service.Id = Guid.NewGuid();
+                _context.Add(service);
+                _context.SaveChanges();
+
+                return service; 
+        }
+
+        public bool DeleteService(Guid serviceId)
         {
-            throw new NotImplementedException();
+            var service = GetService(serviceId);
+            _context.Services.Remove(service);
+            _context.SaveChanges();
+
+            return true;
         }
 
         public Service GetService(Guid serviceId)
         {
-            throw new NotImplementedException();
+            return _context.Services.Find(serviceId);
         }
 
         public Service UpdateService(Guid serviceId, Service service)
         {
-            throw new NotImplementedException();
+            var existingService = GetService(serviceId);
+            _context.Entry(existingService).CurrentValues.SetValues(service);
+            _context.SaveChanges();
+
+            return existingService;
         }
     }
 }

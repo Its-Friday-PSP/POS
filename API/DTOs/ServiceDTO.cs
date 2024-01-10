@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using API.Model;
+using System.ComponentModel.DataAnnotations;
 
 namespace API.DTOs
 {
@@ -8,7 +9,7 @@ namespace API.DTOs
         public string? Name { get; set; }
         public string? Description { get; set; }
         [Required]
-        public decimal Price { get; set; }
+        public Price price { get; set; }
         public int? DurationInMinutes { get; set; }
         [Required]
         public List<ServiceTimeSlotsDTO>? ServiceTimeSlots { get; set; }

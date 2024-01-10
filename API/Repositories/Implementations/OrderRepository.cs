@@ -1,5 +1,6 @@
 ﻿using API.Model;
 using API.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Repositories.Implementations
 {
@@ -14,7 +15,11 @@ namespace API.Repositories.Implementations
 
         public Order AddOrderItem(Guid orderId, OrderItem orderItem)
         {
-            throw new NotImplementedException();
+            var order = GetOrder(orderId);
+            orderItem.OrderId = orderId;
+            _context.OrderItems.Add(orderItem);
+            _context.SaveChanges();
+            return order;
         }
 
         public Order AddTip(Guid orderId, Tip tip)
@@ -34,22 +39,37 @@ namespace API.Repositories.Implementations
 
         public Order CreateOrder(Order order)
         {
-            throw new NotImplementedException();
+            order.Id = Guid.NewGuid();
+            _context.Orders.Add(order);
+            _context.SaveChanges();
+            return order;
         }
 
-        public Order DeleteOrder(Guid orderId)
+        public bool DeleteOrder(Guid orderId)
         {
-            throw new NotImplementedException();
+            var order = GetOrder(orderId);
+            _context.Orders.Remove(order);
+            return true;
         }
 
         public Order GetOrder(Guid orderId)
         {
-            throw new NotImplementedException();
+            return _context.Orders.Find(orderId);
         }
 
-        public Order RemoveOrderItem(Guid orderId, int orderItemIndex)
+        public bool RemoveOrderItem(Guid orderId, int orderItemIndex)
         {
-            throw new NotImplementedException();
+            var productOrder = _context.ProductOrders
+                .Include(productOrder => productOrder.OrderItems)
+                .SingleOrDefault(productOrder => productOrder.Id == orderId);
+
+            var orderItem = productOrder.OrderItems
+                                    .SingleOrDefault(orderItem => orderItem.Index == orderItemIndex);
+
+            _context.OrderItems.Remove(orderItem);
+            _context.SaveChanges();
+
+            return true;
         }
     }
 }
