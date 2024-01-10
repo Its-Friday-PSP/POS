@@ -43,14 +43,6 @@ namespace API.Mappers
                 .ForMember(dest => dest.AppliedDiscounts, opt => opt.MapFrom(src => src.OrderDiscounts.Select(x => x.Discount)))
                 .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => 0));
 
-            //CreateMap<Payment, PaymentDTO>();
-
-            /*CreateMap<ServiceOrderDTO, ServiceOrder>();
-            CreateMap<ProductOrderDTO, ProductOrder>();*/
-
-            //CreateMap<OrderItemDTO, OrderItem>()
-            //.ForMember(orderItem => orderItem.Order, opt => opt.Ignore())
-            //.ForMember(orderItem => orderItem.Product, opt => opt.Ignore());
 
             CreateMap<ServiceTimeSlotsDTO, ServiceTimeSlots>()
                 .ConvertUsing((serviceTimeSlotsDTO, _, context) =>
@@ -68,8 +60,7 @@ namespace API.Mappers
             CreateMap<ServiceTimeSlots, ServiceTimeSlotsDTO>()
                 .ConvertUsing(serviceTimeSlots => new ServiceTimeSlotsDTO
                 {
-                    CustomerId = serviceTimeSlots.CustomerId, 
-                    EmployeeId = serviceTimeSlots.EmployeeId, 
+                    CustomerId = serviceTimeSlots.CustomerId,
                     StartTime = serviceTimeSlots.StartTime,
                     EndTime = serviceTimeSlots.EndTime, 
                     IsBooked = serviceTimeSlots.IsBooked 
@@ -98,36 +89,6 @@ namespace API.Mappers
                 ;
 
 
-            //CreateMap<OrderCreationRequestDTO, Order>()
-            //    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
-            //    .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateTime.Now))
-            //    .ForMember(dest => dest.CustomerId, opt => opt.MapFrom(src => src.CustomerId))
-            //    .ForMember(dest => dest.Tip, opt => opt.MapFrom(src => src.Tip))
-
-            //CreateMap<OrderDTO, Order>()
-            //    .ConvertUsing((orderDto, _, context) =>
-            //    {
-            //        if (orderDto.OrderType == OrderTypeDTO.SERVICE)
-            //        {
-            //            var serviceOrder = new ServiceOrder((Guid)orderDto.Id!);
-            //            return serviceOrder;
-            //        }
-            //        else
-            //        {
-            //            orderDto.ProductOrder!.OrderItems!.Select(orderItemDto => new OrderItem(
-            //                (Guid)orderItemDto.ProductId!,
-            //                (Guid)orderDto.Id!,
-            //                (int)orderItemDto.Amount!,
-            //                (int)orderItemDto.Index!));
-            //            var orderItems = context.Mapper.Map<IEnumerable<OrderItem>>(orderDto.ProductOrder!.OrderItems);
-            //            var productOrder = new ProductOrder((Guid)orderDto.Id!) { OrderItems = orderItems };
-
-            //            return productOrder;
-            //        }
-            //    });
-
-            //CreateMap<Order, OrderDTO>();
-            //CreateMap<OrderItem, OrderItemDTO>();
         }
     }
 }

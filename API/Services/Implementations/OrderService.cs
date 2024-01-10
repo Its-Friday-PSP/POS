@@ -40,6 +40,7 @@ namespace API.Services.Implementations
             {
                 var services = _serviceRepository.GetServices(orderRequest.Services);
                 order = new ServiceOrder(orderRequest.CustomerId, services);
+                order.OrderType = Enumerators.OrderType.SERVICE;
             }
             else
             {
@@ -49,10 +50,10 @@ namespace API.Services.Implementations
                 );
 
                 order = new ProductOrder(orderItems, orderId, orderRequest.CustomerId);
+                order.OrderType = Enumerators.OrderType.PRODUCT;
             }
 
             order.Status = OrderStatus.PROCESSING;
-            
             _orderRepository.CreateOrder(order);
 
             return order;

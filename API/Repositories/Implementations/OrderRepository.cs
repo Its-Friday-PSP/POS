@@ -16,27 +16,24 @@ namespace API.Repositories.Implementations
         public Order AddOrderItem(Guid orderId, OrderItem orderItem)
         {
             var order = GetOrder(orderId);
+
             orderItem.OrderId = orderId;
             _context.OrderItems.Add(orderItem);
             _context.SaveChanges();
+
             return order;
+        }
+
+        public Order AddTip(Guid orderId, Tip tip)
+        {
+            throw new NotImplementedException();
         }
 
         public Order CreateOrder(Order order)
         {
-            HandleDiscounts(order);
-
             _context.Orders.Add(order);
             _context.SaveChanges();
 
-            return order;
-        }
-
-        public Order DeleteOrder(Guid orderId)
-        {
-            order.Id = Guid.NewGuid();
-            _context.Orders.Add(order);
-            _context.SaveChanges();
             return order;
         }
 
@@ -47,7 +44,7 @@ namespace API.Repositories.Implementations
             return true;
         }
 
-        public Order RemoveOrderItem(Guid orderId, int orderItemIndex)
+        public Order GetOrder(Guid orderId)
         {
             return _context.Orders.Find(orderId);
         }

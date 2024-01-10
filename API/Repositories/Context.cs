@@ -30,10 +30,14 @@ namespace API.Repositories
             OnCreatingService(modelBuilder);
             OnCreatingCustomer(modelBuilder);
 
-            modelBuilder.Entity<ServiceTimeSlots>()
-                .HasOne<Service>()
-                .WithMany(service => service.ServiceTimeSlots)
-                .HasForeignKey(erviceTimeSlots => erviceTimeSlots.ServiceId);
+            modelBuilder.Entity<Employee>()
+               .OwnsOne(employee => employee.Auth, auth =>
+               {
+                   auth.Property(auth => auth.Email).IsRequired();
+                   auth.Property(auth => auth.Password).IsRequired();
+               })
+               .Navigation(employee => employee.Auth).IsRequired();
+
         }
 
         private void OnCreatingCustomer(ModelBuilder modelBuilder)
@@ -81,21 +85,13 @@ namespace API.Repositories
                         priceNavigation.Property(price => price.Amount).HasColumnName("TipAmount");
                         priceNavigation.Property(price => price.Currency).HasColumnName("TipCurrency");
                     });
+                    tipNavigation.Property(tip => tip.PaymentType).HasColumnName("TipPaymentType");
+                });
 
             modelBuilder.Entity<ServiceOrder>()
                 .HasMany(serviceOrder => serviceOrder.Services) 
                 .WithOne() 
                 .HasForeignKey(service => service.ServiceOrderId);
-                    tipNavigation.Property(tip => tip.PaymentType).HasColumnName("TipPaymentType");
-                });
-
-            modelBuilder.Entity<Employee>()
-               .OwnsOne(employee => employee.Auth, auth =>
-               {
-                   auth.Property(auth => auth.Email).IsRequired();
-                   auth.Property(auth => auth.Password).IsRequired();
-               })
-               .Navigation(employee => employee.Auth).IsRequired();
 
             modelBuilder.Entity<OrderItem>()
                 .HasKey(z => new
@@ -116,6 +112,11 @@ namespace API.Repositories
                 .HasForeignKey(orderItem => orderItem.ProductId);
 
             modelBuilder.Entity<OrderItem>()
+                .HasOne(orderItem => orderItem.Order)
+                .WithMany(order => order.OrderItems)
+                .HasForeignKey(orderItem => orderItem.OrderId);
+
+            modelBuilder.Entity<OrderItem>()
                .HasOne(orderItem => orderItem.Order)
                .WithMany(order => order.OrderItems)
                .HasForeignKey(orderItem => orderItem.OrderId);
@@ -125,10 +126,6 @@ namespace API.Repositories
                 .WithOne(orderItem => orderItem.Order)
                 .HasForeignKey(orderItem => orderItem.OrderId);
 
-            modelBuilder.Entity<ServiceOrder>()
-                .HasMany(serviceOrder => serviceOrder.Services)
-                .WithOne(service => service.ServiceOrder)
-                .HasForeignKey(service => service.ServiceOrderId);
         }
 
         private void OnCreatingPayments(ModelBuilder modelBuilder)
@@ -144,36 +141,20 @@ namespace API.Repositories
                     price.Property(price => price.Amount).HasColumnName("Amount");
                     price.Property(price => price.Currency).HasColumnName("Currency");
                 });
-
-            modelBuilder.Entity<OrderItem>()
-                .HasOne(orderItem => orderItem.Order)
-                .WithMany(order => order.OrderItems) 
-                .HasForeignKey(orderItem => orderItem.OrderId);
-
-            modelBuilder.Entity<Service>()
-                .HasMany(service => service.ServiceTimeSlots)
-                .WithOne()
-                .HasForeignKey(serviceTimeSlots => serviceTimeSlots.ServiceId);
-
-            modelBuilder.Entity<Service>()
-                .OwnsOne(service => service.Price, price =>
-                {
-                    price.Property(price => price.Amount).HasColumnName("Amount");
-                    price.Property(price => price.Currency).HasColumnName("Currency");
-                });
-
-            modelBuilder.Entity<Employee>()
-                .HasMany(employee => employee.ServiceTimeSlots)
-                .WithOne()
-                .HasForeignKey(serviceTimeSlots => serviceTimeSlots.EmployeeId);
+            
         }
 
         private void OnCreatingService(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Service>()
-                .OwnsOne(discount => discount.Price, price =>
+               .HasMany(service => service.ServiceTimeSlots)
+               .WithOne()
+               .HasForeignKey(serviceTimeSlots => serviceTimeSlots.ServiceId);
+
+            modelBuilder.Entity<Service>()
+                .OwnsOne(service => service.Price, price =>
                 {
-                    price.Property(price => price.Amount).HasColumnName("Amount");
+                    price.Property(price => price.Amount).HasColumnName("Pay");
                     price.Property(price => price.Currency).HasColumnName("Currency");
                 });
         }

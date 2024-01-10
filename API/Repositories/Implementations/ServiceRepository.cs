@@ -38,7 +38,7 @@ namespace API.Repositories.Implementations
 
         public IEnumerable<Service> GetServices(IEnumerable<Guid> serviceIds)
         {
-            throw new NotImplementedException();
+            return _context.Services.Where(x => serviceIds.Contains(x.Id));
         }
 
         public Service UpdateService(Guid serviceId, Service service)
