@@ -29,6 +29,7 @@ namespace API.Repositories
             OnCreatingDiscount(modelBuilder);
             OnCreatingService(modelBuilder);
             OnCreatingCustomer(modelBuilder);
+            OnCreatingProduct(modelBuilder);
 
             modelBuilder.Entity<Employee>()
                .OwnsOne(employee => employee.Auth, auth =>
@@ -38,6 +39,16 @@ namespace API.Repositories
                })
                .Navigation(employee => employee.Auth).IsRequired();
 
+        }
+
+        private void OnCreatingProduct(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Product>()
+                .OwnsOne(product => product.Price, price =>
+                {
+                    price.Property(price => price.Amount).HasColumnName("Amount");
+                    price.Property(price => price.Currency).HasColumnName("Currency");
+                });
         }
 
         private void OnCreatingCustomer(ModelBuilder modelBuilder)
@@ -88,10 +99,12 @@ namespace API.Repositories
                     tipNavigation.Property(tip => tip.PaymentType).HasColumnName("TipPaymentType");
                 });
 
-            modelBuilder.Entity<ServiceOrder>()
-                .HasMany(serviceOrder => serviceOrder.Services) 
-                .WithOne() 
-                .HasForeignKey(service => service.ServiceOrderId);
+            modelBuilder.Entity<Order>()
+                .OwnsOne(product => product.Price, price =>
+                {
+                    price.Property(price => price.Amount).HasColumnName("OrderAmount");
+                    price.Property(price => price.Currency).HasColumnName("OrderCurrency");
+                });
 
             modelBuilder.Entity<OrderItem>()
                 .HasKey(z => new

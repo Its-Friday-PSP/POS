@@ -77,17 +77,16 @@ namespace API.Mappers
                     src.ServiceTimeSlots != null
                         ? src.ServiceTimeSlots.Select(dto => context.Mapper.Map<ServiceTimeSlots>(dto)).ToList()
                         : new List<ServiceTimeSlots>()))
-                .ForMember(dest => dest.ServiceOrderId, opt => opt.Ignore());
+                .ForMember(dest => dest.Discounts, opt => opt.MapFrom(src => src.Discounts));
 
             CreateMap<Service, ServiceDTO>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id)) 
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                 //.ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
                 .ForMember(dest => dest.DurationInMinutes, opt => opt.MapFrom(src => src.DurationInMinutes))
-                .ForMember(dest => dest.ServiceTimeSlots, opt => opt.MapFrom(src => src.ServiceTimeSlots)) 
-                ;
-
+                .ForMember(dest => dest.ServiceTimeSlots, opt => opt.MapFrom(src => src.ServiceTimeSlots))
+                .ForMember(dest => dest.Discounts, opt => opt.MapFrom(src => src.Discounts));
 
         }
     }

@@ -28,9 +28,15 @@ namespace API.Services.Implementations
             return _productRepository.GetProduct(productId);
         }
 
+        public IEnumerable<Product> GetProducts(IEnumerable<Guid> productIds)
+        {
+            return _productRepository.GetProducts(productIds);
+        }
+
         public bool UpdateProduct(Guid productId, Product product)
         {
             return _productRepository.UpdateProduct(productId, product);
         }
+
     }
 }
