@@ -1,6 +1,7 @@
 ﻿using API.Model;
 using API.Repositories.Interfaces;
 using API.Services.Interfaces;
+using Stripe;
 
 namespace API.Services.Implementations
 {
@@ -15,7 +16,22 @@ namespace API.Services.Implementations
 
         public Service CreateService(Service service)
         {
-            return _serviceRepository.CreateService(service);
+            var createdService = _serviceRepository.CreateService(service);
+
+            var offerOptions = new ProductCreateOptions
+            {
+                Name = createdService.Name,
+                Description = createdService.Description,
+            };
+
+            var productService = new Stripe.ProductService();
+            var stripeProduct = productService.Create(offerOptions);
+
+            createdService.StripeId = stripeProduct.Id;
+
+            _serviceRepository.UpdateService(createdService.Id, createdService);
+
+            return createdService;
         }
 
         public bool DeleteService(Guid serviceId)

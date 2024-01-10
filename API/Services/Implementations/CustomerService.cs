@@ -2,6 +2,7 @@
 using API.Model;
 using API.Repositories.Interfaces;
 using API.Services.Interfaces;
+using Stripe;
 
 namespace API.Services.Implementations
 {
@@ -14,7 +15,7 @@ namespace API.Services.Implementations
             _customerRepository = customerRepository;
         }
 
-        public Customer CreateCustomer(Customer customer)
+        public Model.Customer CreateCustomer(Model.Customer customer)
         {
             if (EmailAlreadyRegistered())
             {
@@ -22,7 +23,19 @@ namespace API.Services.Implementations
             }
             else
             {
-                return _customerRepository.CreateCustomer(customer);
+                var createdCustomer = _customerRepository.CreateCustomer(customer);
+                var accOptions = new CustomerCreateOptions
+                {
+                    //Password = "hello",
+                    Email = createdCustomer.Auth.Email,
+                    //Description = "My First Test Customer (created for API docs at https://www.stripe.com/docs/api)",
+                };
+                var accService = new Stripe.CustomerService();
+                var stripeCustomer = accService.Create(accOptions);
+
+                createdCustomer.StripeId = stripeCustomer.Id;
+                _customerRepository.UpdateCustomer(createdCustomer.Id, createdCustomer);
+                return createdCustomer;
             }
         }
 
@@ -32,22 +45,22 @@ namespace API.Services.Implementations
             return false;
         }
 
-        public Customer DeleteCustomer(Guid customerId)
+        public Model.Customer DeleteCustomer(Guid customerId)
         {
             return _customerRepository.DeleteCustomer(customerId);
         }
 
-        public Customer GetCustomer(Guid customerId)
+        public Model.Customer GetCustomer(Guid customerId)
         {
             return _customerRepository.GetCustomer(customerId);
         }
 
-        public List<Customer> GetCustomers()
+        public List<Model.Customer> GetCustomers()
         {
            return _customerRepository.GetCustomers();
         }
 
-        public Customer UpdateCustomer(Guid customerId, Customer customer)
+        public Model.Customer UpdateCustomer(Guid customerId, Model.Customer customer)
         {
             return _customerRepository.UpdateCustomer(customerId, customer);
         }

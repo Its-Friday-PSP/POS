@@ -34,9 +34,22 @@ namespace API.Repositories.Implementations
             return true;
         }
 
-        public Order GetOrder(Guid orderId)
+        public Order? GetOrder(Guid orderId)
         {
-            return _context.Orders.Find(orderId);
+            var order = _context.Orders.Find(orderId);
+
+            if(order == null)
+            {
+                return null;
+            }
+            if(order.OrderType == Enumerators.OrderType.PRODUCT)
+            {
+                return _context.Orders.Include(order => ((ProductOrder)order).OrderItems).First(order => order.Id == orderId);
+            }
+            else
+            {
+                return _context.Orders.Include(order => ((ServiceOrder)order).Services).First(order => order.Id == orderId);
+            }
         }
 
         public Order AddOrderItem(Guid orderId, OrderItem orderItem)
