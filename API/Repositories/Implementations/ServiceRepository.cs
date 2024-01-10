@@ -19,12 +19,6 @@ namespace API.Repositories.Implementations
                 _context.Add(service);
                 _context.SaveChanges();
 
-                //foreach (var timeSlot in service.ServiceTimeSlots)
-                //{
-                    //timeSlot.Id = new Guid();
-                    //timeSlot.ServiceId = service.Id; 
-                //}
-
                 return service; 
         }
 

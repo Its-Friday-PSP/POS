@@ -73,13 +73,12 @@ namespace API.Mappers
                 .ForMember(dest => dest.ServiceOrderId, opt => opt.Ignore());
 
             CreateMap<Service, ServiceDTO>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id)) // Assuming Id is not nullable in Service
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id)) 
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                 //.ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
                 .ForMember(dest => dest.DurationInMinutes, opt => opt.MapFrom(src => src.DurationInMinutes))
                 .ForMember(dest => dest.ServiceTimeSlots, opt => opt.MapFrom(src => src.ServiceTimeSlots)) 
-                // .ForMember(dest => dest.ServiceOrderId, opt => opt.Ignore()) // Assuming ServiceOrderId is not needed in DTO
                 ;
 
             CreateMap<OrderDTO, Order>()

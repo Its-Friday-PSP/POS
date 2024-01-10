@@ -89,6 +89,13 @@ namespace API.Repositories
                 .WithOne()
                 .HasForeignKey(serviceTimeSlots => serviceTimeSlots.ServiceId);
 
+            modelBuilder.Entity<Service>()
+                .OwnsOne(service => service.Price, price =>
+                {
+                    price.Property(price => price.Amount).HasColumnName("Amount");
+                    price.Property(price => price.Currency).HasColumnName("Currency");
+                });
+
             modelBuilder.Entity<Employee>()
                 .HasMany(employee => employee.ServiceTimeSlots)
                 .WithOne()
