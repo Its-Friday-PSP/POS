@@ -1,6 +1,7 @@
 ﻿using API.Model;
 using API.Repositories.Interfaces;
 using API.Services.Interfaces;
+using Stripe;
 
 namespace API.Services.Implementations
 {
@@ -13,9 +14,23 @@ namespace API.Services.Implementations
             _productRepository = productRepository;
         }
 
-        public Product CreateProduct(Product product)
+        public Model.Product CreateProduct(Model.Product product)
         {
-            return _productRepository.CreateProduct(product);
+            var createdProduct = _productRepository.CreateProduct(product);
+
+            var offerOptions = new ProductCreateOptions
+            {
+                Name = createdProduct.Name, Description = createdProduct.Description,
+            };
+
+            var productService = new Stripe.ProductService();
+            var stripeProduct = productService.Create(offerOptions);
+
+            createdProduct.StripeId = stripeProduct.Id;
+
+            _productRepository.UpdateProduct(createdProduct.Id, createdProduct);
+
+            return createdProduct;
         }
 
         public bool DeleteProduct(Guid productId)
@@ -23,12 +38,12 @@ namespace API.Services.Implementations
             return _productRepository.DeleteProduct(productId);
         }
 
-        public Product GetProduct(Guid productId)
+        public Model.Product GetProduct(Guid productId)
         {
             return _productRepository.GetProduct(productId);
         }
 
-        public bool UpdateProduct(Guid productId, Product product)
+        public bool UpdateProduct(Guid productId, Model.Product product)
         {
             return _productRepository.UpdateProduct(productId, product);
         }

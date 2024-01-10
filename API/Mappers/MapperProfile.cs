@@ -20,13 +20,15 @@ namespace API.Mappers
             CreateMap<AuthDTO, Auth>();
             CreateMap<Auth, AuthDTO>();
 
-            CreateMap<CustomerDTO, Customer>();
+            CreateMap<CustomerDTO, Customer>()
+                .ForMember(dest => dest.StripeId, opt => opt.MapFrom(_ => (string?)null));
             CreateMap<Customer, CustomerDTO>();
 
             CreateMap<EmployeeDTO, Employee>();
             CreateMap<Employee, EmployeeDTO>();
 
-            CreateMap<ProductDTO, Product>();
+            CreateMap<ProductDTO, Product>()
+                .ForMember(dest => dest.StripeId, opt => opt.MapFrom(_ => (string?)null));
             CreateMap<Product, ProductDTO>();
 
             CreateMap<PaymentDTO, Payment>();
@@ -77,7 +79,8 @@ namespace API.Mappers
                     src.ServiceTimeSlots != null
                         ? src.ServiceTimeSlots.Select(dto => context.Mapper.Map<ServiceTimeSlots>(dto)).ToList()
                         : new List<ServiceTimeSlots>()))
-                .ForMember(dest => dest.ServiceOrderId, opt => opt.Ignore());
+                .ForMember(dest => dest.ServiceOrderId, opt => opt.Ignore())
+                .ForMember(dest => dest.StripeId, opt => opt.MapFrom(_ => (string?)null));
 
             CreateMap<Service, ServiceDTO>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id)) 
