@@ -34,7 +34,8 @@ namespace API.Controllers
         public ActionResult<CreateServiceResponse> CreateService(CreateServiceRequest request)
         {
             var serviceDomain = _mapper.Map<Service>(request.Service);
-            var createdService = _serviceService.CreateService(serviceDomain);
+            var timeSlotsDomain = _mapper.Map<List<ServiceTimeSlots>>(request.Service.ServiceTimeSlots);
+            var createdService = _serviceService.CreateService(serviceDomain, timeSlotsDomain);
             var response = new CreateServiceResponse(_mapper.Map<ServiceDTO>(createdService));
             return Ok(response);
         }

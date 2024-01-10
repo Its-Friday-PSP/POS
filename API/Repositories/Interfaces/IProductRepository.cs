@@ -6,7 +6,7 @@ namespace API.Repositories.Interfaces
     {
         public Product CreateProduct(Product product);
         public Product GetProduct(Guid productId);
-        public Product UpdateProduct(Guid productId, Product product);
-        public Product DeleteProduct(Guid productId);
+        public bool UpdateProduct(Guid productId, Product product);
+        public bool DeleteProduct(Guid productId);
     }
 }

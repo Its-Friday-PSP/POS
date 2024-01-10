@@ -9,5 +9,6 @@ namespace API.Repositories.Interfaces
         public Order AddOrderItem(Guid orderId, OrderItem orderItem);
         public bool RemoveOrderItem(Guid orderId, int orderItemIndex);
         public bool DeleteOrder(Guid orderId);
+        public Order AddTip(Guid orderId, Tip tip);
     }
 }

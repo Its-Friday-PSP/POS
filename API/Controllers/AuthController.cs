@@ -21,12 +21,13 @@ namespace API.Controllers
         }
 
         [HttpPost("login")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public ActionResult<LoginResponse> Login(LoginRequest request)
         {
             var auth = _mapper.Map<Auth>(request.Auth);
             var token = _authService.Login(auth);
-            var response = new LoginResponse(token);
-            return response;
+            return token == null ? StatusCode(StatusCodes.Status401Unauthorized) : Ok(new LoginResponse(token));
         }
     }
 }
