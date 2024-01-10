@@ -4,6 +4,7 @@ using API.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20240110195054_AddServiceSlotsForService")]
+    partial class AddServiceSlotsForService
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,9 +30,6 @@ namespace API.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("StripeId")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -205,9 +205,6 @@ namespace API.Migrations
                     b.Property<decimal?>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("StripeId")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.ToTable("Products");
@@ -233,47 +230,11 @@ namespace API.Migrations
                     b.Property<Guid?>("ServiceOrderId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("StripeId")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ServiceOrderId");
 
                     b.ToTable("Services");
-                });
-
-            modelBuilder.Entity("API.Model.ServiceTimeSlots", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("EmployeeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("EndTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsBooked")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("ServiceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.HasIndex("ServiceId");
-
-                    b.ToTable("ServiceTimeSlots");
                 });
 
             modelBuilder.Entity("API.Model.ProductOrder", b =>
@@ -537,6 +498,7 @@ namespace API.Migrations
                 {
                     b.HasOne("API.Model.ServiceOrder", null)
                         .WithMany("Services")
+                        .HasForeignKey("ServiceOrderId");
 
                     b.OwnsOne("API.Model.Price", "Price", b1 =>
                         {
@@ -558,10 +520,6 @@ namespace API.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("ServiceId");
                         });
-
-                    b.Navigation("Price")
-                        .IsRequired();
-                });
 
                     b.OwnsMany("API.Model.ServiceTimeSlots", "ServiceTimeSlots", b1 =>
                         {
@@ -616,18 +574,6 @@ namespace API.Migrations
             modelBuilder.Entity("API.Model.Discount", b =>
                 {
                     b.Navigation("CustomerDiscounts");
-                });
-
-            modelBuilder.Entity("API.Model.Employee", b =>
-                {
-                    b.Navigation("CustomerDiscounts");
-                });
-
-            modelBuilder.Entity("API.Model.Discount", b =>
-                {
-                    b.Navigation("OrderDiscounts");
-
-                    b.Navigation("Payments");
                 });
 
             modelBuilder.Entity("API.Model.Order", b =>

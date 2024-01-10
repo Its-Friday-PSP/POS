@@ -39,6 +39,10 @@ namespace API.Services.Implementations
             return _serviceRepository.DeleteService(serviceId);
         }
 
+        public IEnumerable<Service> GetAllServices()
+        {
+            return _serviceRepository.GetAllServices();
+        }
         public Service GetService(Guid serviceId)
         {
             return _serviceRepository.GetService(serviceId);

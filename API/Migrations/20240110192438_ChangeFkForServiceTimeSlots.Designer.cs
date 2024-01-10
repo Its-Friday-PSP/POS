@@ -4,6 +4,7 @@ using API.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20240110192438_ChangeFkForServiceTimeSlots")]
+    partial class ChangeFkForServiceTimeSlots
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,9 +30,6 @@ namespace API.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("StripeId")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -205,9 +205,6 @@ namespace API.Migrations
                     b.Property<decimal?>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("StripeId")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.ToTable("Products");
@@ -232,9 +229,6 @@ namespace API.Migrations
 
                     b.Property<Guid?>("ServiceOrderId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("StripeId")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -390,49 +384,8 @@ namespace API.Migrations
                                 .HasForeignKey("EmployeeId");
                         });
 
-                    b.OwnsMany("API.Model.ServiceTimeSlots", "ServiceTimeSlots", b1 =>
-                        {
-                            b1.Property<Guid>("EmployeeId")
-                                .HasColumnType("uniqueidentifier")
-                                .HasColumnName("EmployeeId");
-
-                            b1.Property<Guid>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("uniqueidentifier")
-                                .HasColumnName("Id");
-
-                            b1.Property<Guid>("CustomerId")
-                                .HasColumnType("uniqueidentifier")
-                                .HasColumnName("CustomerId");
-
-                            b1.Property<DateTime>("EndTime")
-                                .HasColumnType("datetime2")
-                                .HasColumnName("EndTime");
-
-                            b1.Property<bool>("IsBooked")
-                                .HasColumnType("bit")
-                                .HasColumnName("IsBooked");
-
-                            b1.Property<Guid>("ServiceId")
-                                .HasColumnType("uniqueidentifier")
-                                .HasColumnName("ServiceId");
-
-                            b1.Property<DateTime>("StartTime")
-                                .HasColumnType("datetime2")
-                                .HasColumnName("StartTime");
-
-                            b1.HasKey("EmployeeId", "Id");
-
-                            b1.ToTable("Employees_ServiceTimeSlots");
-
-                            b1.WithOwner()
-                                .HasForeignKey("EmployeeId");
-                        });
-
                     b.Navigation("Auth")
                         .IsRequired();
-
-                    b.Navigation("ServiceTimeSlots");
                 });
 
             modelBuilder.Entity("API.Model.Order", b =>
@@ -537,6 +490,7 @@ namespace API.Migrations
                 {
                     b.HasOne("API.Model.ServiceOrder", null)
                         .WithMany("Services")
+                        .HasForeignKey("ServiceOrderId");
 
                     b.OwnsOne("API.Model.Price", "Price", b1 =>
                         {
@@ -563,49 +517,19 @@ namespace API.Migrations
                         .IsRequired();
                 });
 
-                    b.OwnsMany("API.Model.ServiceTimeSlots", "ServiceTimeSlots", b1 =>
-                        {
-                            b1.Property<Guid>("ServiceId")
-                                .HasColumnType("uniqueidentifier")
-                                .HasColumnName("ServiceId");
-
-                            b1.Property<Guid>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("uniqueidentifier")
-                                .HasColumnName("Id");
-
-                            b1.Property<Guid>("CustomerId")
-                                .HasColumnType("uniqueidentifier")
-                                .HasColumnName("CustomerId");
-
-                            b1.Property<Guid>("EmployeeId")
-                                .HasColumnType("uniqueidentifier")
-                                .HasColumnName("EmployeeId");
-
-                            b1.Property<DateTime>("EndTime")
-                                .HasColumnType("datetime2")
-                                .HasColumnName("EndTime");
-
-                            b1.Property<bool>("IsBooked")
-                                .HasColumnType("bit")
-                                .HasColumnName("IsBooked");
-
-                            b1.Property<DateTime>("StartTime")
-                                .HasColumnType("datetime2")
-                                .HasColumnName("StartTime");
-
-                            b1.HasKey("ServiceId", "Id");
-
-                            b1.ToTable("Services_ServiceTimeSlots");
-
-                            b1.WithOwner()
-                                .HasForeignKey("ServiceId");
-                        });
-
-                    b.Navigation("Price")
+            modelBuilder.Entity("API.Model.ServiceTimeSlots", b =>
+                {
+                    b.HasOne("API.Model.Employee", null)
+                        .WithMany("ServiceTimeSlots")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ServiceTimeSlots");
+                    b.HasOne("API.Model.Service", null)
+                        .WithMany("ServiceTimeSlots")
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("API.Model.Customer", b =>
@@ -620,14 +544,7 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Model.Employee", b =>
                 {
-                    b.Navigation("CustomerDiscounts");
-                });
-
-            modelBuilder.Entity("API.Model.Discount", b =>
-                {
-                    b.Navigation("OrderDiscounts");
-
-                    b.Navigation("Payments");
+                    b.Navigation("ServiceTimeSlots");
                 });
 
             modelBuilder.Entity("API.Model.Order", b =>
@@ -635,6 +552,11 @@ namespace API.Migrations
                     b.Navigation("OrderDiscounts");
 
                     b.Navigation("Payments");
+                });
+
+            modelBuilder.Entity("API.Model.Service", b =>
+                {
+                    b.Navigation("ServiceTimeSlots");
                 });
 
             modelBuilder.Entity("API.Model.ProductOrder", b =>

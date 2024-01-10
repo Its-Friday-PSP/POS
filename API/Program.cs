@@ -48,6 +48,9 @@ builder.Services.AddScoped<IDiscountRepository, DiscountRepository>();
 builder.Services.AddScoped<IEmployeesService, EmployeesService>();
 builder.Services.AddScoped<IEmployeesRepository, EmployeesRepository>();
 
+builder.Services.AddScoped<IReservationService, ReservationService>();
+builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
+
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 
