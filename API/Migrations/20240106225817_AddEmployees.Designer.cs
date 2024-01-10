@@ -4,6 +4,7 @@ using API.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20240106225817_AddEmployees")]
+    partial class AddEmployees
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,7 +33,7 @@ namespace API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Customers", (string)null);
+                    b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("API.Model.Employee", b =>
@@ -49,7 +52,7 @@ namespace API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Employees", (string)null);
+                    b.ToTable("Employees");
                 });
 
             modelBuilder.Entity("API.Model.Order", b =>
@@ -68,15 +71,12 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("EmployeeId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("Order");
 
@@ -101,7 +101,7 @@ namespace API.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderItems", (string)null);
+                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("API.Model.Payment", b =>
@@ -126,7 +126,7 @@ namespace API.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("Payments", (string)null);
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("API.Model.Product", b =>
@@ -149,7 +149,7 @@ namespace API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("API.Model.Service", b =>
@@ -172,14 +172,14 @@ namespace API.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid?>("ServiceOrderId")
+                    b.Property<Guid>("ServiceOrderId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ServiceOrderId");
 
-                    b.ToTable("Services", (string)null);
+                    b.ToTable("Services");
                 });
 
             modelBuilder.Entity("API.Model.ServiceTimeSlots", b =>
@@ -189,9 +189,6 @@ namespace API.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("EmployeeId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("EndTime")
@@ -208,11 +205,9 @@ namespace API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EmployeeId");
-
                     b.HasIndex("ServiceId");
 
-                    b.ToTable("ServiceTimeSlots", (string)null);
+                    b.ToTable("ServiceTimeSlots");
                 });
 
             modelBuilder.Entity("API.Model.ProductOrder", b =>
@@ -231,7 +226,7 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Model.Customer", b =>
                 {
-                    b.OwnsOne("API.Model.Customer.Auth#API.Model.Auth", "Auth", b1 =>
+                    b.OwnsOne("API.Model.Auth", "Auth", b1 =>
                         {
                             b1.Property<Guid>("CustomerId")
                                 .HasColumnType("uniqueidentifier");
@@ -246,7 +241,7 @@ namespace API.Migrations
 
                             b1.HasKey("CustomerId");
 
-                            b1.ToTable("Customers", (string)null);
+                            b1.ToTable("Customers");
 
                             b1.WithOwner()
                                 .HasForeignKey("CustomerId");
@@ -258,7 +253,7 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Model.Employee", b =>
                 {
-                    b.OwnsOne("API.Model.Employee.Auth#API.Model.Auth", "Auth", b1 =>
+                    b.OwnsOne("API.Model.Auth", "Auth", b1 =>
                         {
                             b1.Property<Guid>("EmployeeId")
                                 .HasColumnType("uniqueidentifier");
@@ -273,7 +268,7 @@ namespace API.Migrations
 
                             b1.HasKey("EmployeeId");
 
-                            b1.ToTable("Employees", (string)null);
+                            b1.ToTable("Employees");
 
                             b1.WithOwner()
                                 .HasForeignKey("EmployeeId");
@@ -281,52 +276,6 @@ namespace API.Migrations
 
                     b.Navigation("Auth")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("API.Model.Order", b =>
-                {
-                    b.OwnsOne("API.Model.Order.Tip#API.Model.Tip", "Tip", b1 =>
-                        {
-                            b1.Property<Guid>("OrderId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<int>("PaymentType")
-                                .HasColumnType("int")
-                                .HasColumnName("TipPaymentType");
-
-                            b1.HasKey("OrderId");
-
-                            b1.ToTable("Orders", (string)null);
-
-                            b1.WithOwner()
-                                .HasForeignKey("OrderId");
-
-                            b1.OwnsOne("API.Model.Order.Tip#API.Model.Tip.Price#API.Model.Price", "Price", b2 =>
-                                {
-                                    b2.Property<Guid>("TipOrderId")
-                                        .HasColumnType("uniqueidentifier");
-
-                                    b2.Property<decimal>("Amount")
-                                        .HasColumnType("decimal(18,2)")
-                                        .HasColumnName("TipAmount");
-
-                                    b2.Property<int>("Currency")
-                                        .HasColumnType("int")
-                                        .HasColumnName("TipCurrency");
-
-                                    b2.HasKey("TipOrderId");
-
-                                    b2.ToTable("Orders", (string)null);
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("TipOrderId");
-                                });
-
-                            b1.Navigation("Price")
-                                .IsRequired();
-                        });
-
-                    b.Navigation("Tip");
                 });
 
             modelBuilder.Entity("API.Model.OrderItem", b =>
@@ -356,7 +305,7 @@ namespace API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("API.Model.Payment.Price#API.Model.Price", "Price", b1 =>
+                    b.OwnsOne("API.Model.Price", "Price", b1 =>
                         {
                             b1.Property<Guid>("PaymentId")
                                 .HasColumnType("uniqueidentifier");
@@ -371,7 +320,7 @@ namespace API.Migrations
 
                             b1.HasKey("PaymentId");
 
-                            b1.ToTable("Payments", (string)null);
+                            b1.ToTable("Payments");
 
                             b1.WithOwner()
                                 .HasForeignKey("PaymentId");
@@ -383,29 +332,22 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Model.Service", b =>
                 {
-                    b.HasOne("API.Model.ServiceOrder", null)
+                    b.HasOne("API.Model.ServiceOrder", "ServiceOrder")
                         .WithMany("Services")
-                        .HasForeignKey("ServiceOrderId");
+                        .HasForeignKey("ServiceOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ServiceOrder");
                 });
 
             modelBuilder.Entity("API.Model.ServiceTimeSlots", b =>
                 {
-                    b.HasOne("API.Model.Employee", null)
-                        .WithMany("ServiceTimeSlots")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("API.Model.Service", null)
                         .WithMany("ServiceTimeSlots")
                         .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("API.Model.Employee", b =>
-                {
-                    b.Navigation("ServiceTimeSlots");
                 });
 
             modelBuilder.Entity("API.Model.Order", b =>

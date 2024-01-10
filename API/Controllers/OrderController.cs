@@ -41,7 +41,7 @@ namespace API.Controllers
 
         [HttpPost("{orderId}/orderItem")]
         public ActionResult<Order> AddOrderItem(
-            [FromQuery] Guid orderId,
+            [FromRoute]Guid orderId,
             [FromBody] OrderItemDTO orderItem)
         {
             System.Console.WriteLine("hello");

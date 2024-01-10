@@ -20,6 +20,7 @@ namespace API.Repositories
         public DbSet<Service> Services { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Discount> Discounts { get; set; }
+        public DbSet<Employee> Employees { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -81,14 +82,26 @@ namespace API.Repositories
                         priceNavigation.Property(price => price.Currency).HasColumnName("TipCurrency");
                     });
 
+            modelBuilder.Entity<ServiceOrder>()
+                .HasMany(serviceOrder => serviceOrder.Services) 
+                .WithOne() 
+                .HasForeignKey(service => service.ServiceOrderId);
                     tipNavigation.Property(tip => tip.PaymentType).HasColumnName("TipPaymentType");
                 });
+
+            modelBuilder.Entity<Employee>()
+               .OwnsOne(employee => employee.Auth, auth =>
+               {
+                   auth.Property(auth => auth.Email).IsRequired();
+                   auth.Property(auth => auth.Password).IsRequired();
+               })
+               .Navigation(employee => employee.Auth).IsRequired();
 
             modelBuilder.Entity<OrderItem>()
                 .HasKey(z => new
                 {
                     z.OrderId,
-                    z.Index
+                    z.Index,
                 });
 
             modelBuilder.Entity<OrderItem>()
@@ -131,6 +144,28 @@ namespace API.Repositories
                     price.Property(price => price.Amount).HasColumnName("Amount");
                     price.Property(price => price.Currency).HasColumnName("Currency");
                 });
+
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(orderItem => orderItem.Order)
+                .WithMany(order => order.OrderItems) 
+                .HasForeignKey(orderItem => orderItem.OrderId);
+
+            modelBuilder.Entity<Service>()
+                .HasMany(service => service.ServiceTimeSlots)
+                .WithOne()
+                .HasForeignKey(serviceTimeSlots => serviceTimeSlots.ServiceId);
+
+            modelBuilder.Entity<Service>()
+                .OwnsOne(service => service.Price, price =>
+                {
+                    price.Property(price => price.Amount).HasColumnName("Amount");
+                    price.Property(price => price.Currency).HasColumnName("Currency");
+                });
+
+            modelBuilder.Entity<Employee>()
+                .HasMany(employee => employee.ServiceTimeSlots)
+                .WithOne()
+                .HasForeignKey(serviceTimeSlots => serviceTimeSlots.EmployeeId);
         }
 
         private void OnCreatingService(ModelBuilder modelBuilder)

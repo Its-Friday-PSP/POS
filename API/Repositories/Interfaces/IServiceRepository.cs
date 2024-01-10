@@ -8,6 +8,6 @@ namespace API.Repositories.Interfaces
         public Service GetService(Guid serviceId);
         public IEnumerable<Service> GetServices(IEnumerable<Guid> serviceIds);
         public Service UpdateService(Guid serviceId, Service service);
-        public Service DeleteService(Guid serviceId);
+        public bool DeleteService(Guid serviceId);
     }
 }

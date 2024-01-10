@@ -47,11 +47,8 @@ namespace API.Repositories.Implementations
         public Customer UpdateCustomer(Guid customerId, Customer customer)
         {
             var existingCustomer = GetCustomer(customerId);
-
             existingCustomer.Auth = customer.Auth;
-
             _context.SaveChanges();
-
             return existingCustomer;
         }
     }

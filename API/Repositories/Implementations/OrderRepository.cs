@@ -1,5 +1,6 @@
 ﻿using API.Model;
 using API.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Repositories.Implementations
 {
@@ -14,7 +15,11 @@ namespace API.Repositories.Implementations
 
         public Order AddOrderItem(Guid orderId, OrderItem orderItem)
         {
-            throw new NotImplementedException();
+            var order = GetOrder(orderId);
+            orderItem.OrderId = orderId;
+            _context.OrderItems.Add(orderItem);
+            _context.SaveChanges();
+            return order;
         }
 
         public Order CreateOrder(Order order)
@@ -29,59 +34,37 @@ namespace API.Repositories.Implementations
 
         public Order DeleteOrder(Guid orderId)
         {
-            throw new NotImplementedException();
+            order.Id = Guid.NewGuid();
+            _context.Orders.Add(order);
+            _context.SaveChanges();
+            return order;
         }
 
-        public Order GetOrder(Guid orderId)
+        public bool DeleteOrder(Guid orderId)
         {
-            throw new NotImplementedException();
+            var order = GetOrder(orderId);
+            _context.Orders.Remove(order);
+            return true;
         }
 
         public Order RemoveOrderItem(Guid orderId, int orderItemIndex)
         {
-            throw new NotImplementedException();
+            return _context.Orders.Find(orderId);
         }
 
-        public Order AddTip(Guid orderId, Tip tip)
+        public bool RemoveOrderItem(Guid orderId, int orderItemIndex)
         {
-            var order = _context.Orders.Find(orderId);
+            var productOrder = _context.ProductOrders
+                .Include(productOrder => productOrder.OrderItems)
+                .SingleOrDefault(productOrder => productOrder.Id == orderId);
 
-            if (order == null)
-            {
-                return null;
-            }
+            var orderItem = productOrder.OrderItems
+                                    .SingleOrDefault(orderItem => orderItem.Index == orderItemIndex);
 
-            order.Tip = tip;
+            _context.OrderItems.Remove(orderItem);
             _context.SaveChanges();
 
-            return order;
-        }
-
-        private void HandleDiscounts(Order order)
-        {
-            //var customer = _context.Customers.Find(order.CustomerId);
-
-            //if(order.OrderDiscounts == null || order.OrderDiscounts.Count == 0 || customer == null)
-            //{
-            //    return;
-            //}
-
-            //foreach(var orderDiscount in order.OrderDiscounts)
-            //{
-            //    if(!orderDiscount.IsUsed)
-            //    {
-            //        continue;
-            //    }
-
-            //    var usedDiscount = customer.CustomerDiscounts?.FirstOrDefault(
-            //        x => x.CustomerId == orderDiscount.CustomerId &&
-            //        x.DiscountId == orderDiscount.DiscountId
-            //        );
-            //    customer.CustomerDiscounts?.Remove(usedDiscount!);
-            //}
-
-            //_context.SaveChanges();
-
+            return true;
         }
     }
 }
