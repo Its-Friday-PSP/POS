@@ -1,6 +1,9 @@
 using API.DTOs;
+using API.DTOs.Request;
+using API.DTOs.Response;
 using API.Model;
 using API.Requests.Order;
+using API.Responses.Order;
 using API.Services.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -28,10 +31,12 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Order> CreateOrder(CreateOrderRequest request)
+        public ActionResult<OrderCreationResponseDTO> CreateOrder(OrderCreationRequestDTO request)
         {
-            var order = _mapper.Map<Order>(request.Order);
-            return Ok(_orderService.CreateOrder(order));
+            Order order = _orderService.CreateOrder(request);
+            var response = _mapper.Map<OrderCreationResponseDTO>(order);
+
+            return Ok(response);
         }
 
         [HttpPost("{orderId}/orderItem")]
@@ -66,5 +71,6 @@ namespace API.Controllers
 
             return order == null ? NotFound() : Ok(order);
         }
+
     }
 }

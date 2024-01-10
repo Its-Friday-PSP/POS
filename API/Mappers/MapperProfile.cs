@@ -1,8 +1,9 @@
 ﻿using API.DTOs;
+using API.DTOs.Request;
+using API.DTOs.Response;
 using API.Model;
-using API.Repositories;
 using AutoMapper;
-using System.Runtime.CompilerServices;
+using System.ComponentModel.DataAnnotations;
 
 namespace API.Mappers
 {
@@ -10,6 +11,12 @@ namespace API.Mappers
     {
         public MapperProfile()
         {
+            CreateMap<Discount, DiscountDTO>();
+            CreateMap<DiscountDTO, Discount>();
+
+            CreateMap<CustomerDiscount, CustomerDiscountDTO>();
+            CreateMap<CustomerDiscountDTO, CustomerDiscount>();
+
             CreateMap<AuthDTO, Auth>();
             CreateMap<Auth, AuthDTO>();
 
@@ -27,14 +34,15 @@ namespace API.Mappers
 
             CreateMap<Tip, TipDTO>();
             CreateMap<TipDTO, Tip>();
-            //CreateMap<Payment, PaymentDTO>();
 
-            /*CreateMap<ServiceOrderDTO, ServiceOrder>();
-            CreateMap<ProductOrderDTO, ProductOrder>();*/
+            CreateMap<Order, OrderCreationResponseDTO>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.OrderType, opt => opt.MapFrom(src => src.OrderType))
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date))
+                .ForMember(dest => dest.OrderStatus, opt => opt.MapFrom(src => src.Status))
+                .ForMember(dest => dest.AppliedDiscounts, opt => opt.MapFrom(src => src.OrderDiscounts.Select(x => x.Discount)))
+                .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => 0));
 
-            //CreateMap<OrderItemDTO, OrderItem>()
-            //.ForMember(orderItem => orderItem.Order, opt => opt.Ignore())
-            //.ForMember(orderItem => orderItem.Product, opt => opt.Ignore());
 
             CreateMap<ServiceTimeSlotsDTO, ServiceTimeSlots>()
                 .ConvertUsing((serviceTimeSlotsDTO, _, context) =>
@@ -52,8 +60,7 @@ namespace API.Mappers
             CreateMap<ServiceTimeSlots, ServiceTimeSlotsDTO>()
                 .ConvertUsing(serviceTimeSlots => new ServiceTimeSlotsDTO
                 {
-                    CustomerId = serviceTimeSlots.CustomerId, 
-                    EmployeeId = serviceTimeSlots.EmployeeId, 
+                    CustomerId = serviceTimeSlots.CustomerId,
                     StartTime = serviceTimeSlots.StartTime,
                     EndTime = serviceTimeSlots.EndTime, 
                     IsBooked = serviceTimeSlots.IsBooked 
@@ -81,30 +88,7 @@ namespace API.Mappers
                 .ForMember(dest => dest.ServiceTimeSlots, opt => opt.MapFrom(src => src.ServiceTimeSlots)) 
                 ;
 
-            CreateMap<OrderDTO, Order>()
-                .ConvertUsing((orderDto, _, context) =>
-                {
-                    if (orderDto.OrderType == OrderTypeDTO.SERVICE)
-                    {
-                        var serviceOrder = new ServiceOrder((Guid)orderDto.Id!);
-                        return serviceOrder;
-                    }
-                    else
-                    {
-                        orderDto.ProductOrder!.OrderItems!.Select(orderItemDto => new OrderItem(
-                            (Guid)orderItemDto.ProductId!,
-                            (Guid)orderDto.Id!,
-                            (int)orderItemDto.Amount!,
-                            (int)orderItemDto.Index!));
-                        var orderItems = context.Mapper.Map<IEnumerable<OrderItem>>(orderDto.ProductOrder!.OrderItems);
-                        var productOrder = new ProductOrder((Guid)orderDto.Id!) { OrderItems = orderItems };
 
-                        return productOrder;
-                    }
-                });
-
-            //CreateMap<Order, OrderDTO>();
-            //CreateMap<OrderItem, OrderItemDTO>();
         }
     }
 }

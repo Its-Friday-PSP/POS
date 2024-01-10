@@ -16,32 +16,24 @@ namespace API.Repositories.Implementations
         public Order AddOrderItem(Guid orderId, OrderItem orderItem)
         {
             var order = GetOrder(orderId);
+
             orderItem.OrderId = orderId;
             _context.OrderItems.Add(orderItem);
             _context.SaveChanges();
+
             return order;
         }
 
         public Order AddTip(Guid orderId, Tip tip)
         {
-            var order = _context.Orders.Find(orderId);
-
-            if(order == null)
-            {
-                return null;
-            }
-
-            order.Tip = tip;
-            _context.SaveChanges();
-
-            return order;
+            throw new NotImplementedException();
         }
 
         public Order CreateOrder(Order order)
         {
-            order.Id = Guid.NewGuid();
             _context.Orders.Add(order);
             _context.SaveChanges();
+
             return order;
         }
 

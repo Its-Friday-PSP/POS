@@ -42,6 +42,11 @@ namespace API.Repositories.Implementations
             return _context.Products.FirstOrDefault(product => product.Id == productId)!;
         }
 
+        public IEnumerable<Product> GetProducts(IEnumerable<Guid> productIds)
+        {
+            return _context.Products.Where(x => productIds.Contains(x.Id));
+        }
+
         public bool UpdateProduct(Guid productId, Product product)
         {
             var oldProduct = _context.Products.FirstOrDefault(product => product.Id == productId);

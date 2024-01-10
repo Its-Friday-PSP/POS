@@ -1,10 +1,11 @@
-﻿using API.Model;
+﻿using API.DTOs.Request;
+using API.Model;
 
 namespace API.Services.Interfaces
 {
     public interface IOrderService
     {
-        public Order CreateOrder(Order order);
+        public Order CreateOrder(OrderCreationRequestDTO order);
         public Order GetOrder(Guid orderId);
         public Order AddOrderItem(Guid orderId, OrderItem orderItem);
         public bool RemoveOrderItem(Guid orderId, int orderItemIndex);
