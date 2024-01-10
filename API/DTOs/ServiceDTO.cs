@@ -14,6 +14,5 @@ namespace API.DTOs
         public int? DurationInMinutes { get; set; }
         [Required]
         public List<ServiceTimeSlotsDTO>? ServiceTimeSlots { get; set; }
-        public List<DiscountCreationResponse>? Discounts { get; set; }
     }
 }

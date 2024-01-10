@@ -42,7 +42,6 @@ namespace API.Services.Implementations
         {
             Order order;
 
-            var discounts = _discountRepository.GetDiscounts(orderRequest.DiscountCodes);
 
             if (orderRequest.OrderType == OrderTypeDTO.SERVICE)
             {
@@ -51,7 +50,7 @@ namespace API.Services.Implementations
 
                 order.OrderType = OrderType.SERVICE;
 
-                order.Price = CalculateTotalPrice(services, discounts);
+                order.Price = CalculateTotalPrice(services, orderRequest.DiscountCodes);
             }
             else
             {
@@ -64,9 +63,13 @@ namespace API.Services.Implementations
                 
                 order.OrderType = OrderType.PRODUCT;
 
-                order.Price = CalculateTotalPrice(orderItems, discounts);
+                order.Price = CalculateTotalPrice(orderItems, orderRequest.DiscountCodes);
             }
 
+            if (order.Price.Amount == 0)
+            {
+                return null;
+            }
 
             order.Status = OrderStatus.PROCESSING;
             _orderRepository.CreateOrder(order);
@@ -89,16 +92,20 @@ namespace API.Services.Implementations
             return _orderRepository.RemoveOrderItem(orderId, orderItemIndex);
         }
 
-        private Price CalculateTotalPrice(IEnumerable<OrderItem> orderItems, IEnumerable<Discount> appliedDiscounts)
+        private Price CalculateTotalPrice(IEnumerable<OrderItem> orderItems, IEnumerable<string> appliedDiscounts)
         {
             var productIds = orderItems.Select(x => x.ProductId);
-            var products = _productRepository.GetProducts(productIds);
+            var products = _productRepository.GetProducts(productIds).ToList();
 
             long totalPrice = 0;
 
             foreach(var product in products)
             {
                 long normalizedProductPrice = NormalizeCurrency(product.Price);
+
+                var amount = orderItems.FirstOrDefault(x => x.ProductId == product.Id).Amount;
+                normalizedProductPrice *= amount;
+
                 long discountedProductPrice = ApplyDiscountTotalPrice(appliedDiscounts, OrderTypeDTO.PRODUCT, normalizedProductPrice);
                 
                 totalPrice += discountedProductPrice;
@@ -107,7 +114,7 @@ namespace API.Services.Implementations
             return new Price() { Amount = totalPrice, Currency = Currency.EUR };
         }
 
-        private Price CalculateTotalPrice(IEnumerable<Service> orderServices, IEnumerable<Discount> appliedDiscounts)
+        private Price CalculateTotalPrice(IEnumerable<Service> orderServices, IEnumerable<string> appliedDiscounts)
         {
             long totalPrice = 0;
 
@@ -129,8 +136,9 @@ namespace API.Services.Implementations
             _ => price.Amount,
         };
 
-        private long ApplyDiscountTotalPrice(IEnumerable<Discount> discounts, OrderTypeDTO orderType, long productPrice)
+        private long ApplyDiscountTotalPrice(IEnumerable<string> discountCodes, OrderTypeDTO orderType, long productPrice)
         {
+            var discounts = _discountRepository.GetDiscounts(discountCodes);
             long resultPrice = productPrice;
 
             foreach(var discount in discounts)
@@ -146,7 +154,8 @@ namespace API.Services.Implementations
                 }
                 else if(discount.DiscountType == DiscountType.PERCENTAGE && discount.ApplicableOrderType == orderType)
                 {
-                    resultPrice *= (long)(resultPrice * ((100 - discount.Percentage) / 100))!;
+                    double percentage = (100.0 - (double) discount.Percentage!) / 100.0;
+                    resultPrice = (long)(resultPrice * percentage);
                 }
 
             }

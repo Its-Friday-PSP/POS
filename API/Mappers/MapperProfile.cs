@@ -40,7 +40,7 @@ namespace API.Mappers
                 .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date))
                 .ForMember(dest => dest.OrderStatus, opt => opt.MapFrom(src => src.Status))
                 .ForMember(dest => dest.AppliedDiscounts, opt => opt.MapFrom(src => src.OrderDiscounts.Select(x => x.Discount)))
-                .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => 0));
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price));
 
             CreateMap<OrderItemDTO, OrderItem>()
                 .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId))

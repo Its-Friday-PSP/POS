@@ -12,6 +12,5 @@ namespace API.DTOs
         public Price? Price { get; set; }
         public int? AmountInStock { get; set; }
         public OriginCountry? OriginCountry { get; set; }
-        public List<Discount>? ApplicableDiscounts { get; set; }
     }
 }
