@@ -7,7 +7,6 @@ namespace API.Model
     {
         public Guid Id { get; set; }
         public Guid CustomerId { get; set; }
-        public Guid EmployeeId { get; set; }
         public OrderStatus Status { get; set; }
         public OrderType OrderType { get; set; }
         public DateTime Date { get; set; }
