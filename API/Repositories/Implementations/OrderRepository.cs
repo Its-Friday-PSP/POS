@@ -91,5 +91,12 @@ namespace API.Repositories.Implementations
             return true;
         }
 
+        public Order UpdateOrderStatus(Order order, OrderStatus orderStatus)
+        {
+            order.Status = orderStatus;
+            _context.Update(order);
+            _context.SaveChanges();
+            return order;
+        }
     }
 }
