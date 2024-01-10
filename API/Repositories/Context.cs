@@ -24,11 +24,19 @@ namespace API.Repositories
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Order>()
+                .OwnsOne(product => product.Price, price =>
+                {
+                    price.Property(price => price.Amount).HasColumnName("OrderAmount");
+                    price.Property(price => price.Currency).HasColumnName("OrderCurrency");
+                });
+
             OnCreatingOrder(modelBuilder);
             OnCreatingPayments(modelBuilder);
             OnCreatingDiscount(modelBuilder);
             OnCreatingService(modelBuilder);
             OnCreatingCustomer(modelBuilder);
+            OnCreatingProduct(modelBuilder);
 
             modelBuilder.Entity<Employee>()
                .OwnsOne(employee => employee.Auth, auth =>
@@ -38,6 +46,16 @@ namespace API.Repositories
                })
                .Navigation(employee => employee.Auth).IsRequired();
 
+        }
+
+        private void OnCreatingProduct(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Product>()
+                .OwnsOne(product => product.Price, price =>
+                {
+                    price.Property(price => price.Amount).HasColumnName("Amount");
+                    price.Property(price => price.Currency).HasColumnName("Currency");
+                });
         }
 
         private void OnCreatingCustomer(ModelBuilder modelBuilder)
@@ -78,20 +96,22 @@ namespace API.Repositories
         private void OnCreatingOrder(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Order>()
-                .OwnsOne(order => order.Tip, tipNavigation =>
+                .OwnsOne(product => product.Price, price =>
                 {
-                    tipNavigation.OwnsOne(tip => tip.Price, priceNavigation =>
-                    {
-                        priceNavigation.Property(price => price.Amount).HasColumnName("TipAmount");
-                        priceNavigation.Property(price => price.Currency).HasColumnName("TipCurrency");
-                    });
-                    tipNavigation.Property(tip => tip.PaymentType).HasColumnName("TipPaymentType");
+                    price.Property(price => price.Amount).HasColumnName("OrderAmount");
+                    price.Property(price => price.Currency).HasColumnName("OrderCurrency");
                 });
 
-            modelBuilder.Entity<ServiceOrder>()
-                .HasMany(serviceOrder => serviceOrder.Services) 
-                .WithOne() 
-                .HasForeignKey(service => service.ServiceOrderId);
+            modelBuilder.Entity<Order>()
+                   .OwnsOne(order => order.Tip, tipNavigation =>
+                   {
+                       tipNavigation.OwnsOne(tip => tip.Price, priceNavigation =>
+                       {
+                           priceNavigation.Property(price => price.Amount).HasColumnName("TipAmount");
+                           priceNavigation.Property(price => price.Currency).HasColumnName("TipCurrency");
+                       });
+                       tipNavigation.Property(tip => tip.PaymentType).HasColumnName("TipPaymentType");
+                   });
 
             modelBuilder.Entity<OrderItem>()
                 .HasKey(z => new

@@ -75,5 +75,9 @@ namespace API.Repositories.Implementations
             return true;
         }
 
+        public IEnumerable<Discount> GetDiscounts(IEnumerable<string> discounts)
+        {
+            return _context.Discounts.Where(x => discounts.Contains(x.Id));
+        }
     }
 }

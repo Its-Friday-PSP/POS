@@ -11,9 +11,6 @@ namespace API.Mappers
     {
         public MapperProfile()
         {
-            CreateMap<Discount, DiscountDTO>();
-            CreateMap<DiscountDTO, Discount>();
-
             CreateMap<CustomerDiscount, CustomerDiscountDTO>();
             CreateMap<CustomerDiscountDTO, CustomerDiscount>();
 
@@ -43,7 +40,7 @@ namespace API.Mappers
                 .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date))
                 .ForMember(dest => dest.OrderStatus, opt => opt.MapFrom(src => src.Status))
                 .ForMember(dest => dest.AppliedDiscounts, opt => opt.MapFrom(src => src.OrderDiscounts.Select(x => x.Discount)))
-                .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => 0));
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price));
 
             CreateMap<OrderItemDTO, OrderItem>()
                 .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId))
@@ -52,6 +49,19 @@ namespace API.Mappers
                 .ForMember(dest => dest.OrderId, opt => opt.Ignore())
                 .ForMember(dest => dest.Product, opt => opt.Ignore())
                 .ForMember(dest => dest.Order, opt => opt.Ignore());
+
+            CreateMap<DiscountCreationRequest, Discount>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.DiscountType, opt => opt.MapFrom(src => src.DiscountType))
+                .ForMember(dest => dest.ApplicableOrderType, opt => opt.MapFrom(src => src.ApplicableOrderType))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.Percentage, opt => opt.MapFrom(src => src.Percentage))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+                .ForMember(dest => dest.ValidFrom, opt => opt.MapFrom(src => src.ValidFrom))
+                .ForMember(dest => dest.ValidTo, opt => opt.MapFrom(src => src.ValidTo))
+                .ForMember(dest => dest.IsStackable, opt => opt.MapFrom(src => src.IsStackable))
+                .ForMember(dest => dest.CustomerDiscounts, opt => opt.MapFrom(src => new List<CustomerDiscount>()));
+            CreateMap<Discount, DiscountCreationResponse>();
 
             CreateMap<ServiceTimeSlotsDTO, ServiceTimeSlots>()
                 .ConvertUsing((serviceTimeSlotsDTO, _, context) =>
@@ -86,18 +96,15 @@ namespace API.Mappers
                     src.ServiceTimeSlots != null
                         ? src.ServiceTimeSlots.Select(dto => context.Mapper.Map<ServiceTimeSlots>(dto)).ToList()
                         : new List<ServiceTimeSlots>()))
-                .ForMember(dest => dest.ServiceOrderId, opt => opt.Ignore())
                 .ForMember(dest => dest.StripeId, opt => opt.MapFrom(_ => (string?)null));
 
             CreateMap<Service, ServiceDTO>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id)) 
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                 //.ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
                 .ForMember(dest => dest.DurationInMinutes, opt => opt.MapFrom(src => src.DurationInMinutes))
-                .ForMember(dest => dest.ServiceTimeSlots, opt => opt.MapFrom(src => src.ServiceTimeSlots)) 
-                ;
-
+                .ForMember(dest => dest.ServiceTimeSlots, opt => opt.MapFrom(src => src.ServiceTimeSlots));
 
         }
     }

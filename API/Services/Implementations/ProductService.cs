@@ -3,6 +3,8 @@ using API.Repositories.Interfaces;
 using API.Services.Interfaces;
 using Stripe;
 
+using Product = API.Model.Product;
+
 namespace API.Services.Implementations
 {
     public class ProductService : IProductService
@@ -43,9 +45,15 @@ namespace API.Services.Implementations
             return _productRepository.GetProduct(productId);
         }
 
-        public bool UpdateProduct(Guid productId, Model.Product product)
+        public IEnumerable<Product> GetProducts(IEnumerable<Guid> productIds)
+        {
+            return _productRepository.GetProducts(productIds);
+        }
+
+        public bool UpdateProduct(Guid productId, Product product)
         {
             return _productRepository.UpdateProduct(productId, product);
         }
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using API.Model;
+﻿using API.Enumerators;
+using API.Model;
 using System.ComponentModel.DataAnnotations;
 
 namespace API.DTOs
@@ -8,7 +9,8 @@ namespace API.DTOs
         public Guid? Id { get; set; }
         public string? Name { get; set; }
         public string? Description { get; set; }
-        public decimal? Price { get; set; }
+        public Price? Price { get; set; }
         public int? AmountInStock { get; set; }
+        public OriginCountry? OriginCountry { get; set; }
     }
 }

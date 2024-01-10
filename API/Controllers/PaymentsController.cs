@@ -136,7 +136,7 @@ namespace API.Controllers
                 var orderItems = ((ProductOrder)order).OrderItems;
                 var productIds = orderItems.Select(item => item.ProductId);
                 var productsDomain = productIds.Select(productId => _productRepository.GetProduct(productId));
-                products = orderItems.Select(orderItem => (orderItem.ProductId.ToString(), orderItem.Amount, (int)(_productRepository.GetProduct(orderItem.ProductId)!.Price! * 100))).Distinct().ToList();
+                products = orderItems.Select(orderItem => (orderItem.ProductId.ToString(), orderItem.Amount, (int)(_productRepository.GetProduct(orderItem.ProductId)!.Price!.Amount * 100))).Distinct().ToList();
             }
 
 

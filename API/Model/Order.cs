@@ -10,6 +10,7 @@ namespace API.Model
         public OrderStatus Status { get; set; }
         public OrderType OrderType { get; set; }
         public DateTime Date { get; set; }
+        public Price Price { get; set; }
         public Tip? Tip { get; set; }
         public List<Payment>? Payments { get; set; }
         public List<CustomerDiscount>? OrderDiscounts { get; set; }
