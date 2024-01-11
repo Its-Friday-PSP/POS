@@ -38,9 +38,9 @@ namespace API.Services.Implementations
             return _reservationRepository.InsertReservationToEmployee(timeSlot, id);
         }
 
-        public MakeReservationReturnType MakeReservation(Guid timeSlotId, Guid customerId)
+        public void MakeReservation(Guid timeSlotId, Guid customerId)
         {
-            return _reservationRepository.MakeReservation(timeSlotId, customerId);
+            _reservationRepository.MakeReservation(timeSlotId, customerId);
         }
     }
 }

@@ -1,4 +1,5 @@
 using API.Enumerators;
+using API.Exceptions;
 using API.Model;
 using API.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -66,19 +67,18 @@ namespace API.Repositories.Implementations
             return employee;
         }
 
-        public MakeReservationReturnType MakeReservation(Guid timeSlotId, Guid customerId)
+        public void MakeReservation(Guid timeSlotId, Guid customerId)
         {
             var timeSlot = _context.ServiceTimeSlots.Find(timeSlotId);
             if (timeSlot == null || _context.Customers.Find(customerId) == null)
-                return MakeReservationReturnType.INVALID_ID;
+                throw new EntityNotFoundException();
 
             if (timeSlot.IsBooked)
-                return MakeReservationReturnType.RESERVATION_ALREADY_BOOKED;
+                throw new TimeSlotAlreadyBooked();
 
             timeSlot.IsBooked = true;
             timeSlot.CustomerId = customerId;
             _context.SaveChanges();
-            return MakeReservationReturnType.SUCCESS;
         }
     }
 

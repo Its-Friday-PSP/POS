@@ -10,6 +10,6 @@ namespace API.Services.Interfaces
         public IEnumerable<ServiceTimeSlots>? GetFreeReservationsFromEmployee(Guid id);
         public Service? InsertReservationToService(ServiceTimeSlots timeSlot, Guid id);
         public Employee? InsertReservationToEmployee(ServiceTimeSlots timeSlot, Guid id);
-        public MakeReservationReturnType MakeReservation(Guid timeSlotId, Guid customerId);
+        public void MakeReservation(Guid timeSlotId, Guid customerId);
     }
 }

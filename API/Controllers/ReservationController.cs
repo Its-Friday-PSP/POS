@@ -1,3 +1,4 @@
+using API.Exceptions;
 using API.Model;
 using API.Requests.Reservation;
 using API.Responses.Reservation;
@@ -69,16 +70,16 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public ActionResult MakeReservation([FromRoute] AddCustomerToTheReservationRequest request)
         {
-            switch (_reservationService.MakeReservation(request.TimeSlotId, request.CustomerId))
+            try
             {
-                case Enumerators.MakeReservationReturnType.INVALID_ID:
-                    return NotFound();
-                case Enumerators.MakeReservationReturnType.RESERVATION_ALREADY_BOOKED:
-                    return UnprocessableEntity();
-                case Enumerators.MakeReservationReturnType.SUCCESS:
-                    return Ok();
-                default: throw new NotImplementedException();
+                _reservationService.MakeReservation(request.TimeSlotId, request.CustomerId);
             }
+            catch (HttpResponseException ex)
+            {
+                return StatusCode(((int)ex.StatusCode), ex.Message);
+            }
+
+            return Ok();
         }
     }
 }
