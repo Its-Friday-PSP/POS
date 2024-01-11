@@ -10,6 +10,7 @@ namespace API.DTOs.Request
         public int DurationInMinutes { get; set; }
         public List<ServiceServiceTimeSlotsCreationRequestDTO> ServiceTimeSlots { get; set; }
         public string? StripeId { get; set; }
+        public List<Tax>? Taxes { get; set; }
 
     }
 }

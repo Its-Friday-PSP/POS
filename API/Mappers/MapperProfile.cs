@@ -62,11 +62,16 @@ namespace API.Mappers
             CreateMap<Tip, TipDTO>();
             CreateMap<TipDTO, Tip>();
 
+            CreateMap<Tax, TaxDTO>();
+            CreateMap<TaxDTO, Tax>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()));
+
             CreateMap<ServiceDTO, Service>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id ?? Guid.Empty))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name ?? string.Empty))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description ?? string.Empty))
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+                .ForMember(dest => dest.Taxes, opt => opt.MapFrom(src => src.Taxes))
                 .ForMember(dest => dest.DurationInMinutes, opt => opt.MapFrom(src => src.DurationInMinutes ?? 0))
                 .ForMember(dest => dest.ServiceTimeSlots, opt => opt.MapFrom((src => src.ServiceTimeSlots)))
                 .ForMember(dest => dest.StripeId, opt => opt.MapFrom(_ => (string?)null));
@@ -76,6 +81,7 @@ namespace API.Mappers
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+                .ForMember(dest => dest.Taxes, opt => opt.MapFrom(src => src.Taxes))
                 .ForMember(dest => dest.DurationInMinutes, opt => opt.MapFrom(src => src.DurationInMinutes))
                 .ForMember(dest => dest.ServiceTimeSlots, opt => opt.MapFrom(src => src.ServiceTimeSlots));
 
@@ -179,6 +185,7 @@ namespace API.Mappers
             CreateMap<ProductCreationRequestDTO, Product>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Taxes, opt => opt.MapFrom(src => src.Taxes))
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
                 .ForMember(dest => dest.AmountInStock, opt => opt.MapFrom(src => src.AmountInStock))
                 .ForMember(dest => dest.StripeId, opt => opt.MapFrom(src => src.StripeId))
@@ -187,6 +194,7 @@ namespace API.Mappers
             CreateMap<Product, ProductCreationResponseDTO>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Taxes, opt => opt.MapFrom(src => src.Taxes))
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
                 .ForMember(dest => dest.AmountInStock, opt => opt.MapFrom(src => src.AmountInStock))
                 .ForMember(dest => dest.StripeId, opt => opt.MapFrom(src => src.StripeId))

@@ -23,6 +23,7 @@ namespace API.Repositories
         public DbSet<Discount> Discounts { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<ServiceTimeSlots> ServiceTimeSlots { get; set; }
+        public DbSet<Tax> Taxes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -49,6 +50,13 @@ namespace API.Repositories
             modelBuilder.Entity<ServiceTimeSlots>()
                 .HasKey(a => a.Id);
 
+            modelBuilder.Entity<Tax>()
+                .OwnsOne(tax => tax.Price, price =>
+                {
+                    price.Property(price => price.Amount).HasColumnName("Amount");
+                    price.Property(price => price.Currency).HasColumnName("Currency");
+                });
+
         }
 
         private void OnCreatingProduct(ModelBuilder modelBuilder)
@@ -59,6 +67,11 @@ namespace API.Repositories
                     price.Property(price => price.Amount).HasColumnName("Price");
                     price.Property(price => price.Currency).HasColumnName("Currency");
                 });
+
+            modelBuilder.Entity<Product>()
+                .HasMany(product => product.Taxes)
+                .WithOne()
+                .HasForeignKey(tax => tax.Id);
         }
 
         private void OnCreatingCustomer(ModelBuilder modelBuilder)
@@ -173,6 +186,12 @@ namespace API.Repositories
                 .HasOne<Customer>()
                 .WithMany(customer => customer.ServiceTimeSlots)
                 .HasForeignKey(serviceTimeSlots => serviceTimeSlots.CustomerId);
+
+            modelBuilder.Entity<Service>()
+                .HasMany(service => service.Taxes)
+                .WithOne()
+                .HasForeignKey(tax => tax.Id);
+
         }
     }
 }

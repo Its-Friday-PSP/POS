@@ -12,5 +12,6 @@ namespace API.DTOs.Response
         public int? AmountInStock { get; set; }
         public string? StripeId { get; set; }
         public OriginCountry OriginCountry { get; set; }
+        public List<Tax> Taxes { get; set; }
     }
 }
