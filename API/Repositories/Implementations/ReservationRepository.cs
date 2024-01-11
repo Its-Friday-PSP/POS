@@ -1,8 +1,6 @@
-using API.Migrations;
 using API.Model;
 using API.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Stripe;
 
 namespace API.Repositories.Implementations
 {
