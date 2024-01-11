@@ -24,6 +24,13 @@ namespace API.Controllers
             _mapper = mapper;
         }
 
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<IEnumerable<Order>> GetOrders()
+        {
+            return Ok(_orderService.GetAllOrders());
+        }
+
         [HttpGet("{orderId}")]
         public ActionResult<Order> GetOrder(Guid orderId)
         {

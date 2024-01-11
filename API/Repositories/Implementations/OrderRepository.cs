@@ -34,6 +34,10 @@ namespace API.Repositories.Implementations
               
             return true;
         }
+        public IEnumerable<Order> GetAllOrders()
+        {
+            return _context.Orders;
+        }
 
         public Order? GetOrder(Guid orderId)
         {
@@ -131,5 +135,12 @@ namespace API.Repositories.Implementations
             return completedOrder;
         }
 
+        public Order UpdateOrderStatus(Order order, OrderStatus orderStatus)
+        {
+            order.Status = orderStatus;
+            _context.Update(order);
+            _context.SaveChanges();
+            return order;
+        }
     }
 }

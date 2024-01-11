@@ -1,6 +1,7 @@
 using API.DTOs;
 using API.Model;
 using API.Requests.Service;
+using API.Responses.Reservation;
 using API.Responses.Service;
 using API.Services.Interfaces;
 using AutoMapper;
@@ -20,6 +21,14 @@ namespace API.Controllers
         {
             _serviceService = serviceService;
             _mapper = mapper;
+        }
+
+        [HttpGet]
+        public ActionResult<IEnumerable<GetAllServicesResponse>> GetService()
+        {
+            var serviceDomain = _serviceService.GetAllServices();
+            var response = new GetAllServicesResponse(_mapper.Map<List<ServiceDTO>>(serviceDomain));
+            return Ok(response);
         }
 
         [HttpGet("{serviceId}")]

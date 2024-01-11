@@ -137,15 +137,17 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Model.OrderItem", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("OrderId")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("Index")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Amount")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Index")
-                        .HasColumnType("INTEGER");
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 

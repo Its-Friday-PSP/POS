@@ -57,6 +57,8 @@ namespace API.Repositories.Implementations
             }
 
             oldProduct = product;
+            _context.Update(oldProduct);
+            _context.SaveChanges();
 
             return true;
         }

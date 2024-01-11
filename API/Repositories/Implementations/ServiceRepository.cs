@@ -36,6 +36,11 @@ namespace API.Repositories.Implementations
             return _context.Services.Find(serviceId);
         }
 
+        public IEnumerable<Service> GetAllServices()
+        {
+            return _context.Services;
+        }
+
         public IEnumerable<Service> GetServices(IEnumerable<Guid> serviceIds)
         {
             return _context.Services.Where(x => serviceIds.Contains(x.Id));
