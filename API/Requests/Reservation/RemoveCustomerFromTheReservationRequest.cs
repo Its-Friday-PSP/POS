@@ -6,7 +6,5 @@ namespace API.Requests.Reservation
     {
         [FromRoute(Name = "timeSlotId")]
         public Guid TimeSlotId { get; set; }
-        [FromRoute(Name = "customerId")]
-        public Guid CustomerId { get; set; }
     }
 }

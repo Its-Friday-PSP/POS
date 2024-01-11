@@ -74,13 +74,13 @@ namespace API.Controllers
             return Ok(timeSlot);
         }
 
-        [HttpPost("cancelReservation/{timeSlotId}/{customerId}")]
+        [HttpPost("cancelReservation/{timeSlotId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public ActionResult<RemoveCustomerFromTheReservationResponse> CancelReservation([FromRoute] RemoveCustomerFromTheReservationRequest request)
         {
-            var timeSlot = _reservationService.CancelReservation(request.TimeSlotId, request.CustomerId);
+            var timeSlot = _reservationService.CancelReservation(request.TimeSlotId);
             return Ok(timeSlot);
         }
     }
