@@ -41,9 +41,9 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public ActionResult<OrderDTO> CreateOrder(OrderCreationRequestDTO request)
+        public async Task<ActionResult<OrderDTO>> CreateOrder(OrderCreationRequestDTO request)
         {
-            Order order = _orderService.CreateOrder(request);
+            Order order = await _orderService.CreateOrder(request);
             var response = _mapper.Map<OrderDTO>(order);
 
             return Ok(response);
