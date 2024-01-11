@@ -62,5 +62,23 @@ namespace API.Controllers
             var service = _reservationService.InsertReservationToEmployee(_mapper.Map<ServiceTimeSlots>(request.TimeSlots), employeeId);
             return service == null ? NotFound() : Ok(service);
         }
+
+        [HttpPost("customer/{timeSlotId}/{customerId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        public ActionResult MakeReservation([FromRoute] AddCustomerToTheReservationRequest request)
+        {
+            switch (_reservationService.MakeReservation(request.TimeSlotId, request.CustomerId))
+            {
+                case Enumerators.MakeReservationReturnType.INVALID_ID:
+                    return NotFound();
+                case Enumerators.MakeReservationReturnType.RESERVATION_ALREADY_BOOKED:
+                    return UnprocessableEntity();
+                case Enumerators.MakeReservationReturnType.SUCCESS:
+                    return Ok();
+                default: throw new NotImplementedException();
+            }
+        }
     }
 }
