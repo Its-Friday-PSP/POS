@@ -64,13 +64,23 @@ namespace API.Controllers
             return service == null ? NotFound() : Ok(service);
         }
 
-        [HttpPost("customer/{timeSlotId}/{customerId}")]
+        [HttpPost("makeReservation/{timeSlotId}/{customerId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public ActionResult<AddCustomerToTheReservationResponse> MakeReservation([FromRoute] AddCustomerToTheReservationRequest request)
         {
             var timeSlot = _reservationService.MakeReservation(request.TimeSlotId, request.CustomerId);
+            return Ok(timeSlot);
+        }
+
+        [HttpPost("cancelReservation/{timeSlotId}/{customerId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        public ActionResult<RemoveCustomerFromTheReservationResponse> CancelReservation([FromRoute] RemoveCustomerFromTheReservationRequest request)
+        {
+            var timeSlot = _reservationService.CancelReservation(request.TimeSlotId, request.CustomerId);
             return Ok(timeSlot);
         }
     }

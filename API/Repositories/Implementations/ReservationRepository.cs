@@ -81,6 +81,23 @@ namespace API.Repositories.Implementations
             _context.SaveChanges();
             return timeSlot;
         }
+
+        public ServiceTimeSlots CancelReservation(Guid timeSlotId, Guid customerId)
+        {
+            var timeSlot = _context.ServiceTimeSlots.Find(timeSlotId);
+            if (timeSlot == null || _context.Customers.Find(customerId) == null)
+                throw new EntityNotFoundException();
+
+            if (!timeSlot.IsBooked)
+                throw new TimeSlotAlreadyBooked();
+
+            if (timeSlot.StartTime > DateTime.Now)
+
+            timeSlot.IsBooked = true;
+            timeSlot.CustomerId = customerId;
+            _context.SaveChanges();
+            return timeSlot;
+        }
     }
 
 }
