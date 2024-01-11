@@ -35,7 +35,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<TaxDTO> GetTax()
+        public ActionResult<TaxDTO> GetTaxes()
         {
             var taxes = _taxService.GetAllTaxes();
             var response = _mapper.Map<IEnumerable<TaxDTO>>(taxes);
