@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20240111113707_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20240111165945_newthings2")]
+    partial class newthings2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -140,8 +140,13 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Model.OrderItem", b =>
                 {
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("TEXT");
+
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ProductId")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Amount")
@@ -150,7 +155,9 @@ namespace API.Migrations
                     b.Property<int>("Index")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("Id");
+                    b.HasKey("OrderId", "Id", "ProductId");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("OrderItems");
                 });
@@ -206,26 +213,6 @@ namespace API.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("API.Model.ProductOrderItem", b =>
-                {
-                    b.Property<Guid>("OrderItemId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid?>("ProductOrderId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("OrderItemId", "ProductId");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("ProductOrderId");
-
-                    b.ToTable("ProductOrderItem");
-                });
-
             modelBuilder.Entity("API.Model.Service", b =>
                 {
                     b.Property<Guid>("Id")
@@ -262,10 +249,10 @@ namespace API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("CustomerId")
+                    b.Property<Guid?>("CustomerId")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("EmployeeId")
+                    b.Property<Guid?>("EmployeeId")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("EndTime")
@@ -274,13 +261,15 @@ namespace API.Migrations
                     b.Property<bool>("IsBooked")
                         .HasColumnType("INTEGER");
 
-                    b.Property<Guid>("ServiceId")
+                    b.Property<Guid?>("ServiceId")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
 
                     b.HasIndex("EmployeeId");
 
@@ -476,6 +465,23 @@ namespace API.Migrations
                     b.Navigation("Tip");
                 });
 
+            modelBuilder.Entity("API.Model.OrderItem", b =>
+                {
+                    b.HasOne("API.Model.ProductOrder", "ProductOrder")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("API.Model.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProductOrder");
+                });
+
             modelBuilder.Entity("API.Model.Payment", b =>
                 {
                     b.HasOne("API.Model.Order", null)
@@ -518,7 +524,7 @@ namespace API.Migrations
 
                             b1.Property<long>("Amount")
                                 .HasColumnType("INTEGER")
-                                .HasColumnName("Amount");
+                                .HasColumnName("Price");
 
                             b1.Property<int>("Currency")
                                 .HasColumnType("INTEGER")
@@ -533,29 +539,6 @@ namespace API.Migrations
                         });
 
                     b.Navigation("Price");
-                });
-
-            modelBuilder.Entity("API.Model.ProductOrderItem", b =>
-                {
-                    b.HasOne("API.Model.OrderItem", "OrderItem")
-                        .WithMany("ProductOrderItems")
-                        .HasForeignKey("OrderItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("API.Model.Product", "Product")
-                        .WithMany("ProductOrderItems")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("API.Model.ProductOrder", null)
-                        .WithMany("OrderItems")
-                        .HasForeignKey("ProductOrderId");
-
-                    b.Navigation("OrderItem");
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("API.Model.Service", b =>
@@ -591,22 +574,24 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Model.ServiceTimeSlots", b =>
                 {
+                    b.HasOne("API.Model.Customer", null)
+                        .WithMany("ServiceTimeSlots")
+                        .HasForeignKey("CustomerId");
+
                     b.HasOne("API.Model.Employee", null)
                         .WithMany("ServiceTimeSlots")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EmployeeId");
 
                     b.HasOne("API.Model.Service", null)
                         .WithMany("ServiceTimeSlots")
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ServiceId");
                 });
 
             modelBuilder.Entity("API.Model.Customer", b =>
                 {
                     b.Navigation("CustomerDiscounts");
+
+                    b.Navigation("ServiceTimeSlots");
                 });
 
             modelBuilder.Entity("API.Model.Discount", b =>
@@ -624,16 +609,6 @@ namespace API.Migrations
                     b.Navigation("OrderDiscounts");
 
                     b.Navigation("Payments");
-                });
-
-            modelBuilder.Entity("API.Model.OrderItem", b =>
-                {
-                    b.Navigation("ProductOrderItems");
-                });
-
-            modelBuilder.Entity("API.Model.Product", b =>
-                {
-                    b.Navigation("ProductOrderItems");
                 });
 
             modelBuilder.Entity("API.Model.Service", b =>

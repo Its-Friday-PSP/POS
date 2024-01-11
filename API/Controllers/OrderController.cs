@@ -41,10 +41,10 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public ActionResult<OrderCreationResponseDTO> CreateOrder(OrderCreationRequestDTO request)
+        public ActionResult<OrderDTO> CreateOrder(OrderCreationRequestDTO request)
         {
             Order order = _orderService.CreateOrder(request);
-            var response = _mapper.Map<OrderCreationResponseDTO>(order);
+            var response = _mapper.Map<OrderDTO>(order);
 
             return Ok(response);
         }

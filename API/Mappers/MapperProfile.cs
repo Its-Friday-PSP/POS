@@ -5,6 +5,7 @@ using API.Model;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore.Update.Internal;
 using System.ComponentModel.DataAnnotations;
+using API.Shared;
 
 namespace API.Mappers
 {
@@ -12,6 +13,14 @@ namespace API.Mappers
     {
         public MapperProfile()
         {
+            CreateMap<PriceDTO, Price>()
+                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount * (decimal)Constants.DECIMAL_MULTIPLIER))
+                .ForMember(dest => dest.Currency, opt => opt.MapFrom(src => src.Currency));
+
+            CreateMap<Price, PriceDTO>()
+                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount / (decimal) Constants.DECIMAL_MULTIPLIER))
+                .ForMember(dest => dest.Currency, opt => opt.MapFrom(src => src.Currency));
+
             CreateMap<CustomerDiscount, CustomerDiscountDTO>();
             CreateMap<CustomerDiscountDTO, CustomerDiscount>();
 
@@ -53,6 +62,25 @@ namespace API.Mappers
             CreateMap<Tip, TipDTO>();
             CreateMap<TipDTO, Tip>();
 
+            CreateMap<ServiceDTO, Service>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id ?? Guid.Empty))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name ?? string.Empty))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description ?? string.Empty))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+                .ForMember(dest => dest.DurationInMinutes, opt => opt.MapFrom(src => src.DurationInMinutes ?? 0))
+                .ForMember(dest => dest.ServiceTimeSlots, opt => opt.MapFrom((src => src.ServiceTimeSlots)))
+                .ForMember(dest => dest.StripeId, opt => opt.MapFrom(_ => (string?)null));
+
+            CreateMap<Service, ServiceDTO>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+                .ForMember(dest => dest.DurationInMinutes, opt => opt.MapFrom(src => src.DurationInMinutes))
+                .ForMember(dest => dest.ServiceTimeSlots, opt => opt.MapFrom(src => src.ServiceTimeSlots));
+
+            CreateMap<ServiceOrder, ServiceOrderDTO>();
+
             CreateMap<OrderItemCreationRequestDTO, OrderItem>()
                 .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId))
                 .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount))
@@ -77,6 +105,24 @@ namespace API.Mappers
                 .ForMember(dest => dest.EndTime, opt => opt.MapFrom(src => src.EndTime))
                 .ForMember(dest => dest.IsBooked, opt => opt.MapFrom(src => true));
 
+            CreateMap<EmployeeServiceTimeSlotsRequestDTO, ServiceTimeSlots>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
+                .ForMember(dest => dest.ServiceId, opt => opt.Ignore())
+                .ForMember(dest => dest.EmployeeId, opt => opt.Ignore())
+                .ForMember(dest => dest.CustomerId, opt => opt.Ignore())
+                .ForMember(dest => dest.StartTime, opt => opt.MapFrom(src => src.StartTime))
+                .ForMember(dest => dest.EndTime, opt => opt.MapFrom(src => src.EndTime))
+                .ForMember(dest => dest.IsBooked, opt => opt.MapFrom(src => true));
+
+            CreateMap<ServiceServiceTimeSlotsCreationRequestDTO, ServiceTimeSlots>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
+                .ForMember(dest => dest.ServiceId, opt => opt.Ignore())
+                .ForMember(dest => dest.EmployeeId, opt => opt.MapFrom(src => src.EmployeeId))
+                .ForMember(dest => dest.CustomerId, opt => opt.Ignore())
+                .ForMember(dest => dest.StartTime, opt => opt.MapFrom(src => src.StartTime))
+                .ForMember(dest => dest.EndTime, opt => opt.MapFrom(src => src.EndTime))
+                .ForMember(dest => dest.IsBooked, opt => opt.MapFrom(src => true));
+
             CreateMap<ServiceCreationRequestDTO, Service>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
@@ -86,15 +132,20 @@ namespace API.Mappers
                 .ForMember(dest => dest.ServiceTimeSlots, opt => opt.MapFrom(src => src.ServiceTimeSlots))
                 .ForMember(dest => dest.StripeId, opt => opt.MapFrom(src => src.StripeId));
 
+            CreateMap<EmployeeCreationRequestDTO, Employee>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
+                .ForMember(dest => dest.Auth, opt => opt.MapFrom(src => src.Auth))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role))
+                .ForMember(dest => dest.ServiceTimeSlots, opt => opt.MapFrom(src => src.ServiceTimeSlots));
 
-            //CreateMap<ServiceOrder, OrderDTO>()
-            //    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-            //    .ForMember(dest => dest.OrderType, opt => opt.MapFrom(src => src.OrderType))
-            //    .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.Price))
-            //    .ForMember(dest => dest.Tip, opt => opt.MapFrom(src => src.Tip))
-            //    .ForMember(dest => dest.ProductOrder, opt => opt.Ignore())
-            //    .ForMember(dest => dest.ServiceOrder, opt => opt.MapFrom(src => src));
-
+            CreateMap<ServiceOrder, OrderDTO>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.OrderType, opt => opt.MapFrom(src => src.OrderType))
+                .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.Price))
+                .ForMember(dest => dest.Tip, opt => opt.MapFrom(src => src.Tip))
+                .ForMember(dest => dest.ProductOrder, opt => opt.Ignore())
+                .ForMember(dest => dest.ServiceOrder, opt => opt.MapFrom(src => src));
 
             CreateMap<ProductOrder, OrderDTO>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
@@ -158,7 +209,6 @@ namespace API.Mappers
             CreateMap<ServiceTimeSlots, ServiceTimeSlotsDTO>()
                 .ConvertUsing(serviceTimeSlots => new ServiceTimeSlotsDTO
                 {
-                    
                     CustomerId = serviceTimeSlots.CustomerId,
                     StartTime = serviceTimeSlots.StartTime,
                     EndTime = serviceTimeSlots.EndTime, 
@@ -166,26 +216,7 @@ namespace API.Mappers
                     ServiceId = serviceTimeSlots.ServiceId
                 });
 
-
-            CreateMap<ServiceDTO, Service>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id ?? Guid.Empty))
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name ?? string.Empty))
-                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description ?? string.Empty))
-                //.ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
-                .ForMember(dest => dest.DurationInMinutes, opt => opt.MapFrom(src => src.DurationInMinutes ?? 0))
-                .ForMember(dest => dest.ServiceTimeSlots, opt => opt.MapFrom((src, dest, destMember, context) =>
-                    src.ServiceTimeSlots != null
-                        ? src.ServiceTimeSlots.Select(dto => context.Mapper.Map<ServiceTimeSlots>(dto)).ToList()
-                        : new List<ServiceTimeSlots>()))
-                .ForMember(dest => dest.StripeId, opt => opt.MapFrom(_ => (string?)null));
-
-            CreateMap<Service, ServiceDTO>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
-                //.ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
-                .ForMember(dest => dest.DurationInMinutes, opt => opt.MapFrom(src => src.DurationInMinutes))
-                .ForMember(dest => dest.ServiceTimeSlots, opt => opt.MapFrom(src => src.ServiceTimeSlots));
+            
 
         }
     }

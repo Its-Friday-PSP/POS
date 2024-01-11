@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace API.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class initialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -61,19 +61,6 @@ namespace API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "OrderItems",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Amount = table.Column<int>(type: "INTEGER", nullable: false),
-                    Index = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_OrderItems", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Orders",
                 columns: table => new
                 {
@@ -101,7 +88,7 @@ namespace API.Migrations
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: true),
                     Description = table.Column<string>(type: "TEXT", nullable: true),
-                    Amount = table.Column<long>(type: "INTEGER", nullable: true),
+                    Price = table.Column<long>(type: "INTEGER", nullable: true),
                     Currency = table.Column<int>(type: "INTEGER", nullable: true),
                     AmountInStock = table.Column<int>(type: "INTEGER", nullable: true),
                     StripeId = table.Column<string>(type: "TEXT", nullable: true),
@@ -190,29 +177,26 @@ namespace API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProductOrderItem",
+                name: "OrderItems",
                 columns: table => new
                 {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    OrderId = table.Column<Guid>(type: "TEXT", nullable: false),
                     ProductId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    OrderItemId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    ProductOrderId = table.Column<Guid>(type: "TEXT", nullable: true)
+                    Index = table.Column<int>(type: "INTEGER", nullable: false),
+                    Amount = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductOrderItem", x => new { x.OrderItemId, x.ProductId });
+                    table.PrimaryKey("PK_OrderItems", x => new { x.OrderId, x.Id, x.ProductId });
                     table.ForeignKey(
-                        name: "FK_ProductOrderItem_OrderItems_OrderItemId",
-                        column: x => x.OrderItemId,
-                        principalTable: "OrderItems",
+                        name: "FK_OrderItems_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ProductOrderItem_Orders_ProductOrderId",
-                        column: x => x.ProductOrderId,
-                        principalTable: "Orders",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_ProductOrderItem_Products_ProductId",
+                        name: "FK_OrderItems_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
@@ -235,14 +219,20 @@ namespace API.Migrations
                 {
                     table.PrimaryKey("PK_ServiceTimeSlots", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_ServiceTimeSlots_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_ServiceTimeSlots_Employees_EmployeeId",
                         column: x => x.EmployeeId,
                         principalTable: "Employees",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ServiceTimeSlots_Services_ServiceId",
-                        column: x => x.ServiceId,
+                        name: "FK_ServiceTimeSlots_Services_Id",
+                        column: x => x.Id,
                         principalTable: "Services",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -259,19 +249,14 @@ namespace API.Migrations
                 column: "OrderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Payments_OrderId",
-                table: "Payments",
-                column: "OrderId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProductOrderItem_ProductId",
-                table: "ProductOrderItem",
+                name: "IX_OrderItems_ProductId",
+                table: "OrderItems",
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductOrderItem_ProductOrderId",
-                table: "ProductOrderItem",
-                column: "ProductOrderId");
+                name: "IX_Payments_OrderId",
+                table: "Payments",
+                column: "OrderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Services_ServiceOrderId",
@@ -279,14 +264,14 @@ namespace API.Migrations
                 column: "ServiceOrderId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ServiceTimeSlots_CustomerId",
+                table: "ServiceTimeSlots",
+                column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ServiceTimeSlots_EmployeeId",
                 table: "ServiceTimeSlots",
                 column: "EmployeeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ServiceTimeSlots_ServiceId",
-                table: "ServiceTimeSlots",
-                column: "ServiceId");
         }
 
         /// <inheritdoc />
@@ -296,25 +281,22 @@ namespace API.Migrations
                 name: "CustomerDiscount");
 
             migrationBuilder.DropTable(
-                name: "Payments");
+                name: "OrderItems");
 
             migrationBuilder.DropTable(
-                name: "ProductOrderItem");
+                name: "Payments");
 
             migrationBuilder.DropTable(
                 name: "ServiceTimeSlots");
 
             migrationBuilder.DropTable(
-                name: "Customers");
-
-            migrationBuilder.DropTable(
                 name: "Discounts");
 
             migrationBuilder.DropTable(
-                name: "OrderItems");
+                name: "Products");
 
             migrationBuilder.DropTable(
-                name: "Products");
+                name: "Customers");
 
             migrationBuilder.DropTable(
                 name: "Employees");

@@ -5,6 +5,8 @@ using API.Enumerators;
 using API.Model;
 using API.Repositories.Interfaces;
 using API.Services.Interfaces;
+using API.Shared;
+
 
 namespace API.Services.Implementations
 {
@@ -53,6 +55,7 @@ namespace API.Services.Implementations
             }
             else
             {
+
                 Guid orderId = Guid.NewGuid();
                 
                 List<OrderItem> orderItems = orderRequest.Products?.Select(orderItemDto =>
@@ -64,6 +67,11 @@ namespace API.Services.Implementations
                         Index = orderItemDto.Index
                     }
                 ).ToList()!;
+
+                if(orderItems == null)
+                {
+                    new ArgumentException("No Items");
+                }
 
                 order = new ProductOrder(orderId, orderRequest.CustomerId) { OrderItems = orderItems };
                 order.Price = CalculateTotalPrice(orderItems, orderRequest.DiscountCodes);
@@ -138,8 +146,8 @@ namespace API.Services.Implementations
 
         private long NormalizeCurrency(Price price) => price.Currency switch
         {
-            Currency.GBP => 86 * price.Amount,
-            Currency.PLN => 434 * price.Amount,
+            Currency.GBP => (long) 0.86 * Constants.DECIMAL_MULTIPLIER * price.Amount,
+            Currency.PLN => (long) 4.34 * Constants.DECIMAL_MULTIPLIER * price.Amount,
             _ => price.Amount,
         };
 
@@ -161,7 +169,7 @@ namespace API.Services.Implementations
                 }
                 else if(discount.DiscountType == DiscountType.PERCENTAGE && discount.ApplicableOrderType == orderType)
                 {
-                    double percentage = (100.0 - (double) discount.Percentage!) / 100.0;
+                    double percentage = (100.0 - (double) discount.Percentage!) / (double) Constants.DECIMAL_MULTIPLIER;
                     resultPrice = (long)(resultPrice * percentage);
                 }
 

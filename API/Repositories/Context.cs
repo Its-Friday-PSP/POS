@@ -150,7 +150,7 @@ namespace API.Repositories
             modelBuilder.Entity<Service>()
                .HasMany(service => service.ServiceTimeSlots)
                .WithOne()
-               .HasForeignKey(serviceTimeSlots => serviceTimeSlots.ServiceId);
+               .HasForeignKey(serviceTimeSlots => serviceTimeSlots.Id);
 
             modelBuilder.Entity<Service>()
                 .OwnsOne(service => service.Price, price =>
@@ -158,6 +158,21 @@ namespace API.Repositories
                     price.Property(price => price.Amount).HasColumnName("Pay");
                     price.Property(price => price.Currency).HasColumnName("Currency");
                 });
+
+            modelBuilder.Entity<ServiceTimeSlots>()
+                .HasOne<Service>()
+                .WithMany(service => service.ServiceTimeSlots)
+                .HasForeignKey(servicetimeslots => servicetimeslots.ServiceId);
+
+            modelBuilder.Entity<ServiceTimeSlots>()
+                .HasOne<Employee>()
+                .WithMany(service => service.ServiceTimeSlots)
+                .HasForeignKey(servicetimeslots => servicetimeslots.EmployeeId);
+
+            modelBuilder.Entity<ServiceTimeSlots>()
+                .HasOne<Customer>()
+                .WithMany(customer => customer.ServiceTimeSlots)
+                .HasForeignKey(serviceTimeSlots => serviceTimeSlots.CustomerId);
         }
     }
 }

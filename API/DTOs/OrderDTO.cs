@@ -7,7 +7,7 @@ namespace API.DTOs
     {
         public Guid? Id { get; set; }
         public OrderTypeDTO OrderType { get; set; }
-        public Price? TotalPrice { get; set; }
+        public PriceDTO? TotalPrice { get; set; }
         public TipDTO? Tip { get; set; }
         public DateTime Date { get; set; }
         public ProductOrderDTO? ProductOrder { get; set; }

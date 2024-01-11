@@ -246,10 +246,10 @@ namespace API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("CustomerId")
+                    b.Property<Guid?>("CustomerId")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("EmployeeId")
+                    b.Property<Guid?>("EmployeeId")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("EndTime")
@@ -258,13 +258,15 @@ namespace API.Migrations
                     b.Property<bool>("IsBooked")
                         .HasColumnType("INTEGER");
 
-                    b.Property<Guid>("ServiceId")
+                    b.Property<Guid?>("ServiceId")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
 
                     b.HasIndex("EmployeeId");
 
@@ -569,22 +571,24 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Model.ServiceTimeSlots", b =>
                 {
+                    b.HasOne("API.Model.Customer", null)
+                        .WithMany("ServiceTimeSlots")
+                        .HasForeignKey("CustomerId");
+
                     b.HasOne("API.Model.Employee", null)
                         .WithMany("ServiceTimeSlots")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EmployeeId");
 
                     b.HasOne("API.Model.Service", null)
                         .WithMany("ServiceTimeSlots")
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ServiceId");
                 });
 
             modelBuilder.Entity("API.Model.Customer", b =>
                 {
                     b.Navigation("CustomerDiscounts");
+
+                    b.Navigation("ServiceTimeSlots");
                 });
 
             modelBuilder.Entity("API.Model.Discount", b =>

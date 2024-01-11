@@ -9,5 +9,7 @@ namespace API.DTOs
         [Required]
         public AuthDTO? Auth { get; set; }
         public List<CustomerDiscount>? CustomerDiscounts { get; set; }
+        public List<ServiceTimeSlots>? ServiceTimeSlots { get; set; }
+
     }
 }

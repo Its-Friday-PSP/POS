@@ -1,4 +1,5 @@
-﻿using API.Enumerators;
+﻿using API.DTOs;
+using API.Enumerators;
 using API.Model;
 using API.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -47,7 +48,7 @@ namespace API.Repositories.Implementations
             {
                 return null;
             }
-            if(order.OrderType == Enumerators.OrderType.PRODUCT)
+            if(order.OrderType == OrderTypeDTO.PRODUCT)
             {
                 return _context.Orders
                     .Include(order => ((ProductOrder)order).OrderItems)
@@ -101,7 +102,7 @@ namespace API.Repositories.Implementations
         {
             var completedOrder = GetOrder(orderId);
 
-            if(completedOrder.OrderType == OrderType.SERVICE)
+            if(completedOrder.OrderType == OrderTypeDTO.SERVICE)
             {
                 var serviceOrder = completedOrder as ServiceOrder;
 

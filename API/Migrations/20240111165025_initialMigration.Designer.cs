@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20240111135440_deletedProductOrderItem")]
-    partial class deletedProductOrderItem
+    [Migration("20240111165025_initialMigration")]
+    partial class initialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -246,7 +246,6 @@ namespace API.Migrations
             modelBuilder.Entity("API.Model.ServiceTimeSlots", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("CustomerId")
@@ -269,9 +268,9 @@ namespace API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EmployeeId");
+                    b.HasIndex("CustomerId");
 
-                    b.HasIndex("ServiceId");
+                    b.HasIndex("EmployeeId");
 
                     b.ToTable("ServiceTimeSlots");
                 });
@@ -572,6 +571,12 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Model.ServiceTimeSlots", b =>
                 {
+                    b.HasOne("API.Model.Customer", null)
+                        .WithMany("ServiceTimeSlots")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("API.Model.Employee", null)
                         .WithMany("ServiceTimeSlots")
                         .HasForeignKey("EmployeeId")
@@ -580,7 +585,7 @@ namespace API.Migrations
 
                     b.HasOne("API.Model.Service", null)
                         .WithMany("ServiceTimeSlots")
-                        .HasForeignKey("ServiceId")
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -588,6 +593,8 @@ namespace API.Migrations
             modelBuilder.Entity("API.Model.Customer", b =>
                 {
                     b.Navigation("CustomerDiscounts");
+
+                    b.Navigation("ServiceTimeSlots");
                 });
 
             modelBuilder.Entity("API.Model.Discount", b =>
