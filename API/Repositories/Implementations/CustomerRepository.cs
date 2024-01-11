@@ -25,7 +25,7 @@ namespace API.Repositories.Implementations
         {
             var customer = GetCustomer(customerId);
             _context.Customers.Remove(customer);
-            _context.SaveChanges(); 
+            _context.SaveChanges();
             return customer;
         }
 

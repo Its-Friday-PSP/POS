@@ -61,7 +61,8 @@ namespace API.Mappers
                             (Guid)serviceTimeSlotsDTO.EmployeeId!,
                             (DateTime)serviceTimeSlotsDTO.StartTime!,
                             (DateTime)serviceTimeSlotsDTO.EndTime!,
-                            (bool)serviceTimeSlotsDTO.IsBooked!
+                            (bool)serviceTimeSlotsDTO.IsBooked!,
+                            (Guid)serviceTimeSlotsDTO.ServiceId!
                         );
                     return serviceTimeSlots;
                 });
@@ -69,10 +70,12 @@ namespace API.Mappers
             CreateMap<ServiceTimeSlots, ServiceTimeSlotsDTO>()
                 .ConvertUsing(serviceTimeSlots => new ServiceTimeSlotsDTO
                 {
+                    
                     CustomerId = serviceTimeSlots.CustomerId,
                     StartTime = serviceTimeSlots.StartTime,
                     EndTime = serviceTimeSlots.EndTime, 
-                    IsBooked = serviceTimeSlots.IsBooked 
+                    IsBooked = serviceTimeSlots.IsBooked,
+                    ServiceId = serviceTimeSlots.ServiceId
                 });
 
 

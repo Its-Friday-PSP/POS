@@ -26,7 +26,7 @@ namespace API.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<GetAllServicesResponse>> GetService()
         {
-            var serviceDomain = _serviceService.GetAllServices().ToList();
+            var serviceDomain = _serviceService.GetAllServices();
             var response = new GetAllServicesResponse(_mapper.Map<List<ServiceDTO>>(serviceDomain));
             return Ok(response);
         }
