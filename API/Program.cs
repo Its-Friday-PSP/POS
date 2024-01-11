@@ -15,7 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAutoMapper(typeof(API.Mappers.MapperProfile));
 
 builder.Services.AddDbContext<Context>(options =>
-        options.UseSqlServer(builder.Configuration.GetConnectionString("context") ?? throw new InvalidOperationException("Connection string 'context' not found.")));
+        options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'context' not found.")));
 
 
 StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
@@ -47,6 +47,9 @@ builder.Services.AddScoped<IDiscountRepository, DiscountRepository>();
 
 builder.Services.AddScoped<IEmployeesService, EmployeesService>();
 builder.Services.AddScoped<IEmployeesRepository, EmployeesRepository>();
+
+builder.Services.AddScoped<IReservationService, ReservationService>();
+builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 

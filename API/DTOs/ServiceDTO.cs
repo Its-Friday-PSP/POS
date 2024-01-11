@@ -13,6 +13,6 @@ namespace API.DTOs
         public Price? Price { get; set; }
         public int? DurationInMinutes { get; set; }
         [Required]
-        public List<ServiceTimeSlotsDTO>? ServiceTimeSlots { get; set; }
+        public List<ServiceTimeSlotsDTO> ServiceTimeSlots { get; set; }
     }
 }

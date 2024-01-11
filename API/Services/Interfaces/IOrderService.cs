@@ -6,6 +6,7 @@ namespace API.Services.Interfaces
     public interface IOrderService
     {
         public Order CreateOrder(OrderCreationRequestDTO order);
+        public IEnumerable<Order> GetAllOrders();
         public Order GetOrder(Guid orderId);
         public Order AddOrderItem(Guid orderId, OrderItem orderItem);
         public bool RemoveOrderItem(Guid orderId, int orderItemIndex);

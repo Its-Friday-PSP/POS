@@ -3,7 +3,6 @@ using System;
 using API.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
@@ -12,43 +11,96 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20240109215709_services")]
-    partial class services
+    [Migration("20240111090103_RemoveSErvicesIdAndStripeId2")]
+    partial class RemoveSErvicesIdAndStripeId2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.9")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
-
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            modelBuilder.HasAnnotation("ProductVersion", "7.0.9");
 
             modelBuilder.Entity("API.Model.Customer", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("StripeId")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.ToTable("Customers");
                 });
 
+            modelBuilder.Entity("API.Model.CustomerDiscount", b =>
+                {
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DiscountId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid?>("OrderId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("CustomerId", "DiscountId");
+
+                    b.HasIndex("DiscountId");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("CustomerDiscount");
+                });
+
+            modelBuilder.Entity("API.Model.Discount", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ApplicableOrderType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("DiscountType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsStackable")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long?>("Percentage")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("ValidFrom")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ValidTo")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Discounts");
+                });
+
             modelBuilder.Entity("API.Model.Employee", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Role")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -59,23 +111,23 @@ namespace API.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
-                    b.Property<Guid>("EmployeeId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("OrderType")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Status")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -89,16 +141,16 @@ namespace API.Migrations
             modelBuilder.Entity("API.Model.OrderItem", b =>
                 {
                     b.Property<Guid>("OrderId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Index")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Amount")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("OrderId", "Index");
 
@@ -111,19 +163,19 @@ namespace API.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("LastUpdated")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("OrderId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("PaymentState")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("PaymentType")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -136,19 +188,22 @@ namespace API.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.Property<int?>("AmountInStock")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
-                    b.Property<decimal?>("Price")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("OriginCountry")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("StripeId")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -158,23 +213,29 @@ namespace API.Migrations
             modelBuilder.Entity("API.Model.Service", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("DurationInMinutes")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<Guid?>("ServiceOrderId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("StripeId")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ServiceOrderId");
 
                     b.ToTable("Services");
                 });
@@ -183,25 +244,25 @@ namespace API.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("EmployeeId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("EndTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("IsBooked")
-                        .HasColumnType("bit");
+                        .HasColumnType("INTEGER");
 
                     b.Property<Guid>("ServiceId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -231,15 +292,15 @@ namespace API.Migrations
                     b.OwnsOne("API.Model.Auth", "Auth", b1 =>
                         {
                             b1.Property<Guid>("CustomerId")
-                                .HasColumnType("uniqueidentifier");
+                                .HasColumnType("TEXT");
 
                             b1.Property<string>("Email")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)");
+                                .HasColumnType("TEXT");
 
                             b1.Property<string>("Password")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)");
+                                .HasColumnType("TEXT");
 
                             b1.HasKey("CustomerId");
 
@@ -253,20 +314,69 @@ namespace API.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("API.Model.CustomerDiscount", b =>
+                {
+                    b.HasOne("API.Model.Customer", "Customer")
+                        .WithMany("CustomerDiscounts")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("API.Model.Discount", "Discount")
+                        .WithMany("CustomerDiscounts")
+                        .HasForeignKey("DiscountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("API.Model.Order", null)
+                        .WithMany("OrderDiscounts")
+                        .HasForeignKey("OrderId");
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Discount");
+                });
+
+            modelBuilder.Entity("API.Model.Discount", b =>
+                {
+                    b.OwnsOne("API.Model.Price", "Price", b1 =>
+                        {
+                            b1.Property<string>("DiscountId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<long>("Amount")
+                                .HasColumnType("INTEGER")
+                                .HasColumnName("Amount");
+
+                            b1.Property<int>("Currency")
+                                .HasColumnType("INTEGER")
+                                .HasColumnName("Currency");
+
+                            b1.HasKey("DiscountId");
+
+                            b1.ToTable("Discounts");
+
+                            b1.WithOwner()
+                                .HasForeignKey("DiscountId");
+                        });
+
+                    b.Navigation("Price");
+                });
+
             modelBuilder.Entity("API.Model.Employee", b =>
                 {
                     b.OwnsOne("API.Model.Auth", "Auth", b1 =>
                         {
                             b1.Property<Guid>("EmployeeId")
-                                .HasColumnType("uniqueidentifier");
+                                .HasColumnType("TEXT");
 
                             b1.Property<string>("Email")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)");
+                                .HasColumnType("TEXT");
 
                             b1.Property<string>("Password")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)");
+                                .HasColumnType("TEXT");
 
                             b1.HasKey("EmployeeId");
 
@@ -282,13 +392,34 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Model.Order", b =>
                 {
+                    b.OwnsOne("API.Model.Price", "Price", b1 =>
+                        {
+                            b1.Property<Guid>("OrderId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<long>("Amount")
+                                .HasColumnType("INTEGER")
+                                .HasColumnName("OrderAmount");
+
+                            b1.Property<int>("Currency")
+                                .HasColumnType("INTEGER")
+                                .HasColumnName("OrderCurrency");
+
+                            b1.HasKey("OrderId");
+
+                            b1.ToTable("Orders");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderId");
+                        });
+
                     b.OwnsOne("API.Model.Tip", "Tip", b1 =>
                         {
                             b1.Property<Guid>("OrderId")
-                                .HasColumnType("uniqueidentifier");
+                                .HasColumnType("TEXT");
 
                             b1.Property<int>("PaymentType")
-                                .HasColumnType("int")
+                                .HasColumnType("INTEGER")
                                 .HasColumnName("TipPaymentType");
 
                             b1.HasKey("OrderId");
@@ -301,14 +432,14 @@ namespace API.Migrations
                             b1.OwnsOne("API.Model.Price", "Price", b2 =>
                                 {
                                     b2.Property<Guid>("TipOrderId")
-                                        .HasColumnType("uniqueidentifier");
+                                        .HasColumnType("TEXT");
 
-                                    b2.Property<decimal>("Amount")
-                                        .HasColumnType("decimal(18,2)")
+                                    b2.Property<long>("Amount")
+                                        .HasColumnType("INTEGER")
                                         .HasColumnName("TipAmount");
 
                                     b2.Property<int>("Currency")
-                                        .HasColumnType("int")
+                                        .HasColumnType("INTEGER")
                                         .HasColumnName("TipCurrency");
 
                                     b2.HasKey("TipOrderId");
@@ -322,6 +453,9 @@ namespace API.Migrations
                             b1.Navigation("Price")
                                 .IsRequired();
                         });
+
+                    b.Navigation("Price")
+                        .IsRequired();
 
                     b.Navigation("Tip");
                 });
@@ -356,14 +490,14 @@ namespace API.Migrations
                     b.OwnsOne("API.Model.Price", "Price", b1 =>
                         {
                             b1.Property<Guid>("PaymentId")
-                                .HasColumnType("uniqueidentifier");
+                                .HasColumnType("TEXT");
 
-                            b1.Property<decimal>("Amount")
-                                .HasColumnType("decimal(18,2)")
+                            b1.Property<long>("Amount")
+                                .HasColumnType("INTEGER")
                                 .HasColumnName("Amount");
 
                             b1.Property<int>("Currency")
-                                .HasColumnType("int")
+                                .HasColumnType("INTEGER")
                                 .HasColumnName("Currency");
 
                             b1.HasKey("PaymentId");
@@ -378,12 +512,60 @@ namespace API.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("API.Model.Product", b =>
+                {
+                    b.OwnsOne("API.Model.Price", "Price", b1 =>
+                        {
+                            b1.Property<Guid>("ProductId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<long>("Amount")
+                                .HasColumnType("INTEGER")
+                                .HasColumnName("Amount");
+
+                            b1.Property<int>("Currency")
+                                .HasColumnType("INTEGER")
+                                .HasColumnName("Currency");
+
+                            b1.HasKey("ProductId");
+
+                            b1.ToTable("Products");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ProductId");
+                        });
+
+                    b.Navigation("Price");
+                });
+
             modelBuilder.Entity("API.Model.Service", b =>
                 {
                     b.HasOne("API.Model.ServiceOrder", null)
                         .WithMany("Services")
-                        .HasForeignKey("Id")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("ServiceOrderId");
+
+                    b.OwnsOne("API.Model.Price", "Price", b1 =>
+                        {
+                            b1.Property<Guid>("ServiceId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<long>("Amount")
+                                .HasColumnType("INTEGER")
+                                .HasColumnName("Pay");
+
+                            b1.Property<int>("Currency")
+                                .HasColumnType("INTEGER")
+                                .HasColumnName("Currency");
+
+                            b1.HasKey("ServiceId");
+
+                            b1.ToTable("Services");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ServiceId");
+                        });
+
+                    b.Navigation("Price")
                         .IsRequired();
                 });
 
@@ -402,6 +584,16 @@ namespace API.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("API.Model.Customer", b =>
+                {
+                    b.Navigation("CustomerDiscounts");
+                });
+
+            modelBuilder.Entity("API.Model.Discount", b =>
+                {
+                    b.Navigation("CustomerDiscounts");
+                });
+
             modelBuilder.Entity("API.Model.Employee", b =>
                 {
                     b.Navigation("ServiceTimeSlots");
@@ -409,6 +601,8 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Model.Order", b =>
                 {
+                    b.Navigation("OrderDiscounts");
+
                     b.Navigation("Payments");
                 });
 

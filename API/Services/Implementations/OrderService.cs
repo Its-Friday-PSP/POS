@@ -82,6 +82,10 @@ namespace API.Services.Implementations
             return _orderRepository.DeleteOrder(orderId);
         }
 
+        public IEnumerable<Order> GetAllOrders()
+        {
+            return _orderRepository.GetAllOrders();
+        }
         public Order GetOrder(Guid orderId)
         {
             return _orderRepository.GetOrder(orderId);

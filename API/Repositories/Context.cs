@@ -1,5 +1,6 @@
 ﻿using API.Model;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace API.Repositories
 {
@@ -21,6 +22,7 @@ namespace API.Repositories
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Discount> Discounts { get; set; }
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<ServiceTimeSlots> ServiceTimeSlots { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -45,6 +47,14 @@ namespace API.Repositories
                    auth.Property(auth => auth.Password).IsRequired();
                })
                .Navigation(employee => employee.Auth).IsRequired();
+
+            modelBuilder.Entity<Employee>()
+               .HasMany(employee => employee.ServiceTimeSlots)
+               .WithOne()
+               .HasForeignKey(serviceTimeSlots => serviceTimeSlots.EmployeeId);
+
+            modelBuilder.Entity<ServiceTimeSlots>()
+                .HasKey(a => a.Id);
 
         }
 

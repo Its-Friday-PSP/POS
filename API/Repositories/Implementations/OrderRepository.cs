@@ -33,6 +33,10 @@ namespace API.Repositories.Implementations
               
             return true;
         }
+        public IEnumerable<Order> GetAllOrders()
+        {
+            return _context.Orders;
+        }
 
         public Order? GetOrder(Guid orderId)
         {
