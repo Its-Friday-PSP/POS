@@ -8,7 +8,7 @@ namespace API.Responses.Order
         public Discount? ServiceDiscount { get; set; }
         public ApplyDiscountResponse(Discount discount)
         {
-            if(discount.DiscountType == DTOs.OrderTypeDTO.PRODUCT)
+            if(discount.ApplicableOrderType == DTOs.OrderTypeDTO.PRODUCT)
             {
                 ProductDiscount = discount;
             }

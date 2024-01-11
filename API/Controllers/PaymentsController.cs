@@ -18,6 +18,9 @@ namespace API.Controllers
     [Route("payments")]
     public class PaymentsController : Controller
     {
+
+        //const string endpointSecret = "whsec_8cd6e873a43848838d76b4fe16b68aed995642b3dd5edb27e51a83293505e63a";
+
         private readonly IPaymentService _paymentsService;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
@@ -26,6 +29,7 @@ namespace API.Controllers
         private readonly ICustomerRepository _customerRepository;
         private readonly IProductRepository _productRepository;
         private readonly IOrderRepository _orderRepository;
+        private readonly IPaymentsRepository _paymentRepository;
 
 
 
@@ -36,7 +40,8 @@ namespace API.Controllers
             IHttpContextAccessor httpContext,
             ICustomerRepository customerRepository,
             IOrderRepository orderRepository,
-            IProductRepository productRepository)
+            IProductRepository productRepository,
+            IPaymentsRepository paymentsRepository)
         {
             _paymentsService = paymentsService;
             _mapper = mapper;
@@ -45,6 +50,7 @@ namespace API.Controllers
             _customerRepository = customerRepository;
             _orderRepository = orderRepository;
             _productRepository = productRepository;
+            _paymentRepository = paymentsRepository;
         }
 
         [HttpPost]
@@ -129,17 +135,17 @@ namespace API.Controllers
             if(order.OrderType == Enumerators.OrderType.SERVICE)
             {
                 var services = ((ServiceOrder)order).Services;
-                products = services.Select(service => (service.Id.ToString(), 1, (int)(service.Price.Amount * 100))).Distinct().ToList();
+                products = services.Select(service => (service.StripeId!, 1, (int)(service.Price.Amount * 100))).Distinct().ToList();
             }
             else
             {
                 var orderItems = ((ProductOrder)order).OrderItems;
                 var productIds = orderItems.Select(item => item.ProductId);
-                var productsDomain = productIds.Select(productId => _productRepository.GetProduct(productId));
-                products = orderItems.Select(orderItem => (orderItem.ProductId.ToString(), orderItem.Amount, (int)(_productRepository.GetProduct(orderItem.ProductId)!.Price! * 100))).Distinct().ToList();
+                var productsDomain = productIds.Select(productId => (productId, _productRepository.GetProduct(productId))).ToDictionary(item => item.productId);
+                products = orderItems.Select(orderItem => (productsDomain[orderItem.ProductId].Item2.StripeId!, orderItem.Amount, (int)(_productRepository.GetProduct(orderItem.ProductId)!.Price!.Amount * 100))).Distinct().ToList();
             }
 
-
+            var customer = _customerRepository.GetCustomer(userId);
 
             var options = new SessionCreateOptions
             {
@@ -153,6 +159,7 @@ namespace API.Controllers
                 {
                     "card"
                 },
+                Metadata = new Dictionary<string, string>() { {"orderId", orderId.ToString()} },
                 LineItems = products.Select<(String id, int quantity, int price), SessionLineItemOptions>(product => new()
                 {
                     PriceData = new SessionLineItemPriceDataOptions
@@ -172,7 +179,7 @@ namespace API.Controllers
                 }).ToList(),
                 Mode = "payment", // One-time payment. Stripe supports recurring 'subscription' payments.
 
-                Customer = userId.ToString(),
+                Customer = customer.StripeId,
 
 
             };
@@ -181,6 +188,90 @@ namespace API.Controllers
             var session = service.Create(options);
 
             return session.Url;
+        }
+
+        [HttpPost("webhook")]
+        public async Task<ActionResult> SuccessfullPaymentHandler()
+        {
+            var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
+
+            const string endpointSecret = "whsec_8cd6e873a43848838d76b4fe16b68aed995642b3dd5edb27e51a83293505e63a";
+
+            //Console.WriteLine(json);
+            var stripeEvent = (Event)null;
+            try
+            {
+                stripeEvent = EventUtility.ConstructEvent(json,
+                    Request.Headers["Stripe-Signature"], endpointSecret);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            
+            //Console.WriteLine(stripeEvent.Type.ToString());
+            try
+            {
+                var stripeEvent2 = EventUtility.ConstructEvent(json,
+                    Request.Headers["Stripe-Signature"], endpointSecret);
+
+                var a = 5;
+                if (stripeEvent.Type == Events.CheckoutSessionCompleted)
+                {
+
+                    var checkoutSession = stripeEvent.Data.Object as Stripe.Checkout.Session;
+                    var customerID = checkoutSession.CustomerId;
+
+                    var orderId = Guid.Parse(checkoutSession.Metadata["orderId"]);
+                    Console.WriteLine("orderId=" + orderId);
+                    var order = _orderRepository.GetOrder(orderId);
+
+                    _paymentRepository.CreatePayment(new Payment(
+                        Guid.NewGuid(),
+                        orderId,
+                        Enumerators.PaymentType.CARD,
+                        Enumerators.PaymentState.COMPLETED,
+                        order.Price,
+                        DateTime.Now
+                        ));
+                    _orderRepository.UpdateOrderStatus(order, OrderStatus.PAID);
+
+                    /*var options = new SessionListLineItemsOptions
+                    {
+                        Limit = 10
+                    };
+                    var service = new SessionService();
+                    StripeList<LineItem> lineItems = service.ListLineItems(checkoutSession.Id, options);
+
+
+
+                    var productIds = lineItems.Data.ToArray().Select(li => li.Price.ProductId);
+
+                    Console.WriteLine("productId=" + lineItems.Data.ToArray()[0].Price.ProductId);
+
+                    var user = await _userRepository.GetUserAsync(user => user.StripeId == customerID);
+                    var offer = await _offerRepository.GetOfferAsync(offer => offer.StripeId == productId);
+
+
+                    if (user != null && offer != null)
+                    {
+                        await _subscriptionRepository.AddSubscriptionAsync(new Models.Entities.Subscription(
+                            user.Id,
+                            offer.Id,
+                            DateTime.Now
+                            ));
+                        await _subscriptionRepository.SaveChangesAsync();
+                    }*/
+                }
+
+
+                return Ok();
+            }
+            catch (StripeException e)
+            {
+                return BadRequest();
+            }
+
         }
 
     }

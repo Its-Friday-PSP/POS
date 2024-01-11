@@ -11,5 +11,17 @@ namespace API.Model
         public PaymentState PaymentState { get; set; }
         public Price Price { get; set; }
         public DateTime LastUpdated { get; set; }
+
+        public Payment() { }
+
+        public Payment(Guid id, Guid orderId, PaymentType paymentType, PaymentState paymentState, Price price, DateTime lastUpdated)
+        {
+            Id = id;
+            OrderId = orderId;
+            PaymentType = paymentType;
+            PaymentState = paymentState;
+            Price = price;
+            LastUpdated = lastUpdated;
+        }
     }
 }

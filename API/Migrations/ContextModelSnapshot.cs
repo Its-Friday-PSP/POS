@@ -59,8 +59,10 @@ namespace API.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("ApplicableOrderType")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("DiscountType")
@@ -69,8 +71,8 @@ namespace API.Migrations
                     b.Property<bool>("IsStackable")
                         .HasColumnType("INTEGER");
 
-                    b.Property<double>("Rate")
-                        .HasColumnType("REAL");
+                    b.Property<long?>("Percentage")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("ValidFrom")
                         .HasColumnType("TEXT");
@@ -194,8 +196,8 @@ namespace API.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal?>("Price")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("OriginCountry")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("StripeId")
                         .HasColumnType("TEXT");
@@ -355,8 +357,7 @@ namespace API.Migrations
                                 .HasForeignKey("DiscountId");
                         });
 
-                    b.Navigation("Price")
-                        .IsRequired();
+                    b.Navigation("Price");
                 });
 
             modelBuilder.Entity("API.Model.Employee", b =>
@@ -388,6 +389,27 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Model.Order", b =>
                 {
+                    b.OwnsOne("API.Model.Price", "Price", b1 =>
+                        {
+                            b1.Property<Guid>("OrderId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<long>("Amount")
+                                .HasColumnType("INTEGER")
+                                .HasColumnName("OrderAmount");
+
+                            b1.Property<int>("Currency")
+                                .HasColumnType("INTEGER")
+                                .HasColumnName("OrderCurrency");
+
+                            b1.HasKey("OrderId");
+
+                            b1.ToTable("Orders");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderId");
+                        });
+
                     b.OwnsOne("API.Model.Tip", "Tip", b1 =>
                         {
                             b1.Property<Guid>("OrderId")
@@ -428,6 +450,9 @@ namespace API.Migrations
                             b1.Navigation("Price")
                                 .IsRequired();
                         });
+
+                    b.Navigation("Price")
+                        .IsRequired();
 
                     b.Navigation("Tip");
                 });
@@ -482,6 +507,32 @@ namespace API.Migrations
 
                     b.Navigation("Price")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("API.Model.Product", b =>
+                {
+                    b.OwnsOne("API.Model.Price", "Price", b1 =>
+                        {
+                            b1.Property<Guid>("ProductId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<long>("Amount")
+                                .HasColumnType("INTEGER")
+                                .HasColumnName("Amount");
+
+                            b1.Property<int>("Currency")
+                                .HasColumnType("INTEGER")
+                                .HasColumnName("Currency");
+
+                            b1.HasKey("ProductId");
+
+                            b1.ToTable("Products");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ProductId");
+                        });
+
+                    b.Navigation("Price");
                 });
 
             modelBuilder.Entity("API.Model.Service", b =>

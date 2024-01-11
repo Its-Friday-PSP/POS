@@ -1,4 +1,6 @@
 ﻿using API.DTOs;
+using API.DTOs.Request;
+using API.DTOs.Response;
 using API.Model;
 using API.Responses.Order;
 using API.Services.Interfaces;
@@ -21,7 +23,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{discountId}")]
-        public ActionResult<DiscountDTO> GetDiscount([FromRoute] string discountId)
+        public ActionResult<DiscountCreationResponse> GetDiscount([FromRoute] string discountId)
         {
             var discount = _discountService.GetDiscount(discountId);
 
@@ -29,7 +31,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<DiscountDTO>> GetDiscounts()
+        public ActionResult<IEnumerable<DiscountCreationResponse>> GetDiscounts()
         {
             var discounts = _discountService.GetDiscounts();
             var discountDTOs = _mapper.Map<IEnumerable<Discount>>(discounts);
@@ -38,7 +40,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public ActionResult<DiscountDTO> CreateDiscount([FromBody] DiscountDTO discountDTO)
+        public ActionResult<DiscountCreationResponse> CreateDiscount([FromBody] DiscountCreationRequest discountDTO)
         {
             var discount = _mapper.Map<Discount>(discountDTO);
             var newDiscount = _discountService.CreateDiscount(discount);
@@ -47,7 +49,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{discountId}")]
-        public IActionResult UpdateDiscount([FromRoute] string discountId, DiscountDTO discountDTO)
+        public IActionResult UpdateDiscount([FromRoute] string discountId, DiscountCreationRequest discountDTO)
         {
             var discount = _mapper.Map<Discount>(discountDTO);
             bool success = _discountService.UpdateDiscount(discountId, discount);
