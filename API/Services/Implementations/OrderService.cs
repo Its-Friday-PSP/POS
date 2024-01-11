@@ -1,4 +1,5 @@
-﻿using API.DTOs;
+﻿using API.Controllers;
+using API.DTOs;
 using API.DTOs.Request;
 using API.Enumerators;
 using API.Model;
@@ -28,7 +29,7 @@ namespace API.Services.Implementations
             _discountRepository = discountRepository;
         }
 
-        public Order AddOrderItem(Guid orderId, OrderItem orderItem)
+        public Order AddOrderItem(Guid orderId, ProductOrderItem orderItem)
         {
             return _orderRepository.AddOrderItem(orderId, orderItem);
         }
@@ -48,8 +49,6 @@ namespace API.Services.Implementations
                 var services = _serviceRepository.GetServices(orderRequest.Services);
                 order = new ServiceOrder(orderRequest.CustomerId, services);
 
-                order.OrderType = OrderType.SERVICE;
-
                 order.Price = CalculateTotalPrice(services, orderRequest.DiscountCodes);
             }
             else
@@ -57,12 +56,13 @@ namespace API.Services.Implementations
                 Guid orderId = Guid.NewGuid();
                 
                 var orderItems = orderRequest.Products?.Select(orderItemDto =>
-                    new OrderItem(orderItemDto.ProductId, orderId, orderItemDto.Amount, orderItemDto.Index)
-                );
-                order = new ProductOrder(orderItems, orderId, orderRequest.CustomerId);
-                
-                order.OrderType = OrderType.PRODUCT;
+                    new ProductOrderItem(orderItemDto.ProductId, orderId)
+                    {
+                        OrderItem = new OrderItem() { Amount = orderItemDto.Amount, Index = orderItemDto.Index }
+                    }
+                ).ToList();
 
+                order = new ProductOrder(orderId, orderRequest.CustomerId) { OrderItems = orderItems };
                 order.Price = CalculateTotalPrice(orderItems, orderRequest.DiscountCodes);
             }
 
@@ -92,7 +92,7 @@ namespace API.Services.Implementations
             return _orderRepository.RemoveOrderItem(orderId, orderItemIndex);
         }
 
-        private Price CalculateTotalPrice(IEnumerable<OrderItem> orderItems, IEnumerable<string> appliedDiscounts)
+        private Price CalculateTotalPrice(IEnumerable<ProductOrderItem> orderItems, IEnumerable<string> appliedDiscounts)
         {
             var productIds = orderItems.Select(x => x.ProductId);
             var products = _productRepository.GetProducts(productIds).ToList();
@@ -103,7 +103,7 @@ namespace API.Services.Implementations
             {
                 long normalizedProductPrice = NormalizeCurrency(product.Price);
 
-                var amount = orderItems.FirstOrDefault(x => x.ProductId == product.Id).Amount;
+                var amount = orderItems.FirstOrDefault(x => x.ProductId == product.Id).OrderItem.Amount;
                 normalizedProductPrice *= amount;
 
                 long discountedProductPrice = ApplyDiscountTotalPrice(appliedDiscounts, OrderTypeDTO.PRODUCT, normalizedProductPrice);
@@ -163,5 +163,9 @@ namespace API.Services.Implementations
             return resultPrice;
         }
 
+        public Order CompleteOrder(Guid orderId)
+        {
+            return _orderRepository.CompleteOrder(orderId);
+        }
     }
 }

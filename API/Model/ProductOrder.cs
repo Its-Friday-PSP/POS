@@ -2,25 +2,15 @@
 {
     public class ProductOrder : Order
     {
-        public List<OrderItem>? OrderItems { get; set; }
+        public List<ProductOrderItem>? OrderItems { get; set; }
         public ProductOrder(Guid customerId) : base(customerId)
         {
-
+            OrderType = Enumerators.OrderType.PRODUCT;
         }
 
-        public ProductOrder(IEnumerable<OrderItem> orderItems) : base()
+        public ProductOrder(Guid orderId, Guid customerId) : base(orderId, customerId)
         {
-            OrderItems = orderItems.ToList();
-        }
-
-        public ProductOrder(IEnumerable<OrderItem> orderItems, Guid customerId) : base(customerId)
-        {
-            OrderItems = orderItems.ToList();
-        }
-
-        public ProductOrder(IEnumerable<OrderItem> orderItems, Guid orderId, Guid customerId) : base(customerId)
-        {
-            OrderItems = orderItems.ToList();
+            OrderType = Enumerators.OrderType.PRODUCT;
         }
 
     }

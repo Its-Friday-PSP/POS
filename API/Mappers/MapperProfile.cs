@@ -42,14 +42,6 @@ namespace API.Mappers
                 .ForMember(dest => dest.AppliedDiscounts, opt => opt.MapFrom(src => src.OrderDiscounts.Select(x => x.Discount)))
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price));
 
-            CreateMap<OrderItemDTO, OrderItem>()
-                .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId))
-                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount))
-                .ForMember(dest => dest.Index, opt => opt.MapFrom(src => src.Index))
-                .ForMember(dest => dest.OrderId, opt => opt.Ignore())
-                .ForMember(dest => dest.Product, opt => opt.Ignore())
-                .ForMember(dest => dest.Order, opt => opt.Ignore());
-
             CreateMap<DiscountCreationRequest, Discount>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.DiscountType, opt => opt.MapFrom(src => src.DiscountType))

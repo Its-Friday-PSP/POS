@@ -24,13 +24,6 @@ namespace API.Repositories
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Order>()
-                .OwnsOne(product => product.Price, price =>
-                {
-                    price.Property(price => price.Amount).HasColumnName("OrderAmount");
-                    price.Property(price => price.Currency).HasColumnName("OrderCurrency");
-                });
-
             OnCreatingOrder(modelBuilder);
             OnCreatingPayments(modelBuilder);
             OnCreatingDiscount(modelBuilder);
@@ -113,38 +106,18 @@ namespace API.Repositories
                        tipNavigation.Property(tip => tip.PaymentType).HasColumnName("TipPaymentType");
                    });
 
-            modelBuilder.Entity<OrderItem>()
-                .HasKey(z => new
-                {
-                    z.OrderId,
-                    z.Index,
-                });
+            modelBuilder.Entity<ProductOrderItem>()
+                .HasKey(item => new { item.OrderItemId, item.ProductId });
 
-            modelBuilder.Entity<OrderItem>()
-                .Property(orderItem => orderItem.ProductId).IsRequired();
+            modelBuilder.Entity<ProductOrderItem>()
+                .HasOne(cd => cd.OrderItem)
+                .WithMany(c => c.ProductOrderItems)
+                .HasForeignKey(cd => cd.OrderItemId);
 
-            modelBuilder.Entity<OrderItem>()
-                .Property(orderItem => orderItem.Amount).IsRequired();
-
-            modelBuilder.Entity<OrderItem>()
-                .HasOne(orderItem => orderItem.Product)
-                .WithMany()
-                .HasForeignKey(orderItem => orderItem.ProductId);
-
-            modelBuilder.Entity<OrderItem>()
-                .HasOne(orderItem => orderItem.Order)
-                .WithMany(order => order.OrderItems)
-                .HasForeignKey(orderItem => orderItem.OrderId);
-
-            modelBuilder.Entity<OrderItem>()
-               .HasOne(orderItem => orderItem.Order)
-               .WithMany(order => order.OrderItems)
-               .HasForeignKey(orderItem => orderItem.OrderId);
-
-            modelBuilder.Entity<ProductOrder>()
-                .HasMany(order => order.OrderItems)
-                .WithOne(orderItem => orderItem.Order)
-                .HasForeignKey(orderItem => orderItem.OrderId);
+            modelBuilder.Entity<ProductOrderItem>()
+                .HasOne(cd => cd.Product)
+                .WithMany(d => d.ProductOrderItems)
+                .HasForeignKey(cd => cd.ProductId);
 
         }
 

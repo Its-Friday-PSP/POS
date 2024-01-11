@@ -25,9 +25,10 @@ namespace API.Controllers
         }
 
         [HttpGet("{orderId}")]
-        public ActionResult<IEnumerable<Order>> GetOrder(Guid orderId)
+        public ActionResult<Order> GetOrder(Guid orderId)
         {
-            return Ok(_orderService.GetOrder(orderId));
+            var order = _orderService.GetOrder(orderId);
+            return order == null ? NotFound() : Ok(order);
         }
 
         [HttpPost]
@@ -42,11 +43,9 @@ namespace API.Controllers
         [HttpPost("{orderId}/orderItem")]
         public ActionResult<Order> AddOrderItem(
             [FromRoute]Guid orderId,
-            [FromBody] OrderItemDTO orderItem)
+            [FromBody] ProductOrderItem orderItem)
         {
-            System.Console.WriteLine("hello");
-            
-            return Ok(_orderService.AddOrderItem(orderId, _mapper.Map<OrderItem>(orderItem)));
+            return Ok(_orderService.AddOrderItem(orderId, orderItem));
         }
 
         [HttpDelete("{orderId}/orderItem/{orderItemIndex}")]
@@ -70,6 +69,14 @@ namespace API.Controllers
             var order = _orderService.AddTip(orderId, tip);
 
             return order == null ? NotFound() : Ok(order);
+        }
+
+        [HttpPut("fulfill/{orderId}")]
+        public ActionResult<OrderDTO> FulfillOrder(Guid orderId)
+        {
+            var completedOrder = _orderService.CompleteOrder(orderId);
+
+            return completedOrder == null ? NotFound() : Ok(completedOrder);
         }
 
     }

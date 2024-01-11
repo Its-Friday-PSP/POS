@@ -14,9 +14,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAutoMapper(typeof(API.Mappers.MapperProfile));
 
-builder.Services.AddDbContext<Context>(options =>
-        options.UseSqlServer(builder.Configuration.GetConnectionString("context") ?? throw new InvalidOperationException("Connection string 'context' not found.")));
+//builder.Services.AddDbContext<Context>(options =>
+//        options.UseSqlServer(builder.Configuration.GetConnectionString("context") ?? throw new InvalidOperationException("Connection string 'context' not found.")));
 
+builder.Services.AddDbContext<Context>(options =>
+        options.UseSqlite(builder.Configuration.GetConnectionString("context") ?? throw new InvalidOperationException("Connection string 'context' not found.")));
 
 StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 

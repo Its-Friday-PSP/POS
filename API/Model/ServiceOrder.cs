@@ -6,14 +6,17 @@
 
         public ServiceOrder(Guid customerId, IEnumerable<Service>? services) : base(customerId)
         {
+            OrderType = Enumerators.OrderType.SERVICE;
             Services = services.ToList();
         }
 
         public ServiceOrder(Guid customerId) : base(customerId)
         {
+            OrderType = Enumerators.OrderType.SERVICE;
         }
         public ServiceOrder(IEnumerable<Service>? services) : base()
         {
+            OrderType = Enumerators.OrderType.SERVICE;
             Services = services.ToList();
         }
     }
