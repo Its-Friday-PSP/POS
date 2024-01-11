@@ -132,7 +132,7 @@ namespace API.Controllers
 
 
             var products = new List<(String id, int quantity, int price)>();
-            if(order.OrderType == Enumerators.OrderType.SERVICE)
+            if(order.OrderType == OrderTypeDTO.SERVICE)
             {
                 var services = ((ServiceOrder)order).Services;
                 products = services.Select(service => (service.StripeId!, 1, (int)(service.Price.Amount * 100))).Distinct().ToList();

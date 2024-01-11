@@ -1,9 +1,12 @@
-﻿using API.DTOs;
+﻿using API.Controllers;
+using API.DTOs;
 using API.DTOs.Request;
 using API.Enumerators;
 using API.Model;
 using API.Repositories.Interfaces;
 using API.Services.Interfaces;
+using API.Shared;
+
 
 namespace API.Services.Implementations
 {
@@ -15,17 +18,21 @@ namespace API.Services.Implementations
         private readonly IServiceRepository _serviceRepository;
         private readonly IDiscountRepository _discountRepository;
 
+        private readonly ICurrencyConversionService _conversionService;    
+
         public OrderService(
             IOrderRepository orderRepository,
             IProductRepository productRepository,
             IServiceRepository serviceRepository,
-            IDiscountRepository discountRepository
+            IDiscountRepository discountRepository,
+            ICurrencyConversionService conversionService
             )
         {
             _orderRepository = orderRepository;
             _productRepository = productRepository;
             _serviceRepository = serviceRepository;
             _discountRepository = discountRepository;
+            _conversionService = conversionService;
         }
 
         public Order AddOrderItem(Guid orderId, OrderItem orderItem)
@@ -38,32 +45,46 @@ namespace API.Services.Implementations
             return _orderRepository.AddTip(orderId, tip);
         }
 
-        public Order CreateOrder(OrderCreationRequestDTO orderRequest)
+        public async Task<Order> CreateOrder(OrderCreationRequestDTO orderRequest)
         {
             Order order;
 
+            long conversionRate = 1;
+
+            if(orderRequest.CurrentCurrency != Currency.EUR)
+            {
+                conversionRate = await _conversionService.GetConversionRate(orderRequest.CurrentCurrency, Currency.EUR);
+            }
 
             if (orderRequest.OrderType == OrderTypeDTO.SERVICE)
             {
                 var services = _serviceRepository.GetServices(orderRequest.Services);
                 order = new ServiceOrder(orderRequest.CustomerId, services);
 
-                order.OrderType = OrderType.SERVICE;
-
-                order.Price = CalculateTotalPrice(services, orderRequest.DiscountCodes);
+                order.Price = CalculateTotalPrice(services, orderRequest.DiscountCodes, conversionRate);
             }
             else
             {
+
                 Guid orderId = Guid.NewGuid();
                 
-                var orderItems = orderRequest.Products?.Select(orderItemDto =>
-                    new OrderItem(orderItemDto.ProductId, orderId, orderItemDto.Amount, orderItemDto.Index)
-                );
-                order = new ProductOrder(orderItems, orderId, orderRequest.CustomerId);
-                
-                order.OrderType = OrderType.PRODUCT;
+                List<OrderItem> orderItems = orderRequest.Products?.Select(orderItemDto =>
+                    new OrderItem()
+                    {
+                        OrderId = orderId,
+                        ProductId = orderItemDto.ProductId,
+                        Amount = orderItemDto.Amount,
+                        Index = orderItemDto.Index
+                    }
+                ).ToList()!;
 
-                order.Price = CalculateTotalPrice(orderItems, orderRequest.DiscountCodes);
+                if(orderItems == null)
+                {
+                    new ArgumentException("No Items");
+                }
+
+                order = new ProductOrder(orderId, orderRequest.CustomerId) { OrderItems = orderItems };
+                order.Price = CalculateTotalPrice(orderItems, orderRequest.DiscountCodes, conversionRate);
             }
 
             if (order.Price.Amount == 0)
@@ -96,7 +117,7 @@ namespace API.Services.Implementations
             return _orderRepository.RemoveOrderItem(orderId, orderItemIndex);
         }
 
-        private Price CalculateTotalPrice(IEnumerable<OrderItem> orderItems, IEnumerable<string> appliedDiscounts)
+        private Price CalculateTotalPrice(IEnumerable<OrderItem> orderItems, IEnumerable<string> appliedDiscounts, long conversionRate)
         {
             var productIds = orderItems.Select(x => x.ProductId);
             var products = _productRepository.GetProducts(productIds).ToList();
@@ -105,7 +126,7 @@ namespace API.Services.Implementations
 
             foreach(var product in products)
             {
-                long normalizedProductPrice = NormalizeCurrency(product.Price);
+                long normalizedProductPrice = product.Price.Amount * conversionRate;
 
                 var amount = orderItems.FirstOrDefault(x => x.ProductId == product.Id).Amount;
                 normalizedProductPrice *= amount;
@@ -118,13 +139,13 @@ namespace API.Services.Implementations
             return new Price() { Amount = totalPrice, Currency = Currency.EUR };
         }
 
-        private Price CalculateTotalPrice(IEnumerable<Service> orderServices, IEnumerable<string> appliedDiscounts)
+        private Price CalculateTotalPrice(IEnumerable<Service> orderServices, IEnumerable<string> appliedDiscounts, long conversionRate)
         {
             long totalPrice = 0;
 
             foreach(var orderService in orderServices)
             {
-                long normalizedOrderPrice = NormalizeCurrency(orderService.Price);
+                long normalizedOrderPrice = orderService.Price.Amount * conversionRate;
                 long discountedServicePrice = ApplyDiscountTotalPrice(appliedDiscounts, OrderTypeDTO.SERVICE, normalizedOrderPrice);
 
                 totalPrice += discountedServicePrice;
@@ -132,13 +153,6 @@ namespace API.Services.Implementations
 
             return new Price() { Amount = totalPrice, Currency = Currency.EUR };
         }
-
-        private long NormalizeCurrency(Price price) => price.Currency switch
-        {
-            Currency.GBP => 86 * price.Amount,
-            Currency.PLN => 434 * price.Amount,
-            _ => price.Amount,
-        };
 
         private long ApplyDiscountTotalPrice(IEnumerable<string> discountCodes, OrderTypeDTO orderType, long productPrice)
         {
@@ -158,7 +172,7 @@ namespace API.Services.Implementations
                 }
                 else if(discount.DiscountType == DiscountType.PERCENTAGE && discount.ApplicableOrderType == orderType)
                 {
-                    double percentage = (100.0 - (double) discount.Percentage!) / 100.0;
+                    double percentage = (100.0 - (double) discount.Percentage!) / (double) Constants.DECIMAL_MULTIPLIER;
                     resultPrice = (long)(resultPrice * percentage);
                 }
 
@@ -167,5 +181,9 @@ namespace API.Services.Implementations
             return resultPrice;
         }
 
+        public Order CompleteOrder(Guid orderId)
+        {
+            return _orderRepository.CompleteOrder(orderId);
+        }
     }
 }

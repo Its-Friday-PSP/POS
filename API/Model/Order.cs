@@ -1,14 +1,15 @@
 ﻿
+using API.DTOs;
 using API.Enumerators;
 
 namespace API.Model
 {
-    public class Order
+    public abstract class Order
     {
         public Guid Id { get; set; }
         public Guid CustomerId { get; set; }
         public OrderStatus Status { get; set; }
-        public OrderType OrderType { get; set; }
+        public OrderTypeDTO OrderType { get; set; }
         public DateTime Date { get; set; }
         public Price Price { get; set; }
         public Tip? Tip { get; set; }

@@ -2,7 +2,7 @@
 
 namespace API.DTOs.Response
 {
-    public class DiscountCreationResponse : Discount
+    public class ServiceTimeSlotsResponseDTO : Service
     {
     }
 }

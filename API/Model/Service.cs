@@ -12,6 +12,7 @@ namespace API.Model
         public int DurationInMinutes { get; set; }
         public List<ServiceTimeSlots> ServiceTimeSlots { get; set; }
         public string? StripeId { get; set; }
+        public List<TaxItem>? Taxes { get; set; }
 
         public Service(
             Guid id,
@@ -33,6 +34,7 @@ namespace API.Model
         public Service()
         {
         }
+
     }
 
 }

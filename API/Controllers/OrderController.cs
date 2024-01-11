@@ -32,16 +32,19 @@ namespace API.Controllers
         }
 
         [HttpGet("{orderId}")]
-        public ActionResult<IEnumerable<Order>> GetOrder(Guid orderId)
+        public ActionResult<OrderDTO> GetOrder(Guid orderId)
         {
-            return Ok(_orderService.GetOrder(orderId));
+            var order = _orderService.GetOrder(orderId);
+            var orderDto = _mapper.Map<OrderDTO>(order);
+
+            return order == null ? NotFound() : Ok(orderDto);
         }
 
         [HttpPost]
-        public ActionResult<OrderCreationResponseDTO> CreateOrder(OrderCreationRequestDTO request)
+        public async Task<ActionResult<OrderDTO>> CreateOrder(OrderCreationRequestDTO request)
         {
-            Order order = _orderService.CreateOrder(request);
-            var response = _mapper.Map<OrderCreationResponseDTO>(order);
+            Order order = await _orderService.CreateOrder(request);
+            var response = _mapper.Map<OrderDTO>(order);
 
             return Ok(response);
         }
@@ -49,11 +52,9 @@ namespace API.Controllers
         [HttpPost("{orderId}/orderItem")]
         public ActionResult<Order> AddOrderItem(
             [FromRoute]Guid orderId,
-            [FromBody] OrderItemDTO orderItem)
+            [FromBody] OrderItem orderItem)
         {
-            System.Console.WriteLine("hello");
-            
-            return Ok(_orderService.AddOrderItem(orderId, _mapper.Map<OrderItem>(orderItem)));
+            return Ok(_orderService.AddOrderItem(orderId, orderItem));
         }
 
         [HttpDelete("{orderId}/orderItem/{orderItemIndex}")]
@@ -77,6 +78,14 @@ namespace API.Controllers
             var order = _orderService.AddTip(orderId, tip);
 
             return order == null ? NotFound() : Ok(order);
+        }
+
+        [HttpPut("fulfill/{orderId}")]
+        public ActionResult<OrderDTO> FulfillOrder(Guid orderId)
+        {
+            var completedOrder = _orderService.CompleteOrder(orderId);
+
+            return completedOrder == null ? NotFound() : Ok(completedOrder);
         }
 
     }

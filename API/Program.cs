@@ -51,6 +51,11 @@ builder.Services.AddScoped<IEmployeesRepository, EmployeesRepository>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 
+builder.Services.AddScoped<ITaxRepository, TaxRepository>();
+builder.Services.AddScoped<ITaxService, TaxService>();
+
+builder.Services.AddScoped<ICurrencyConversionService, CurrencyConversionService>();
+
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 

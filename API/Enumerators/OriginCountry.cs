@@ -2,8 +2,8 @@
 {
     public enum OriginCountry
     {
-        LITHUANIA,
-        POLAND,
-        GREAT_BRITAIN
+        LT,
+        PL,
+        GB
     }
 }
