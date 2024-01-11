@@ -1,3 +1,4 @@
+using API.Enumerators;
 using API.Model;
 using API.Repositories.Interfaces;
 using API.Services.Interfaces;
@@ -35,6 +36,11 @@ namespace API.Services.Implementations
         public Employee? InsertReservationToEmployee(ServiceTimeSlots timeSlot, Guid id)
         {
             return _reservationRepository.InsertReservationToEmployee(timeSlot, id);
+        }
+
+        public ServiceTimeSlots MakeReservation(Guid timeSlotId, Guid customerId)
+        {
+            return _reservationRepository.MakeReservation(timeSlotId, customerId);
         }
     }
 }

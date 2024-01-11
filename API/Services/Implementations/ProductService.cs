@@ -1,5 +1,4 @@
-﻿using API.Model;
-using API.Repositories.Interfaces;
+﻿using API.Repositories.Interfaces;
 using API.Services.Interfaces;
 using Stripe;
 
