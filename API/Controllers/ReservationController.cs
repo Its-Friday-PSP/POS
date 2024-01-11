@@ -68,18 +68,10 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-        public ActionResult MakeReservation([FromRoute] AddCustomerToTheReservationRequest request)
+        public ActionResult<AddCustomerToTheReservationResponse> MakeReservation([FromRoute] AddCustomerToTheReservationRequest request)
         {
-            try
-            {
-                _reservationService.MakeReservation(request.TimeSlotId, request.CustomerId);
-            }
-            catch (HttpResponseException ex)
-            {
-                return StatusCode(((int)ex.StatusCode), ex.Message);
-            }
-
-            return Ok();
+            var timeSlot = _reservationService.MakeReservation(request.TimeSlotId, request.CustomerId);
+            return Ok(timeSlot);
         }
     }
 }

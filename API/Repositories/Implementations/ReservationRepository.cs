@@ -67,7 +67,7 @@ namespace API.Repositories.Implementations
             return employee;
         }
 
-        public void MakeReservation(Guid timeSlotId, Guid customerId)
+        public ServiceTimeSlots MakeReservation(Guid timeSlotId, Guid customerId)
         {
             var timeSlot = _context.ServiceTimeSlots.Find(timeSlotId);
             if (timeSlot == null || _context.Customers.Find(customerId) == null)
@@ -79,6 +79,7 @@ namespace API.Repositories.Implementations
             timeSlot.IsBooked = true;
             timeSlot.CustomerId = customerId;
             _context.SaveChanges();
+            return timeSlot;
         }
     }
 
