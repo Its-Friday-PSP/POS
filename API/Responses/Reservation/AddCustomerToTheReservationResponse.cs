@@ -1,8 +1,8 @@
-using API.Model;
+using API.DTOs;
 namespace API.Responses.Reservation
 {
     public class AddCustomerToTheReservationResponse
     {
-        public ServiceTimeSlots timeSlots {  get; set; }
+        public ServiceTimeSlotsDTO timeSlots {  get; set; }
     }
 }
