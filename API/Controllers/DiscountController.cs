@@ -23,7 +23,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{discountId}")]
-        public ActionResult<DiscountCreationResponse> GetDiscount([FromRoute] string discountId)
+        public ActionResult<DiscountCreationResponseDTO> GetDiscount([FromRoute] string discountId)
         {
             var discount = _discountService.GetDiscount(discountId);
 
@@ -31,7 +31,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<DiscountCreationResponse>> GetDiscounts()
+        public ActionResult<IEnumerable<DiscountCreationResponseDTO>> GetDiscounts()
         {
             var discounts = _discountService.GetDiscounts();
             var discountDTOs = _mapper.Map<IEnumerable<Discount>>(discounts);
@@ -40,7 +40,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public ActionResult<DiscountCreationResponse> CreateDiscount([FromBody] DiscountCreationRequest discountDTO)
+        public ActionResult<DiscountCreationResponseDTO> CreateDiscount([FromBody] DiscountCreationRequestDTO discountDTO)
         {
             var discount = _mapper.Map<Discount>(discountDTO);
             var newDiscount = _discountService.CreateDiscount(discount);
@@ -49,7 +49,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{discountId}")]
-        public IActionResult UpdateDiscount([FromRoute] string discountId, DiscountCreationRequest discountDTO)
+        public IActionResult UpdateDiscount([FromRoute] string discountId, DiscountCreationRequestDTO discountDTO)
         {
             var discount = _mapper.Map<Discount>(discountDTO);
             bool success = _discountService.UpdateDiscount(discountId, discount);

@@ -1,4 +1,5 @@
 ﻿using API.DTOs;
+using API.DTOs.Request;
 using API.Model;
 using API.Repositories.Interfaces;
 
@@ -15,11 +16,10 @@ namespace API.Repositories.Implementations
 
         public Service CreateService(Service service)
         {       
-                service.Id = Guid.NewGuid();
-                _context.Add(service);
-                _context.SaveChanges();
+            _context.Add(service);
+            _context.SaveChanges();
 
-                return service; 
+            return service; 
         }
 
         public bool DeleteService(Guid serviceId)

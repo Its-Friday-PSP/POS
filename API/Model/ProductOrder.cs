@@ -1,26 +1,18 @@
-﻿namespace API.Model
+﻿using API.DTOs;
+
+namespace API.Model
 {
     public class ProductOrder : Order
     {
         public List<OrderItem>? OrderItems { get; set; }
         public ProductOrder(Guid customerId) : base(customerId)
         {
-
+            OrderType = OrderTypeDTO.PRODUCT;
         }
 
-        public ProductOrder(IEnumerable<OrderItem> orderItems) : base()
+        public ProductOrder(Guid orderId, Guid customerId) : base(orderId, customerId)
         {
-            OrderItems = orderItems.ToList();
-        }
-
-        public ProductOrder(IEnumerable<OrderItem> orderItems, Guid customerId) : base(customerId)
-        {
-            OrderItems = orderItems.ToList();
-        }
-
-        public ProductOrder(IEnumerable<OrderItem> orderItems, Guid orderId, Guid customerId) : base(customerId)
-        {
-            OrderItems = orderItems.ToList();
+            OrderType = OrderTypeDTO.PRODUCT;
         }
 
     }

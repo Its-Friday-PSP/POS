@@ -6,7 +6,7 @@ namespace API.DTOs.Response
     {
         public Guid Id { get; set; }
         public OrderTypeDTO OrderType { get; set; }
-        public Price Price { get; set; }
+        public PriceDTO Price { get; set; }
         public DateTime Date { get; set; }
         public OrderStatus OrderStatus { get; set; }
         public List<Discount> AppliedDiscounts { get; set; }

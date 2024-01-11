@@ -1,4 +1,6 @@
 ﻿using API.DTOs;
+using API.DTOs.Request;
+using API.DTOs.Response;
 using API.Exceptions;
 using API.Model;
 using API.Requests.Employees;
@@ -26,10 +28,10 @@ namespace API.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<CreateEmployeeResponse> RegisterNewEmployee(CreateEmployeeRequest request)
+        public ActionResult<EmployeeCreationResponseDTO> RegisterNewEmployee(EmployeeCreationRequestDTO request)
         {
-            var employeeToReturn = _employeesService.CreateEmployee(_mapper.Map<Employee>(request.Employee));
-            return employeeToReturn == null ? Unauthorized() : Ok(new CreateEmployeeRequest(_mapper.Map<EmployeeDTO>(employeeToReturn)));
+            var employeeToReturn = _employeesService.CreateEmployee(_mapper.Map<Employee>(request));
+            return employeeToReturn == null ? Unauthorized() : Ok(_mapper.Map<EmployeeDTO>(employeeToReturn));
         }
 
         [HttpGet]

@@ -1,4 +1,6 @@
-﻿using API.Model;
+﻿using API.DTOs;
+using API.Enumerators;
+using API.Model;
 using API.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -41,34 +43,35 @@ namespace API.Repositories.Implementations
         public Order? GetOrder(Guid orderId)
         {
             var order = _context.Orders.Find(orderId);
-
+            
             if(order == null)
             {
                 return null;
             }
-            if(order.OrderType == Enumerators.OrderType.PRODUCT)
+            if(order.OrderType == OrderTypeDTO.PRODUCT)
             {
-                return _context.Orders.Include(order => ((ProductOrder)order).OrderItems).First(order => order.Id == orderId);
-            }
+                return _context.Orders
+                    .Include(order => ((ProductOrder)order).OrderItems)
+                    .First(order => order.Id == orderId);
+        }
             else
             {
-                return _context.Orders.Include(order => ((ServiceOrder)order).Services).First(order => order.Id == orderId);
+                return _context.Orders
+                    .Include(order => ((ServiceOrder)order).Services)
+                    .First(order => order.Id == orderId);
             }
         }
 
         public Order AddOrderItem(Guid orderId, OrderItem orderItem)
         {
             var order = GetOrder(orderId);
-
             var product = _context.Products.Find(orderItem.ProductId);
 
             if(product.AmountInStock >= orderItem.Amount)
             {
                 product.AmountInStock -= orderItem.Amount;
 
-                orderItem.OrderId = orderId;
                 _context.OrderItems.Add(orderItem);
-
                 _context.SaveChanges();
             }
 
@@ -93,6 +96,48 @@ namespace API.Repositories.Implementations
             _context.SaveChanges();
 
             return true;
+        }
+
+        public Order CompleteOrder(Guid orderId)
+        {
+            var completedOrder = GetOrder(orderId);
+
+            if(completedOrder.OrderType == OrderTypeDTO.SERVICE)
+            {
+                var serviceOrder = completedOrder as ServiceOrder;
+
+                if(serviceOrder == null)
+                {
+                    return null;
+                }
+
+            }
+            else
+            {
+                var productOrder = completedOrder as ProductOrder;
+
+                if(productOrder.OrderItems == null)
+                {
+                    return null;
+                }
+
+                foreach(var orderItem in productOrder.OrderItems)
+                {
+                    var product = _context.Products.FirstOrDefault(x => x.Id == orderItem.ProductId);
+                    
+                    if(product == null)
+                    {
+                        continue;
+                    }
+                    product.AmountInStock -= orderItem.Amount;
+                }
+
+            }
+
+            completedOrder.Status = OrderStatus.COMPLETED;
+            _context.SaveChanges();
+
+            return completedOrder;
         }
 
         public Order UpdateOrderStatus(Order order, OrderStatus orderStatus)

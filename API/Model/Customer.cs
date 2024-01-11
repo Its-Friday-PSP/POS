@@ -6,7 +6,7 @@
         public Auth Auth { get; set; }
         public string? StripeId { get; set; }
         public List<CustomerDiscount> CustomerDiscounts { get; set; }
-
+        public List<ServiceTimeSlots>? ServiceTimeSlots { get; set; }
         public Customer()
         {
 
