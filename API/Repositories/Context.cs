@@ -57,6 +57,19 @@ namespace API.Repositories
                     price.Property(price => price.Currency).HasColumnName("Currency");
                 });
 
+            modelBuilder.Entity<TaxItem>()
+                .HasKey(taxItem => new { taxItem.ServiceId, taxItem.ProductId, taxItem.TaxId });
+
+            modelBuilder.Entity<TaxItem>()
+                .HasOne(taxItem => taxItem.Product)
+                .WithMany(product => product.Taxes)
+                .HasForeignKey(taxItem => taxItem.ProductId);
+
+            modelBuilder.Entity<TaxItem>()
+                .HasOne(taxItem => taxItem.Service)
+                .WithMany(product => product.Taxes)
+                .HasForeignKey(taxItem => taxItem.ServiceId);
+
         }
 
         private void OnCreatingProduct(ModelBuilder modelBuilder)
@@ -68,10 +81,6 @@ namespace API.Repositories
                     price.Property(price => price.Currency).HasColumnName("Currency");
                 });
 
-            modelBuilder.Entity<Product>()
-                .HasMany(product => product.Taxes)
-                .WithOne()
-                .HasForeignKey(tax => tax.Id);
         }
 
         private void OnCreatingCustomer(ModelBuilder modelBuilder)
@@ -186,11 +195,6 @@ namespace API.Repositories
                 .HasOne<Customer>()
                 .WithMany(customer => customer.ServiceTimeSlots)
                 .HasForeignKey(serviceTimeSlots => serviceTimeSlots.CustomerId);
-
-            modelBuilder.Entity<Service>()
-                .HasMany(service => service.Taxes)
-                .WithOne()
-                .HasForeignKey(tax => tax.Id);
 
         }
     }

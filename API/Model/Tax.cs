@@ -12,6 +12,6 @@ namespace API.Model
         public string? Description { get; set; }
         public int? Percentage { get; set; }
         public Price? Price { get; set; }
-
+        public List<TaxItem>? Taxes { get; set; }
     }
 }
