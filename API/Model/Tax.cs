@@ -7,11 +7,11 @@ namespace API.Model
     public class Tax
     {
         public Guid Id { get; set; }
-        public OrderType OrderType { get; set; }
         public TaxType Type { get; set; }
         public string? Name { get; set; }
         public string? Description { get; set; }
-        public Price Price { get; set; }
+        public int? Percentage { get; set; }
+        public Price? Price { get; set; }
 
     }
 }

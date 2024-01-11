@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20240111165612_newThings")]
-    partial class newThings
+    [Migration("20240111214049_initialMigration")]
+    partial class initialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -249,10 +249,10 @@ namespace API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("CustomerId")
+                    b.Property<Guid?>("CustomerId")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("EmployeeId")
+                    b.Property<Guid?>("EmployeeId")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("EndTime")
@@ -261,7 +261,7 @@ namespace API.Migrations
                     b.Property<bool>("IsBooked")
                         .HasColumnType("INTEGER");
 
-                    b.Property<Guid>("ServiceId")
+                    b.Property<Guid?>("ServiceId")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("StartTime")
@@ -276,6 +276,25 @@ namespace API.Migrations
                     b.HasIndex("ServiceId");
 
                     b.ToTable("ServiceTimeSlots");
+                });
+
+            modelBuilder.Entity("API.Model.Tax", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Taxes");
                 });
 
             modelBuilder.Entity("API.Model.ProductOrder", b =>
@@ -576,20 +595,53 @@ namespace API.Migrations
                 {
                     b.HasOne("API.Model.Customer", null)
                         .WithMany("ServiceTimeSlots")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CustomerId");
 
                     b.HasOne("API.Model.Employee", null)
                         .WithMany("ServiceTimeSlots")
-                        .HasForeignKey("EmployeeId")
+                        .HasForeignKey("EmployeeId");
+
+                    b.HasOne("API.Model.Service", null)
+                        .WithMany("ServiceTimeSlots")
+                        .HasForeignKey("ServiceId");
+                });
+
+            modelBuilder.Entity("API.Model.Tax", b =>
+                {
+                    b.HasOne("API.Model.Product", null)
+                        .WithMany("Taxes")
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("API.Model.Service", null)
-                        .WithMany("ServiceTimeSlots")
-                        .HasForeignKey("ServiceId")
+                        .WithMany("Taxes")
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("API.Model.Price", "Price", b1 =>
+                        {
+                            b1.Property<Guid>("TaxId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<long>("Amount")
+                                .HasColumnType("INTEGER")
+                                .HasColumnName("Amount");
+
+                            b1.Property<int>("Currency")
+                                .HasColumnType("INTEGER")
+                                .HasColumnName("Currency");
+
+                            b1.HasKey("TaxId");
+
+                            b1.ToTable("Taxes");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TaxId");
+                        });
+
+                    b.Navigation("Price")
                         .IsRequired();
                 });
 
@@ -617,9 +669,16 @@ namespace API.Migrations
                     b.Navigation("Payments");
                 });
 
+            modelBuilder.Entity("API.Model.Product", b =>
+                {
+                    b.Navigation("Taxes");
+                });
+
             modelBuilder.Entity("API.Model.Service", b =>
                 {
                     b.Navigation("ServiceTimeSlots");
+
+                    b.Navigation("Taxes");
                 });
 
             modelBuilder.Entity("API.Model.ProductOrder", b =>

@@ -208,9 +208,9 @@ namespace API.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    ServiceId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    EmployeeId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    CustomerId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    ServiceId = table.Column<Guid>(type: "TEXT", nullable: true),
+                    EmployeeId = table.Column<Guid>(type: "TEXT", nullable: true),
+                    CustomerId = table.Column<Guid>(type: "TEXT", nullable: true),
                     StartTime = table.Column<DateTime>(type: "TEXT", nullable: false),
                     EndTime = table.Column<DateTime>(type: "TEXT", nullable: false),
                     IsBooked = table.Column<bool>(type: "INTEGER", nullable: false)
@@ -222,16 +222,41 @@ namespace API.Migrations
                         name: "FK_ServiceTimeSlots_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_ServiceTimeSlots_Employees_EmployeeId",
                         column: x => x.EmployeeId,
                         principalTable: "Employees",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ServiceTimeSlots_Services_ServiceId",
+                        column: x => x.ServiceId,
+                        principalTable: "Services",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Taxes",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Type = table.Column<int>(type: "INTEGER", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    Amount = table.Column<long>(type: "INTEGER", nullable: false),
+                    Currency = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Taxes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Taxes_Products_Id",
+                        column: x => x.Id,
+                        principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ServiceTimeSlots_Services_Id",
+                        name: "FK_Taxes_Services_Id",
                         column: x => x.Id,
                         principalTable: "Services",
                         principalColumn: "Id",
@@ -272,6 +297,11 @@ namespace API.Migrations
                 name: "IX_ServiceTimeSlots_EmployeeId",
                 table: "ServiceTimeSlots",
                 column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ServiceTimeSlots_ServiceId",
+                table: "ServiceTimeSlots",
+                column: "ServiceId");
         }
 
         /// <inheritdoc />
@@ -290,16 +320,19 @@ namespace API.Migrations
                 name: "ServiceTimeSlots");
 
             migrationBuilder.DropTable(
-                name: "Discounts");
+                name: "Taxes");
 
             migrationBuilder.DropTable(
-                name: "Products");
+                name: "Discounts");
 
             migrationBuilder.DropTable(
                 name: "Customers");
 
             migrationBuilder.DropTable(
                 name: "Employees");
+
+            migrationBuilder.DropTable(
+                name: "Products");
 
             migrationBuilder.DropTable(
                 name: "Services");

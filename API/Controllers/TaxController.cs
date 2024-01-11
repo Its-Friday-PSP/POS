@@ -1,4 +1,5 @@
 ﻿using API.DTOs;
+using API.DTOs.Request;
 using API.Model;
 using API.Services.Interfaces;
 using AutoMapper;
@@ -43,7 +44,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public ActionResult<TaxDTO> CreateTax([FromBody] TaxDTO taxDto)
+        public ActionResult<TaxDTO> CreateTax([FromBody] TaxCreationRequestDTO taxDto)
         {
             var tax = _mapper.Map<Tax>(taxDto);
 

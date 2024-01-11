@@ -1,11 +1,9 @@
 ﻿using API.Enumerators;
-using API.Model;
 
-namespace API.DTOs
+namespace API.DTOs.Request
 {
-    public class TaxDTO
+    public class TaxCreationRequestDTO
     {
-        public Guid Id { get; set; }
         public TaxType Type { get; set; }
         public int? Percentage { get; set; }
         public string? Name { get; set; }

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20240111204322_newthings4")]
-    partial class newthings4
+    [Migration("20240111215757_newthings2")]
+    partial class newthings2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -289,7 +289,7 @@ namespace API.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("OrderType")
+                    b.Property<int?>("Percentage")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Type")
@@ -644,8 +644,7 @@ namespace API.Migrations
                                 .HasForeignKey("TaxId");
                         });
 
-                    b.Navigation("Price")
-                        .IsRequired();
+                    b.Navigation("Price");
                 });
 
             modelBuilder.Entity("API.Model.Customer", b =>
