@@ -42,5 +42,10 @@ namespace API.Services.Implementations
         {
             return _reservationRepository.MakeReservation(timeSlotId, customerId);
         }
+
+        public ServiceTimeSlots CancelReservation(Guid timeSlotId)
+        {
+            return _reservationRepository.CancelReservation(timeSlotId);
+        }
     }
 }

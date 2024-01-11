@@ -11,5 +11,6 @@ namespace API.Services.Interfaces
         public Service? InsertReservationToService(ServiceTimeSlots timeSlot, Guid id);
         public Employee? InsertReservationToEmployee(ServiceTimeSlots timeSlot, Guid id);
         public ServiceTimeSlots MakeReservation(Guid timeSlotId, Guid customerId);
+        public ServiceTimeSlots CancelReservation(Guid timeSlotId);
     }
 }

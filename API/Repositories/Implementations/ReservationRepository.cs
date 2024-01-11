@@ -74,10 +74,29 @@ namespace API.Repositories.Implementations
                 throw new EntityNotFoundException();
 
             if (timeSlot.IsBooked)
-                throw new TimeSlotAlreadyBooked();
+                throw new TimeSlotAlreadyBookedException();
 
             timeSlot.IsBooked = true;
             timeSlot.CustomerId = customerId;
+            _context.SaveChanges();
+            return timeSlot;
+        }
+
+        public ServiceTimeSlots CancelReservation(Guid timeSlotId)
+        {
+            var timeSlot = _context.ServiceTimeSlots.Find(timeSlotId);
+            if (timeSlot == null)
+                throw new EntityNotFoundException();
+
+            if (!timeSlot.IsBooked)
+                throw new TimeSlotAlreadyBookedException();
+
+            if (timeSlot.StartTime > DateTime.Now)
+                throw new CancelPastReservationException();
+
+
+            timeSlot.IsBooked = false;
+            timeSlot.CustomerId = null;
             _context.SaveChanges();
             return timeSlot;
         }
