@@ -142,7 +142,7 @@ namespace API.Controllers
                 var orderItems = ((ProductOrder)order).OrderItems;
                 var productIds = orderItems.Select(item => item.ProductId);
                 var productsDomain = productIds.Select(productId => (productId, _productRepository.GetProduct(productId))).ToDictionary(item => item.productId);
-                products = orderItems.Select(orderItem => (productsDomain[orderItem.ProductId].Item2.StripeId!, orderItem.OrderItem.Amount, (int)(_productRepository.GetProduct(orderItem.ProductId)!.Price!.Amount * 100))).Distinct().ToList();
+                products = orderItems.Select(orderItem => (productsDomain[orderItem.ProductId].Item2.StripeId!, orderItem.Amount, (int)(_productRepository.GetProduct(orderItem.ProductId)!.Price!.Amount * 100))).Distinct().ToList();
             }
 
             var customer = _customerRepository.GetCustomer(userId);

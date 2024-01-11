@@ -32,10 +32,12 @@ namespace API.Controllers
         }
 
         [HttpGet("{orderId}")]
-        public ActionResult<Order> GetOrder(Guid orderId)
+        public ActionResult<OrderDTO> GetOrder(Guid orderId)
         {
             var order = _orderService.GetOrder(orderId);
-            return order == null ? NotFound() : Ok(order);
+            var orderDto = _mapper.Map<OrderDTO>(order);
+
+            return order == null ? NotFound() : Ok(orderDto);
         }
 
         [HttpPost]
@@ -50,7 +52,7 @@ namespace API.Controllers
         [HttpPost("{orderId}/orderItem")]
         public ActionResult<Order> AddOrderItem(
             [FromRoute]Guid orderId,
-            [FromBody] ProductOrderItem orderItem)
+            [FromBody] OrderItem orderItem)
         {
             return Ok(_orderService.AddOrderItem(orderId, orderItem));
         }

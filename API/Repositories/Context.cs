@@ -56,7 +56,7 @@ namespace API.Repositories
             modelBuilder.Entity<Product>()
                 .OwnsOne(product => product.Price, price =>
                 {
-                    price.Property(price => price.Amount).HasColumnName("Amount");
+                    price.Property(price => price.Amount).HasColumnName("Price");
                     price.Property(price => price.Currency).HasColumnName("Currency");
                 });
         }
@@ -116,19 +116,18 @@ namespace API.Repositories
                        tipNavigation.Property(tip => tip.PaymentType).HasColumnName("TipPaymentType");
                    });
 
-            modelBuilder.Entity<ProductOrderItem>()
-                .HasKey(item => new { item.OrderItemId, item.ProductId });
+            modelBuilder.Entity<OrderItem>()
+                .HasKey(item => new { item.OrderId, item.Id, item.ProductId });
 
-            modelBuilder.Entity<ProductOrderItem>()
-                .HasOne(cd => cd.OrderItem)
-                .WithMany(c => c.ProductOrderItems)
-                .HasForeignKey(cd => cd.OrderItemId);
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(orderItem => orderItem.ProductOrder)
+                .WithMany(order => order.OrderItems)
+                .HasForeignKey(order => order.OrderId);
 
-            modelBuilder.Entity<ProductOrderItem>()
-                .HasOne(cd => cd.Product)
-                .WithMany(d => d.ProductOrderItems)
-                .HasForeignKey(cd => cd.ProductId);
-
+            modelBuilder.Entity<OrderItem>()
+                .HasOne<Product>()
+                .WithMany()
+                .HasForeignKey(orderItem => orderItem.ProductId);
         }
 
         private void OnCreatingPayments(ModelBuilder modelBuilder)

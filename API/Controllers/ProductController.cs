@@ -1,4 +1,6 @@
 using API.DTOs;
+using API.DTOs.Request;
+using API.DTOs.Response;
 using API.Model;
 using API.Requests.Product;
 using API.Responses.Product;
@@ -31,11 +33,12 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public ActionResult<CreateProductResponse> CreateProduct(CreateProductRequest request)
+        public ActionResult<ProductCreationResponseDTO> CreateProduct(ProductCreationRequestDTO request)
         {
-            var productDomain = _mapper.Map<Product>(request.Product);
+            var productDomain = _mapper.Map<Product>(request);
             var createdProduct = _productService.CreateProduct(productDomain);
-            var response = new CreateProductResponse(_mapper.Map<ProductDTO>(createdProduct));
+            var response = _mapper.Map<ProductCreationResponseDTO>(createdProduct);
+
             return Ok(response);
         }
 

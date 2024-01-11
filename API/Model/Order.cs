@@ -3,7 +3,7 @@ using API.Enumerators;
 
 namespace API.Model
 {
-    public class Order
+    public abstract class Order
     {
         public Guid Id { get; set; }
         public Guid CustomerId { get; set; }

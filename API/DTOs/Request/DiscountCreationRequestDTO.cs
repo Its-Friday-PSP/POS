@@ -4,7 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace API.DTOs.Request
 {
-    public class DiscountCreationRequest
+    public class DiscountCreationRequestDTO
     {
         public string Id { get; set; }
         public DiscountType DiscountType { get; set; }

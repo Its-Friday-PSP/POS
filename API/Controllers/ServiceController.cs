@@ -1,4 +1,6 @@
 using API.DTOs;
+using API.DTOs.Request;
+using API.DTOs.Response;
 using API.Model;
 using API.Requests.Service;
 using API.Responses.Reservation;
@@ -40,12 +42,12 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public ActionResult<CreateServiceResponse> CreateService(CreateServiceRequest request)
+        public ActionResult<ServiceCreationResponseDTO> CreateService(ServiceCreationRequestDTO request)
         {
-            var serviceDomain = _mapper.Map<Service>(request.Service);
-            var timeSlotsDomain = _mapper.Map<List<ServiceTimeSlots>>(request.Service.ServiceTimeSlots);
+            var serviceDomain = _mapper.Map<Service>(request);
             var createdService = _serviceService.CreateService(serviceDomain);
-            var response = new CreateServiceResponse(_mapper.Map<ServiceDTO>(createdService));
+            var response = _mapper.Map<ServiceCreationResponseDTO>(createdService);
+
             return Ok(response);
         }
 

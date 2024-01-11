@@ -49,24 +49,28 @@ namespace API.Repositories.Implementations
             }
             if(order.OrderType == Enumerators.OrderType.PRODUCT)
             {
-                return _context.Orders.Include(order => ((ProductOrder)order).OrderItems).First(order => order.Id == orderId);
+                return _context.Orders
+                    .Include(order => ((ProductOrder)order).OrderItems)
+                    .First(order => order.Id == orderId);
         }
             else
             {
-                return _context.Orders.Include(order => ((ServiceOrder)order).Services).First(order => order.Id == orderId);
+                return _context.Orders
+                    .Include(order => ((ServiceOrder)order).Services)
+                    .First(order => order.Id == orderId);
             }
         }
 
-        public Order AddOrderItem(Guid orderId, ProductOrderItem orderItem)
+        public Order AddOrderItem(Guid orderId, OrderItem orderItem)
         {
             var order = GetOrder(orderId);
             var product = _context.Products.Find(orderItem.ProductId);
 
-            if(product.AmountInStock >= orderItem.OrderItem.Amount)
+            if(product.AmountInStock >= orderItem.Amount)
             {
-                product.AmountInStock -= orderItem.OrderItem.Amount;
+                product.AmountInStock -= orderItem.Amount;
 
-                _context.OrderItems.Add(orderItem.OrderItem);
+                _context.OrderItems.Add(orderItem);
                 _context.SaveChanges();
             }
 
@@ -80,13 +84,13 @@ namespace API.Repositories.Implementations
                 .SingleOrDefault(po => po.Id == orderId);
 
             var orderItem = productOrder?.OrderItems
-                .SingleOrDefault(oi => oi.OrderItem.Index == orderItemIndex);
+                .SingleOrDefault(oi => oi.Index == orderItemIndex);
 
             var product = _context.Products.Find(orderItem.ProductId);
 
-            product.AmountInStock += orderItem.OrderItem.Amount;
+            product.AmountInStock += orderItem.Amount;
 
-            _context.OrderItems.Remove(orderItem.OrderItem);
+            _context.OrderItems.Remove(orderItem);
 
             _context.SaveChanges();
 
@@ -95,7 +99,7 @@ namespace API.Repositories.Implementations
 
         public Order CompleteOrder(Guid orderId)
         {
-            var completedOrder = _context.Orders.Find(orderId);
+            var completedOrder = GetOrder(orderId);
 
             if(completedOrder.OrderType == OrderType.SERVICE)
             {
@@ -119,12 +123,12 @@ namespace API.Repositories.Implementations
                 foreach(var orderItem in productOrder.OrderItems)
                 {
                     var product = _context.Products.FirstOrDefault(x => x.Id == orderItem.ProductId);
-
+                    
                     if(product == null)
                     {
                         continue;
                     }
-                    product.AmountInStock -= orderItem.OrderItem.Amount;
+                    product.AmountInStock -= orderItem.Amount;
                 }
 
             }

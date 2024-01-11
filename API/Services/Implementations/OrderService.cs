@@ -29,7 +29,7 @@ namespace API.Services.Implementations
             _discountRepository = discountRepository;
         }
 
-        public Order AddOrderItem(Guid orderId, ProductOrderItem orderItem)
+        public Order AddOrderItem(Guid orderId, OrderItem orderItem)
         {
             return _orderRepository.AddOrderItem(orderId, orderItem);
         }
@@ -55,12 +55,15 @@ namespace API.Services.Implementations
             {
                 Guid orderId = Guid.NewGuid();
                 
-                var orderItems = orderRequest.Products?.Select(orderItemDto =>
-                    new ProductOrderItem(orderItemDto.ProductId, orderId)
+                List<OrderItem> orderItems = orderRequest.Products?.Select(orderItemDto =>
+                    new OrderItem()
                     {
-                        OrderItem = new OrderItem() { Amount = orderItemDto.Amount, Index = orderItemDto.Index }
+                        OrderId = orderId,
+                        ProductId = orderItemDto.ProductId,
+                        Amount = orderItemDto.Amount,
+                        Index = orderItemDto.Index
                     }
-                ).ToList();
+                ).ToList()!;
 
                 order = new ProductOrder(orderId, orderRequest.CustomerId) { OrderItems = orderItems };
                 order.Price = CalculateTotalPrice(orderItems, orderRequest.DiscountCodes);
@@ -96,7 +99,7 @@ namespace API.Services.Implementations
             return _orderRepository.RemoveOrderItem(orderId, orderItemIndex);
         }
 
-        private Price CalculateTotalPrice(IEnumerable<ProductOrderItem> orderItems, IEnumerable<string> appliedDiscounts)
+        private Price CalculateTotalPrice(IEnumerable<OrderItem> orderItems, IEnumerable<string> appliedDiscounts)
         {
             var productIds = orderItems.Select(x => x.ProductId);
             var products = _productRepository.GetProducts(productIds).ToList();
@@ -107,7 +110,7 @@ namespace API.Services.Implementations
             {
                 long normalizedProductPrice = NormalizeCurrency(product.Price);
 
-                var amount = orderItems.FirstOrDefault(x => x.ProductId == product.Id).OrderItem.Amount;
+                var amount = orderItems.FirstOrDefault(x => x.ProductId == product.Id).Amount;
                 normalizedProductPrice *= amount;
 
                 long discountedProductPrice = ApplyDiscountTotalPrice(appliedDiscounts, OrderTypeDTO.PRODUCT, normalizedProductPrice);
