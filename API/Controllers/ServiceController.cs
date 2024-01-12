@@ -42,11 +42,11 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public ActionResult<ServiceCreationResponseDTO> CreateService(ServiceCreationRequestDTO request)
+        public ActionResult<ServiceDTO> CreateService(ServiceCreationRequestDTO request)
         {
             var serviceDomain = _mapper.Map<Service>(request);
-            var createdService = _serviceService.CreateService(serviceDomain);
-            var response = _mapper.Map<ServiceCreationResponseDTO>(createdService);
+            var createdService = _serviceService.CreateService(serviceDomain, request.Taxes);
+            var response = _mapper.Map<ServiceDTO>(createdService);
 
             return Ok(response);
         }

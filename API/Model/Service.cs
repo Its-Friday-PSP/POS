@@ -1,4 +1,5 @@
 ﻿using API.DTOs;
+using API.Shared;
 using System.ComponentModel.DataAnnotations;
 
 namespace API.Model
@@ -8,17 +9,17 @@ namespace API.Model
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public Price Price { get; set; }
+        public long? Price { get; set; }
         public int DurationInMinutes { get; set; }
         public List<ServiceTimeSlots> ServiceTimeSlots { get; set; }
         public string? StripeId { get; set; }
-        public List<TaxItem>? Taxes { get; set; }
+        public List<ServiceTaxItem>? Taxes { get; set; }
 
         public Service(
             Guid id,
             string name,
             string description,
-            Price price,
+            long price,
             int durationInMinutes,
             List<ServiceTimeSlots> serviceTimeSlots
         )

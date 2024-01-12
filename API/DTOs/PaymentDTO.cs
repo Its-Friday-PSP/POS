@@ -13,7 +13,8 @@ namespace API.DTOs
         public PaymentType PaymentType { get; set; }
         public PaymentState? PaymentState { get; set; }
         [Required]
-        public Price Price { get; set; }
+        public decimal Price { get; set; }
+        public long LoyaltyPoints { get; set; }
         public DateTime? LastUpdated { get; set; }
     }
 }

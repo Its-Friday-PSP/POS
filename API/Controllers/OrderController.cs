@@ -41,27 +41,34 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<OrderDTO>> CreateOrder(OrderCreationRequestDTO request)
+        public async Task<ActionResult<OrderReceipt>> CreateOrder(OrderCreationRequestDTO request)
         {
-            Order order = await _orderService.CreateOrder(request);
+            OrderReceipt orderReceipt = await _orderService.CreateOrder(request);
+
+            return Ok(orderReceipt);
+        }
+
+        [HttpPost("{orderId}/orderItem")]
+        public ActionResult<OrderDTO> AddOrderItem([FromRoute]Guid orderId, [FromBody] OrderItemCreationRequestDTO orderItemDto)
+        {
+            OrderItem orderItem = _mapper.Map<OrderItem>(orderItemDto);
+            orderItem.OrderId = orderId;
+
+            var order = _orderService.AddOrderItem(orderId, orderItem);
             var response = _mapper.Map<OrderDTO>(order);
 
             return Ok(response);
         }
 
-        [HttpPost("{orderId}/orderItem")]
-        public ActionResult<Order> AddOrderItem(
-            [FromRoute]Guid orderId,
-            [FromBody] OrderItem orderItem)
-        {
-            return Ok(_orderService.AddOrderItem(orderId, orderItem));
-        }
-
         [HttpDelete("{orderId}/orderItem/{orderItemIndex}")]
-        public ActionResult<Order> RemoveOrderItem(Guid orderId, int orderItemIndex)
+        public ActionResult<OrderDTO> RemoveOrderItem(Guid orderId, int orderItemIndex)
         {
             System.Console.WriteLine(orderId + ", " + orderItemIndex);
-            return Ok(_orderService.RemoveOrderItem(orderId, orderItemIndex));
+
+            var order = _orderService.RemoveOrderItem(orderId, orderItemIndex);
+            var response = _mapper.Map<OrderDTO>(order);
+
+            return Ok(response);
         }
 
         [HttpDelete("{orderId}")]
@@ -71,10 +78,8 @@ namespace API.Controllers
         }
 
         [HttpPut("tip/{orderId}")]
-        public ActionResult<Order> AddTip([FromRoute] Guid orderId, [FromBody] AddTipRequest request)
+        public ActionResult<Order> AddTip([FromRoute] Guid orderId, [FromBody] long tip)
         {
-            var tip = _mapper.Map<Tip>(request.Tip);
-
             var order = _orderService.AddTip(orderId, tip);
 
             return order == null ? NotFound() : Ok(order);

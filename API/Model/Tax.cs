@@ -11,7 +11,8 @@ namespace API.Model
         public string? Name { get; set; }
         public string? Description { get; set; }
         public int? Percentage { get; set; }
-        public Price? Price { get; set; }
-        public List<TaxItem>? Taxes { get; set; }
+        public long? Price { get; set; }
+        public List<ProductTaxItem>? ProductTaxes { get; set; }
+        public List<ServiceTaxItem>? ServiceTaxes { get; set; }
     }
 }

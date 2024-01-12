@@ -1,4 +1,5 @@
 using API.DTOs;
+using API.DTOs.Request;
 using API.Model;
 using API.Requests.Customer;
 using API.Responses.Customer;
@@ -56,12 +57,11 @@ namespace API.Controllers
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status400BadRequest)] // Email already exists
-        public ActionResult<CreateCustomerResponse> CreateCustomer(CreateCustomerRequest request)
+        public ActionResult<CustomerDTO> CreateCustomer(CustomerCreationRequestDTO request)
         {
-            var customerDomain = _mapper.Map<Customer>(request.Customer);
-            //Console.WriteLine($"{customerDomain.Id} {customerDomain.Auth.Email} {customerDomain.Auth.Password}");
-            var createdCustomer = _customerService.CreateCustomer(customerDomain);
-            var response = new CreateCustomerResponse(_mapper.Map<CustomerDTO>(createdCustomer));
+            var customerDomain = _mapper.Map<Customer>(request);
+            var createdCustomer = _customerService.CreateCustomer(customerDomain, request.AvaialableDiscounts);
+            var response = _mapper.Map<CustomerDTO>(createdCustomer);
             return Ok(response);
         }
 

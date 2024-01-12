@@ -16,7 +16,6 @@ namespace API.Repositories.Implementations
         public Payment CreatePayment(Payment payment)
         {
             payment.Id = new Guid();
-            //payment.LastUpdated = new DateTime();
 
             _context.Payments.Add(payment);
             _context.SaveChanges();

@@ -9,12 +9,13 @@ namespace API.Model
         public Guid OrderId { get; set; }
         public PaymentType PaymentType { get; set; }
         public PaymentState PaymentState { get; set; }
-        public Price Price { get; set; }
+        public long Price { get; set; }
         public DateTime LastUpdated { get; set; }
+        public long LoyaltyPoints { get; set; }
 
         public Payment() { }
 
-        public Payment(Guid id, Guid orderId, PaymentType paymentType, PaymentState paymentState, Price price, DateTime lastUpdated)
+        public Payment(Guid id, Guid orderId, PaymentType paymentType, PaymentState paymentState, long price, DateTime lastUpdated)
         {
             Id = id;
             OrderId = orderId;

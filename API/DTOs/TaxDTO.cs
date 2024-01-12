@@ -10,6 +10,6 @@ namespace API.DTOs
         public int? Percentage { get; set; }
         public string? Name { get; set; }
         public string? Description { get; set; }
-        public PriceDTO? Price { get; set; }
+        public decimal? Price { get; set; }
     }
 }

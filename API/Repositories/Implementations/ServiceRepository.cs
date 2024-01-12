@@ -2,6 +2,7 @@
 using API.DTOs.Request;
 using API.Model;
 using API.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Repositories.Implementations
 {
@@ -15,7 +16,7 @@ namespace API.Repositories.Implementations
         }
 
         public Service CreateService(Service service)
-        {       
+        {   
             _context.Add(service);
             _context.SaveChanges();
 
@@ -33,7 +34,7 @@ namespace API.Repositories.Implementations
 
         public Service GetService(Guid serviceId)
         {
-            return _context.Services.Find(serviceId);
+            return _context.Services.Include(x => x.Taxes).FirstOrDefault(x => x.Id == serviceId);
         }
 
         public IEnumerable<Service> GetAllServices()
@@ -43,7 +44,7 @@ namespace API.Repositories.Implementations
 
         public IEnumerable<Service> GetServices(IEnumerable<Guid> serviceIds)
         {
-            return _context.Services.Where(x => serviceIds.Contains(x.Id));
+            return _context.Services.Include(x => x.Taxes).Where(x => serviceIds.Contains(x.Id));
         }
 
         public Service UpdateService(Guid serviceId, Service service)

@@ -4,7 +4,7 @@ namespace API.Services.Interfaces
 {
     public interface IProductService
     {
-        public Product CreateProduct(Product product);
+        public Product CreateProduct(Product product, IEnumerable<Guid> taxes);
         public Product GetProduct(Guid productId);
         public IEnumerable<Product> GetProducts(IEnumerable<Guid> productIds);
         public bool UpdateProduct(Guid productId, Product product);

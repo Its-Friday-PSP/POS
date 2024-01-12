@@ -3,6 +3,7 @@ using System;
 using API.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20240111233048_newthings5")]
+    partial class newthings5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.9");
@@ -22,9 +25,6 @@ namespace API.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
-
-                    b.Property<long>("LoyaltyPoints")
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("StripeId")
                         .HasColumnType("TEXT");
@@ -75,9 +75,6 @@ namespace API.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<long?>("Percentage")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<long?>("Price")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("ValidFrom")
@@ -132,9 +129,6 @@ namespace API.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("INTEGER");
 
-                    b.Property<long?>("Tip")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("Id");
 
                     b.ToTable("Orders");
@@ -177,9 +171,6 @@ namespace API.Migrations
                     b.Property<DateTime>("LastUpdated")
                         .HasColumnType("TEXT");
 
-                    b.Property<long>("LoyaltyPoints")
-                        .HasColumnType("INTEGER");
-
                     b.Property<Guid>("OrderId")
                         .HasColumnType("TEXT");
 
@@ -187,9 +178,6 @@ namespace API.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("PaymentType")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<long>("Price")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -217,30 +205,12 @@ namespace API.Migrations
                     b.Property<int>("OriginCountry")
                         .HasColumnType("INTEGER");
 
-                    b.Property<long?>("Price")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("StripeId")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.ToTable("Products");
-                });
-
-            modelBuilder.Entity("API.Model.ProductTaxItem", b =>
-                {
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("TaxId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("ProductId", "TaxId");
-
-                    b.HasIndex("TaxId");
-
-                    b.ToTable("ProductTaxItem");
                 });
 
             modelBuilder.Entity("API.Model.Service", b =>
@@ -260,9 +230,6 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<long?>("Price")
-                        .HasColumnType("INTEGER");
-
                     b.Property<Guid?>("ServiceOrderId")
                         .HasColumnType("TEXT");
 
@@ -274,21 +241,6 @@ namespace API.Migrations
                     b.HasIndex("ServiceOrderId");
 
                     b.ToTable("Services");
-                });
-
-            modelBuilder.Entity("API.Model.ServiceTaxItem", b =>
-                {
-                    b.Property<Guid>("ServiceId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("TaxId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("ServiceId", "TaxId");
-
-                    b.HasIndex("TaxId");
-
-                    b.ToTable("ServiceTaxItem");
                 });
 
             modelBuilder.Entity("API.Model.ServiceTimeSlots", b =>
@@ -341,15 +293,32 @@ namespace API.Migrations
                     b.Property<int?>("Percentage")
                         .HasColumnType("INTEGER");
 
-                    b.Property<long?>("Price")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("Type")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.ToTable("Taxes");
+                });
+
+            modelBuilder.Entity("API.Model.TaxItem", b =>
+                {
+                    b.Property<Guid?>("ServiceId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("ProductId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("TaxId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ServiceId", "ProductId", "TaxId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("TaxId");
+
+                    b.ToTable("TaxItem");
                 });
 
             modelBuilder.Entity("API.Model.ProductOrder", b =>
@@ -416,6 +385,32 @@ namespace API.Migrations
                     b.Navigation("Discount");
                 });
 
+            modelBuilder.Entity("API.Model.Discount", b =>
+                {
+                    b.OwnsOne("API.Model.Price", "Price", b1 =>
+                        {
+                            b1.Property<string>("DiscountId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<long>("Amount")
+                                .HasColumnType("INTEGER")
+                                .HasColumnName("Amount");
+
+                            b1.Property<int>("Currency")
+                                .HasColumnType("INTEGER")
+                                .HasColumnName("Currency");
+
+                            b1.HasKey("DiscountId");
+
+                            b1.ToTable("Discounts");
+
+                            b1.WithOwner()
+                                .HasForeignKey("DiscountId");
+                        });
+
+                    b.Navigation("Price");
+                });
+
             modelBuilder.Entity("API.Model.Employee", b =>
                 {
                     b.OwnsOne("API.Model.Auth", "Auth", b1 =>
@@ -443,6 +438,52 @@ namespace API.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("API.Model.Order", b =>
+                {
+                    b.OwnsOne("API.Model.Tip", "Tip", b1 =>
+                        {
+                            b1.Property<Guid>("OrderId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<int>("PaymentType")
+                                .HasColumnType("INTEGER")
+                                .HasColumnName("TipPaymentType");
+
+                            b1.HasKey("OrderId");
+
+                            b1.ToTable("Orders");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderId");
+
+                            b1.OwnsOne("API.Model.Price", "Price", b2 =>
+                                {
+                                    b2.Property<Guid>("TipOrderId")
+                                        .HasColumnType("TEXT");
+
+                                    b2.Property<long>("Amount")
+                                        .HasColumnType("INTEGER")
+                                        .HasColumnName("TipAmount");
+
+                                    b2.Property<int>("Currency")
+                                        .HasColumnType("INTEGER")
+                                        .HasColumnName("TipCurrency");
+
+                                    b2.HasKey("TipOrderId");
+
+                                    b2.ToTable("Orders");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("TipOrderId");
+                                });
+
+                            b1.Navigation("Price")
+                                .IsRequired();
+                        });
+
+                    b.Navigation("Tip");
+                });
+
             modelBuilder.Entity("API.Model.OrderItem", b =>
                 {
                     b.HasOne("API.Model.ProductOrder", "ProductOrder")
@@ -467,25 +508,56 @@ namespace API.Migrations
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.OwnsOne("API.Model.Price", "Price", b1 =>
+                        {
+                            b1.Property<Guid>("PaymentId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<long>("Amount")
+                                .HasColumnType("INTEGER")
+                                .HasColumnName("Amount");
+
+                            b1.Property<int>("Currency")
+                                .HasColumnType("INTEGER")
+                                .HasColumnName("Currency");
+
+                            b1.HasKey("PaymentId");
+
+                            b1.ToTable("Payments");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PaymentId");
+                        });
+
+                    b.Navigation("Price")
+                        .IsRequired();
                 });
 
-            modelBuilder.Entity("API.Model.ProductTaxItem", b =>
+            modelBuilder.Entity("API.Model.Product", b =>
                 {
-                    b.HasOne("API.Model.Product", "Product")
-                        .WithMany("Taxes")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.OwnsOne("API.Model.Price", "Price", b1 =>
+                        {
+                            b1.Property<Guid>("ProductId")
+                                .HasColumnType("TEXT");
 
-                    b.HasOne("API.Model.Tax", "Tax")
-                        .WithMany("ProductTaxes")
-                        .HasForeignKey("TaxId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                            b1.Property<long>("Amount")
+                                .HasColumnType("INTEGER")
+                                .HasColumnName("Price");
 
-                    b.Navigation("Product");
+                            b1.Property<int>("Currency")
+                                .HasColumnType("INTEGER")
+                                .HasColumnName("Currency");
 
-                    b.Navigation("Tax");
+                            b1.HasKey("ProductId");
+
+                            b1.ToTable("Products");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ProductId");
+                        });
+
+                    b.Navigation("Price");
                 });
 
             modelBuilder.Entity("API.Model.Service", b =>
@@ -493,25 +565,30 @@ namespace API.Migrations
                     b.HasOne("API.Model.ServiceOrder", null)
                         .WithMany("Services")
                         .HasForeignKey("ServiceOrderId");
-                });
 
-            modelBuilder.Entity("API.Model.ServiceTaxItem", b =>
-                {
-                    b.HasOne("API.Model.Service", "Service")
-                        .WithMany("Taxes")
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.OwnsOne("API.Model.Price", "Price", b1 =>
+                        {
+                            b1.Property<Guid>("ServiceId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<long>("Amount")
+                                .HasColumnType("INTEGER")
+                                .HasColumnName("Pay");
+
+                            b1.Property<int>("Currency")
+                                .HasColumnType("INTEGER")
+                                .HasColumnName("Currency");
+
+                            b1.HasKey("ServiceId");
+
+                            b1.ToTable("Services");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ServiceId");
+                        });
+
+                    b.Navigation("Price")
                         .IsRequired();
-
-                    b.HasOne("API.Model.Tax", "Tax")
-                        .WithMany("ServiceTaxes")
-                        .HasForeignKey("TaxId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Service");
-
-                    b.Navigation("Tax");
                 });
 
             modelBuilder.Entity("API.Model.ServiceTimeSlots", b =>
@@ -527,6 +604,59 @@ namespace API.Migrations
                     b.HasOne("API.Model.Service", null)
                         .WithMany("ServiceTimeSlots")
                         .HasForeignKey("ServiceId");
+                });
+
+            modelBuilder.Entity("API.Model.Tax", b =>
+                {
+                    b.OwnsOne("API.Model.Price", "Price", b1 =>
+                        {
+                            b1.Property<Guid>("TaxId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<long>("Amount")
+                                .HasColumnType("INTEGER")
+                                .HasColumnName("Amount");
+
+                            b1.Property<int>("Currency")
+                                .HasColumnType("INTEGER")
+                                .HasColumnName("Currency");
+
+                            b1.HasKey("TaxId");
+
+                            b1.ToTable("Taxes");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TaxId");
+                        });
+
+                    b.Navigation("Price");
+                });
+
+            modelBuilder.Entity("API.Model.TaxItem", b =>
+                {
+                    b.HasOne("API.Model.Product", "Product")
+                        .WithMany("Taxes")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("API.Model.Service", "Service")
+                        .WithMany("Taxes")
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("API.Model.Tax", "Tax")
+                        .WithMany("Taxes")
+                        .HasForeignKey("TaxId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Service");
+
+                    b.Navigation("Tax");
                 });
 
             modelBuilder.Entity("API.Model.Customer", b =>
@@ -567,9 +697,7 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Model.Tax", b =>
                 {
-                    b.Navigation("ProductTaxes");
-
-                    b.Navigation("ServiceTaxes");
+                    b.Navigation("Taxes");
                 });
 
             modelBuilder.Entity("API.Model.ProductOrder", b =>

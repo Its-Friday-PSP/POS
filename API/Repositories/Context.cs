@@ -32,7 +32,6 @@ namespace API.Repositories
             OnCreatingDiscount(modelBuilder);
             OnCreatingService(modelBuilder);
             OnCreatingCustomer(modelBuilder);
-            OnCreatingProduct(modelBuilder);
 
             modelBuilder.Entity<Employee>()
                .OwnsOne(employee => employee.Auth, auth =>
@@ -50,36 +49,21 @@ namespace API.Repositories
             modelBuilder.Entity<ServiceTimeSlots>()
                 .HasKey(a => a.Id);
 
-            modelBuilder.Entity<Tax>()
-                .OwnsOne(tax => tax.Price, price =>
-                {
-                    price.Property(price => price.Amount).HasColumnName("Amount");
-                    price.Property(price => price.Currency).HasColumnName("Currency");
-                });
+            modelBuilder.Entity<ProductTaxItem>()
+                .HasKey(taxItem => new { taxItem.ProductId, taxItem.TaxId });
 
-            modelBuilder.Entity<TaxItem>()
-                .HasKey(taxItem => new { taxItem.ServiceId, taxItem.ProductId, taxItem.TaxId });
-
-            modelBuilder.Entity<TaxItem>()
+            modelBuilder.Entity<ProductTaxItem>()
                 .HasOne(taxItem => taxItem.Product)
                 .WithMany(product => product.Taxes)
                 .HasForeignKey(taxItem => taxItem.ProductId);
 
-            modelBuilder.Entity<TaxItem>()
+            modelBuilder.Entity<ServiceTaxItem>()
+                .HasKey(taxItem => new { taxItem.ServiceId, taxItem.TaxId });
+
+            modelBuilder.Entity<ServiceTaxItem>()
                 .HasOne(taxItem => taxItem.Service)
                 .WithMany(product => product.Taxes)
                 .HasForeignKey(taxItem => taxItem.ServiceId);
-
-        }
-
-        private void OnCreatingProduct(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Product>()
-                .OwnsOne(product => product.Price, price =>
-                {
-                    price.Property(price => price.Amount).HasColumnName("Price");
-                    price.Property(price => price.Currency).HasColumnName("Currency");
-                });
 
         }
 
@@ -97,13 +81,6 @@ namespace API.Repositories
 
         private void OnCreatingDiscount(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Discount>()
-                .OwnsOne(discount => discount.Price, price =>
-                {
-                    price.Property(price => price.Amount).HasColumnName("Amount");
-                    price.Property(price => price.Currency).HasColumnName("Currency");
-                });
-
             modelBuilder.Entity<CustomerDiscount>()
                 .HasKey(cd => new { cd.CustomerId, cd.DiscountId });
 
@@ -120,24 +97,6 @@ namespace API.Repositories
 
         private void OnCreatingOrder(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Order>()
-                .OwnsOne(product => product.Price, price =>
-                {
-                    price.Property(price => price.Amount).HasColumnName("OrderAmount");
-                    price.Property(price => price.Currency).HasColumnName("OrderCurrency");
-                });
-
-            modelBuilder.Entity<Order>()
-                   .OwnsOne(order => order.Tip, tipNavigation =>
-                   {
-                       tipNavigation.OwnsOne(tip => tip.Price, priceNavigation =>
-                       {
-                           priceNavigation.Property(price => price.Amount).HasColumnName("TipAmount");
-                           priceNavigation.Property(price => price.Currency).HasColumnName("TipCurrency");
-                       });
-                       tipNavigation.Property(tip => tip.PaymentType).HasColumnName("TipPaymentType");
-                   });
-
             modelBuilder.Entity<OrderItem>()
                 .HasKey(item => new { item.OrderId, item.Id, item.ProductId });
 
@@ -159,12 +118,6 @@ namespace API.Repositories
                 .WithMany(order => order.Payments) // Each Order can have many Payments
                 .HasForeignKey(payment => payment.OrderId);
 
-            modelBuilder.Entity<Payment>()
-                .OwnsOne(payment => payment.Price, price =>
-                {
-                    price.Property(price => price.Amount).HasColumnName("Amount");
-                    price.Property(price => price.Currency).HasColumnName("Currency");
-                });
         }
 
         private void OnCreatingService(ModelBuilder modelBuilder)
@@ -173,13 +126,6 @@ namespace API.Repositories
                .HasMany(service => service.ServiceTimeSlots)
                .WithOne()
                .HasForeignKey(serviceTimeSlots => serviceTimeSlots.Id);
-
-            modelBuilder.Entity<Service>()
-                .OwnsOne(service => service.Price, price =>
-                {
-                    price.Property(price => price.Amount).HasColumnName("Pay");
-                    price.Property(price => price.Currency).HasColumnName("Currency");
-                });
 
             modelBuilder.Entity<ServiceTimeSlots>()
                 .HasOne<Service>()

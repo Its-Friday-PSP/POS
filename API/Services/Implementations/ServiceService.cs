@@ -9,15 +9,20 @@ namespace API.Services.Implementations
     public class ServiceService : IServiceService
     {
         private readonly IServiceRepository _serviceRepository;
+        private readonly ITaxRepository _taxRepository;
 
-        public ServiceService(IServiceRepository serviceRepository)
+        public ServiceService(IServiceRepository serviceRepository, ITaxRepository taxRepository)
         {
             _serviceRepository = serviceRepository;
+            _taxRepository = taxRepository;
         }
 
-        public Service CreateService(Service service)
+        public Service CreateService(Service service, IEnumerable<Guid> taxes)
         {
             var createdService = _serviceRepository.CreateService(service);
+            var selectedTaxes = _taxRepository.GetTaxes(taxes);
+
+            createdService.Taxes = selectedTaxes.Select(x => new ServiceTaxItem() { TaxId = x.Id, ServiceId = service.Id }).ToList();
 
             var offerOptions = new ProductCreateOptions
             {

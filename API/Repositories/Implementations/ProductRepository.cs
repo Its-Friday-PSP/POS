@@ -1,5 +1,6 @@
 ﻿using API.Model;
 using API.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Repositories.Implementations
 {
@@ -39,11 +40,12 @@ namespace API.Repositories.Implementations
 
         public Product GetProduct(Guid productId)
         {
-            return _context.Products.FirstOrDefault(product => product.Id == productId)!;
+            return _context.Products.Include(x => x.Taxes).First(product => product.Id == productId);
         }
 
         public IEnumerable<Product> GetProducts(IEnumerable<Guid> productIds)
         {
+            _context.Products.Include(x => x.Taxes);
             return _context.Products.Where(x => productIds.Contains(x.Id));
         }
 

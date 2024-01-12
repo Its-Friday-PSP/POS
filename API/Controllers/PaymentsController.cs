@@ -135,14 +135,14 @@ namespace API.Controllers
             if(order.OrderType == OrderTypeDTO.SERVICE)
             {
                 var services = ((ServiceOrder)order).Services;
-                products = services.Select(service => (service.StripeId!, 1, (int)(service.Price.Amount * 100))).Distinct().ToList();
+                products = services.Select(service => (service.StripeId!, 1, (int)(service.Price * 100))).Distinct().ToList();
             }
             else
             {
                 var orderItems = ((ProductOrder)order).OrderItems;
                 var productIds = orderItems.Select(item => item.ProductId);
                 var productsDomain = productIds.Select(productId => (productId, _productRepository.GetProduct(productId))).ToDictionary(item => item.productId);
-                products = orderItems.Select(orderItem => (productsDomain[orderItem.ProductId].Item2.StripeId!, orderItem.Amount, (int)(_productRepository.GetProduct(orderItem.ProductId)!.Price!.Amount * 100))).Distinct().ToList();
+                products = orderItems.Select(orderItem => (productsDomain[orderItem.ProductId].Item2.StripeId!, orderItem.Amount, (int)(_productRepository.GetProduct(orderItem.ProductId)!.Price! * 100))).Distinct().ToList();
             }
 
             var customer = _customerRepository.GetCustomer(userId);
@@ -226,15 +226,15 @@ namespace API.Controllers
                     Console.WriteLine("orderId=" + orderId);
                     var order = _orderRepository.GetOrder(orderId);
 
-                    _paymentRepository.CreatePayment(new Payment(
-                        Guid.NewGuid(),
-                        orderId,
-                        Enumerators.PaymentType.CARD,
-                        Enumerators.PaymentState.COMPLETED,
-                        order.Price,
-                        DateTime.Now
-                        ));
-                    _orderRepository.UpdateOrderStatus(order, OrderStatus.PAID);
+                    //_paymentRepository.CreatePayment(new Payment(
+                    //    Guid.NewGuid(),
+                    //    orderId,
+                    //    Enumerators.PaymentType.CARD,
+                    //    Enumerators.PaymentState.COMPLETED,
+                    //    order.Price,
+                    //    DateTime.Now
+                    //    ));
+                    //_orderRepository.UpdateOrderStatus(order, OrderStatus.PAID);
 
                     /*var options = new SessionListLineItemsOptions
                     {

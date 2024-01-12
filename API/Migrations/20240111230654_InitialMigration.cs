@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace API.Migrations
 {
     /// <inheritdoc />
-    public partial class initialMigration : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -97,6 +97,23 @@ namespace API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Products", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Taxes",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Type = table.Column<int>(type: "INTEGER", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    Percentage = table.Column<int>(type: "INTEGER", nullable: true),
+                    Amount = table.Column<long>(type: "INTEGER", nullable: true),
+                    Currency = table.Column<int>(type: "INTEGER", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Taxes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -236,29 +253,32 @@ namespace API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Taxes",
+                name: "TaxItem",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Type = table.Column<int>(type: "INTEGER", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", nullable: true),
-                    Description = table.Column<string>(type: "TEXT", nullable: true),
-                    Amount = table.Column<long>(type: "INTEGER", nullable: false),
-                    Currency = table.Column<int>(type: "INTEGER", nullable: false)
+                    ProductId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    ServiceId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    TaxId = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Taxes", x => x.Id);
+                    table.PrimaryKey("PK_TaxItem", x => new { x.ServiceId, x.ProductId, x.TaxId });
                     table.ForeignKey(
-                        name: "FK_Taxes_Products_Id",
-                        column: x => x.Id,
+                        name: "FK_TaxItem_Products_ProductId",
+                        column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Taxes_Services_Id",
-                        column: x => x.Id,
+                        name: "FK_TaxItem_Services_ServiceId",
+                        column: x => x.ServiceId,
                         principalTable: "Services",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TaxItem_Taxes_TaxId",
+                        column: x => x.TaxId,
+                        principalTable: "Taxes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -302,6 +322,16 @@ namespace API.Migrations
                 name: "IX_ServiceTimeSlots_ServiceId",
                 table: "ServiceTimeSlots",
                 column: "ServiceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TaxItem_ProductId",
+                table: "TaxItem",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TaxItem_TaxId",
+                table: "TaxItem",
+                column: "TaxId");
         }
 
         /// <inheritdoc />
@@ -320,7 +350,7 @@ namespace API.Migrations
                 name: "ServiceTimeSlots");
 
             migrationBuilder.DropTable(
-                name: "Taxes");
+                name: "TaxItem");
 
             migrationBuilder.DropTable(
                 name: "Discounts");
@@ -336,6 +366,9 @@ namespace API.Migrations
 
             migrationBuilder.DropTable(
                 name: "Services");
+
+            migrationBuilder.DropTable(
+                name: "Taxes");
 
             migrationBuilder.DropTable(
                 name: "Orders");
