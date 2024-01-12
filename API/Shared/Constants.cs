@@ -2,6 +2,6 @@
 {
     public static class Constants
     {
-        public static int DECIMAL_MULTIPLIER = 1000;
+        public static int DECIMAL_MULTIPLIER = 100;
     }
 }

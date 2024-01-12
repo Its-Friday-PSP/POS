@@ -1,5 +1,6 @@
 ﻿using API.Model;
 using API.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Repositories.Implementations
 {
@@ -31,7 +32,7 @@ namespace API.Repositories.Implementations
 
         public Customer? GetCustomer(Guid customerId)
         {
-            return _context.Customers.Find(customerId);
+            return _context.Customers.Include(x => x.CustomerDiscounts).FirstOrDefault(x => x.Id == customerId);
         }
 
         public Customer? GetCustomer(string email)

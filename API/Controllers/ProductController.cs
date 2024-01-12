@@ -36,7 +36,7 @@ namespace API.Controllers
         public ActionResult<ProductCreationResponseDTO> CreateProduct(ProductCreationRequestDTO request)
         {
             var productDomain = _mapper.Map<Product>(request);
-            var createdProduct = _productService.CreateProduct(productDomain);
+            var createdProduct = _productService.CreateProduct(productDomain, request.Taxes);
             var response = _mapper.Map<ProductCreationResponseDTO>(createdProduct);
 
             return Ok(response);

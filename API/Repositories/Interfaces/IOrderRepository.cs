@@ -11,7 +11,7 @@ namespace API.Repositories.Interfaces
         public Order AddOrderItem(Guid orderId, OrderItem orderItem);
         public bool RemoveOrderItem(Guid orderId, int orderItemIndex);
         public bool DeleteOrder(Guid orderId);
-        public Order AddTip(Guid orderId, Tip tip);
+        public Order AddTip(Guid orderId, long tip);
         public Order UpdateOrderStatus(Order order, OrderStatus orderStatus);
     }
 }

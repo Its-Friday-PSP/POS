@@ -15,7 +15,7 @@ namespace API.Repositories.Implementations
             _context = context;
         }
 
-        public Order AddTip(Guid orderId, Tip tip)
+        public Order AddTip(Guid orderId, long tip)
         {
             throw new NotImplementedException();
         }
@@ -82,10 +82,10 @@ namespace API.Repositories.Implementations
         {
             var productOrder = _context.ProductOrders
                 .Include(po => po.OrderItems)
-                .SingleOrDefault(po => po.Id == orderId);
+                .FirstOrDefault(po => po.Id == orderId);
 
             var orderItem = productOrder?.OrderItems
-                .SingleOrDefault(oi => oi.Index == orderItemIndex);
+                .FirstOrDefault(oi => oi.Index == orderItemIndex);
 
             var product = _context.Products.Find(orderItem.ProductId);
 
